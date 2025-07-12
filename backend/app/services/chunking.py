@@ -15,10 +15,19 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Configure paths
-TEMP_DIR = Path("temp")
-CHUNKS_DIR = TEMP_DIR / "chunks"
-CHUNKS_DIR.mkdir(exist_ok=True)
+# Configure paths - use the same temp directory as main.py
+try:
+    TEMP_DIR = Path(__file__).parent.parent.parent / "temp"
+    CHUNKS_DIR = TEMP_DIR / "chunks"
+    CHUNKS_DIR.mkdir(exist_ok=True, parents=True)
+    logger.info(f"Chunks directory ready at: {CHUNKS_DIR}")
+except Exception as e:
+    logger.error(f"Error creating chunks directory: {e}")
+    # Fallback to current working directory
+    TEMP_DIR = Path.cwd() / "temp"
+    CHUNKS_DIR = TEMP_DIR / "chunks"
+    CHUNKS_DIR.mkdir(exist_ok=True, parents=True)
+    logger.info(f"Using fallback chunks directory at: {CHUNKS_DIR}")
 
 # API configurations
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
@@ -190,10 +199,31 @@ async def generate_chunks(transcript_data: Dict[str, Any], level: str) -> List[D
         logger.info("Sending request to LLM for chunking")
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
-            response.raise_for_status()
-
+            
+            # Log the response status and headers for debugging
+            logger.info(f"API Response Status: {response.status_code}")
+            logger.info(f"API Response Headers: {dict(response.headers)}")
+            
+            # Check if the response is successful
+            if response.status_code != 200:
+                logger.error(f"API Error: {response.status_code} - {response.text}")
+                raise ValueError(f"API request failed with status {response.status_code}")
+            
             response_data = response.json()
+            logger.info(f"API Response Data Keys: {list(response_data.keys())}")
+            
+            # Check if we have the expected structure
+            if "choices" not in response_data:
+                logger.error(f"Unexpected API response structure: {response_data}")
+                raise ValueError("API response missing 'choices' field")
+            
+            if not response_data["choices"]:
+                logger.error("API returned empty choices")
+                raise ValueError("API returned empty choices")
+            
             llm_response = response_data["choices"][0]["message"]["content"]
+            logger.info(f"LLM Response Length: {len(llm_response)}")
+            logger.info(f"LLM Response Preview: {llm_response[:200]}...")
 
             # Extract JSON from response
             try:
@@ -207,17 +237,20 @@ async def generate_chunks(transcript_data: Dict[str, Any], level: str) -> List[D
                     json_end = llm_response.rfind("}") + 1
 
                 if json_start == -1 or json_end == 0:
+                    logger.error(f"No JSON found in response: {llm_response}")
                     raise ValueError("No valid JSON found in LLM response")
 
                 json_str = llm_response[json_start:json_end]
+                logger.info(f"Extracted JSON: {json_str}")
                 llm_chunks = json.loads(json_str)
 
                 # If result is not a list but a single object, wrap it
                 if isinstance(llm_chunks, dict):
                     llm_chunks = [llm_chunks]
 
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
                 logger.error(f"Failed to parse JSON from LLM response: {llm_response}")
+                logger.error(f"JSON Error: {e}")
                 raise ValueError("Invalid JSON response from LLM")
 
         # Process chunks to match with timestamps

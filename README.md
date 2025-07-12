@@ -1,209 +1,270 @@
-# Course Generator
+# SkillVId - AI-Powered Learning Platform
 
-A platform that transforms YouTube videos into interactive learning experiences with AI-generated content chunks and quizzes.
+Transform any YouTube video into an interactive learning experience with AI-generated content chunks and quizzes.
 
-## Architecture Overview
+## 🚀 Quick Start
 
-### Backend Endpoints
+### Prerequisites
+- **Python 3.8+** - [Download here](https://www.python.org/downloads/)
+- **Node.js 16+** - [Download here](https://nodejs.org/)
+- **OpenRouter API Key** - [Get one here](https://openrouter.ai/)
 
-#### 1. `/api/course/chunks` (POST)
-- **Function**: `generate_chunks`
-- **Location**: `backend/app/routers/course.py`
-- **Purpose**: Generates content chunks from a YouTube video
-- **Frontend Connection**: 
-  - Component: `VideoProcessor.jsx`
-  - Function: `handleSubmit()`
-  - Usage: Initial video processing step
+### Automated Setup
 
-**Request Format**:
-```json
-{
-  "youtube_url": "string",
-  "level": "easy" | "medium" | "hard"
-}
+#### Windows
+```bash
+# Run the setup script
+setup.bat
+
+# Or use npm script
+npm run setup:win
 ```
 
-**Response Format**:
-```json
-[
-  {
-    "title": "string",
-    "start_time": float,
-    "end_time": float,
-    "transcript": "string",
-    "summary": "string"
-  }
-]
+#### macOS/Linux
+```bash
+# Make scripts executable
+chmod +x setup.sh start.sh
+
+# Run the setup script
+./setup.sh
+
+# Or use npm script
+npm run setup
 ```
 
-#### 2. `/api/course/quiz` (POST)
-- **Function**: `generate_quiz`
-- **Location**: `backend/app/routers/course.py`
-- **Purpose**: Generates quiz questions for a content chunk
-- **Frontend Connection**: 
-  - Component: `CourseView.jsx`
-  - Usage: Displays quiz questions for each chunk
+### Manual Setup
 
-**Request Format**:
-```json
-{
-  "chunk": {
-    "title": "string",
-    "start_time": float,
-    "end_time": float,
-    "transcript": "string",
-    "summary": "string"
-  },
-  "level": "easy" | "medium" | "hard"
-}
-```
-
-**Response Format**:
-```json
-[
-  {
-    "question": "string",
-    "options": ["string"],
-    "correct_answer": int,
-    "explanation": "string"
-  }
-]
-```
-
-#### 3. `/api/course/process-complete` (POST)
-- **Function**: `process_course`
-- **Location**: `backend/app/routers/course.py`
-- **Purpose**: Processes complete course generation in background
-- **Frontend Connection**: 
-  - Component: `VideoProcessor.jsx`
-  - Function: `handleSubmit()`
-  - Usage: Initiates full course processing
-
-**Request Format**:
-```json
-{
-  "youtube_url": "string",
-  "level": "easy" | "medium" | "hard"
-}
-```
-
-**Response Format**:
-```json
-{
-  "status": "string",
-  "current_step": int,
-  "total_steps": int,
-  "message": "string",
-  "result": null | object
-}
-```
-
-#### 4. `/api/course/status/{task_id}` (GET)
-- **Function**: `get_course_status`
-- **Location**: `backend/app/routers/course.py`
-- **Purpose**: Checks status of course generation
-- **Frontend Connection**: 
-  - Component: `VideoProcessor.jsx`
-  - Usage: Polls for processing status
-  - Component: `CourseView.jsx`
-  - Usage: Retrieves course data when viewing
-
-**Response Format**:
-```json
-{
-  "status": "string",
-  "current_step": int,
-  "total_steps": int,
-  "message": "string",
-  "result": null | object
-}
-```
-
-### Backend Services
-
-#### 1. Chunking Service (`backend/app/services/chunking.py`)
-- **Main Function**: `generate_chunks_from_url`
-- **Purpose**: Processes YouTube videos into learning chunks
-- **Frontend Usage**: 
-  - Provides content structure for `CourseView.jsx`
-  - Generates timeline in `Timeline.jsx`
-
-#### 2. Quiz Service (`backend/app/services/quiz.py`)
-- **Main Function**: `generate_questions`
-- **Purpose**: Creates quiz questions for content chunks
-- **Frontend Usage**: 
-  - Displays in `CourseView.jsx`
-  - Interactive quiz component
-
-### Frontend Components
-
-#### 1. VideoProcessor.jsx
-- Connects to: `/api/course/process-complete`, `/api/course/status/{task_id}`
-- Purpose: Video URL input and processing initiation
-
-#### 2. CourseView.jsx
-- Connects to: `/api/course/status/{task_id}`
-- Purpose: Displays course content and quizzes
-
-#### 3. Timeline.jsx
-- Uses: Data from chunking service
-- Purpose: Visual representation of course segments
-
-### Data Models
-
-#### Backend Models (`backend/app/models/schemas.py`)
-```python
-ChunkRequest:
-  - youtube_url: HttpUrl
-  - level: Literal["easy", "medium", "hard"]
-
-VideoChunk:
-  - title: Optional[str]
-  - start_time: float
-  - end_time: float
-  - transcript: str
-  - summary: str
-
-QuizQuestion:
-  - question: str
-  - options: List[str]
-  - correct_answer: int
-  - explanation: str
-
-ProcessingStatus:
-  - status: str
-  - current_step: int
-  - total_steps: int
-  - message: str
-  - result: Optional[List[Dict[str, Any]]]
-```
-
-### Mock Data Integration
-- Location: `src/mockData/courses.js`
-- Purpose: Provides sample courses for frontend development
-- Usage: 
-  - `CoursesPage.jsx`: Displays course catalog
-  - `CourseView.jsx`: Shows course content when backend is not used
-
-### Token System
-- Location: `src/store/userStore.js`
-- Purpose: Manages user progress and rewards
-- Integration:
-  - Course completion tracking
-  - Reward token management
-  - Persistent storage using Zustand
-
-## Development Setup
-
-1. Start Backend:
+#### 1. Backend Setup
 ```bash
 cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate.bat
+# macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create environment file
+cp env.example .env
+# Edit .env and add your OPENROUTER_API_KEY
+```
+
+#### 2. Frontend Setup
+```bash
+# Install dependencies
+npm install
+
+# Create environment file
+cp env.example .env
+```
+
+#### 3. Environment Configuration
+
+**Backend (.env)**
+```env
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+HOST=0.0.0.0
+PORT=8000
+ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+**Frontend (.env)**
+```env
+VITE_API_URL=http://localhost:8000/api
+```
+
+## 🏃‍♂️ Running the Application
+
+### Option 1: Automated Start (Recommended)
+
+#### Windows
+```bash
+start.bat
+```
+
+#### macOS/Linux
+```bash
+./start.sh
+```
+
+### Option 2: Manual Start
+
+#### Terminal 1 - Backend
+```bash
+cd backend
+source venv/bin/activate  # or venv\Scripts\activate.bat on Windows
 python main.py
 ```
 
-2. Start Frontend:
+#### Terminal 2 - Frontend
 ```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:3000` with the backend API at `http://localhost:8000`.
+### Option 3: NPM Scripts
+```bash
+# Start both services
+npm run start        # macOS/Linux
+npm run start:win    # Windows
+
+# Start backend only
+npm run backend      # macOS/Linux
+npm run backend:win  # Windows
+```
+
+## 🌐 Access the Application
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Health Check**: http://localhost:8000/health
+
+## 🔧 API Endpoints
+
+### Course Generation
+- `POST /api/course/process-complete` - Generate complete course
+- `GET /api/course/status/{task_id}` - Check processing status
+- `POST /api/course/chunks` - Generate content chunks
+- `POST /api/course/quiz` - Generate quiz questions
+
+### Health Check
+- `GET /health` - API health status
+- `GET /` - API root endpoint
+
+## 🎯 How to Use
+
+1. **Create a Course**:
+   - Navigate to "Course Maker"
+   - Paste a YouTube URL
+   - Select difficulty level (easy/medium/hard)
+   - Click "Generate Course"
+
+2. **View Courses**:
+   - Go to "Quiz & Quests"
+   - Browse available courses
+   - Click on a course to start learning
+
+3. **Track Progress**:
+   - Check "Dashboard" for statistics
+   - View "Completed Courses" for history
+   - Monitor "Quiz Analytics" for performance
+
+## 🛠️ Development
+
+### Project Structure
+```
+├── backend/                 # FastAPI backend
+│   ├── app/
+│   │   ├── routers/        # API endpoints
+│   │   ├── services/       # Business logic
+│   │   └── models/         # Data models
+│   ├── main.py            # Application entry point
+│   └── requirements.txt   # Python dependencies
+├── src/                    # React frontend
+│   ├── components/        # React components
+│   ├── services/          # API services
+│   ├── store/             # State management
+│   └── mockData/          # Sample data
+├── package.json           # Node.js dependencies
+└── vite.config.js         # Vite configuration
+```
+
+### Environment Variables
+
+#### Backend (.env)
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OPENROUTER_API_KEY` | API key for AI services | Required |
+| `HOST` | Server host | `0.0.0.0` |
+| `PORT` | Server port | `8000` |
+| `ALLOWED_ORIGINS` | CORS origins | `http://localhost:3000` |
+
+#### Frontend (.env)
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_URL` | Backend API URL | `http://localhost:8000/api` |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth ID | Optional |
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Backend won't start**:
+   - Check if Python virtual environment is activated
+   - Verify OPENROUTER_API_KEY is set in .env
+   - Ensure port 8000 is not in use
+
+2. **Frontend can't connect to backend**:
+   - Verify backend is running on http://localhost:8000
+   - Check CORS configuration in backend
+   - Ensure VITE_API_URL is correct in frontend .env
+
+3. **AI features not working**:
+   - Verify OPENROUTER_API_KEY is valid
+   - Check API quota and limits
+   - Review backend logs for errors
+
+4. **YouTube videos not processing**:
+   - Ensure video has available transcripts
+   - Check video is not age-restricted
+   - Verify YouTube URL format
+
+### Debug Mode
+
+#### Backend
+```bash
+cd backend
+source venv/bin/activate
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### Frontend
+```bash
+npm run dev -- --debug
+```
+
+## 📦 Deployment
+
+### Production Build
+```bash
+# Build frontend
+npm run build
+
+# Start backend with production settings
+cd backend
+python main.py
+```
+
+### Docker (Future)
+```bash
+# Build and run with Docker
+docker-compose up --build
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+For issues and questions:
+- Check the troubleshooting section
+- Review the API documentation
+- Open an issue on GitHub
+
+---
+
+**Made with ❤️ for better learning experiences**

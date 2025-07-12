@@ -1,1 +1,14 @@
-node_modules
+# ─── Common build & dependency directories ──────────────────────────
+node_modules/
+venv/
+__pycache__/
+
+# ─── Lock files ──────────────────────────────────────────────────────
+package-lock.json
+
+# ─── Environment variables ───────────────────────────────────────────
+.env
+
+# ─── macOS / Windows cruft (optional but handy) ──────────────────────
+.DS_Store
+Thumbs.db

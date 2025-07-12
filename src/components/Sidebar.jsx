@@ -45,7 +45,7 @@ function Sidebar() {
       )
     },
     {
-      name: 'Reward System',
+      name: 'Rewards',
       path: '/rewards',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,23 +58,23 @@ function Sidebar() {
       path: '/completed-courses',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       )
     }
   ];
 
   return (
-    <div className="w-64 bg-white h-screen shadow-lg">
+    <div className="w-64 bg-white dark:bg-gray-800 h-screen shadow-lg transition-colors duration-200">
       <div className="p-4">
         {navItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
-            className={`flex items-center space-x-3 p-3 rounded-lg mb-2 ${
+            className={`flex items-center space-x-3 p-3 rounded-lg mb-2 transition-colors duration-200 ${
               location.pathname === item.path
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
           >
             {item.icon}

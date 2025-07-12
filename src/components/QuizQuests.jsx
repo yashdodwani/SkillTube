@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { courseService } from '../services/api';
 import useUserStore from '../store/userStore';
-import useThemeStore from '../store/themeStore';
 
 function QuizQuests() {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const clearNewQuizzes = useUserStore((state) => state.clearNewQuizzes);
-  const darkMode = useThemeStore((state) => state.darkMode);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -34,11 +32,11 @@ function QuizQuests() {
 
   return (
     <div>
-      <h1 className={`text-3xl font-bold mb-8 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-200">
         Quiz & Quests
       </h1>
-      <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-6`}>
-        <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-200">
+        <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">
           No active quizzes available.
         </p>
       </div>

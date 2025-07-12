@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { courseService } from '../services/api';
 import useUserStore from '../store/userStore';
-import useThemeStore from '../store/themeStore';
 
 function VideoProcessor() {
   const [url, setUrl] = useState('');
@@ -12,7 +11,6 @@ function VideoProcessor() {
   const [progress, setProgress] = useState(null);
   const navigate = useNavigate();
   const incrementNewQuizzes = useUserStore((state) => state.incrementNewQuizzes);
-  const darkMode = useThemeStore((state) => state.darkMode);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,89 +50,66 @@ function VideoProcessor() {
   };
 
   return (
-    <div className={`min-h-[80vh] flex items-center justify-center ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-      <div className={`max-w-2xl w-full ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-xl p-8`}>
+    <div className="min-h-[80vh] flex items-center justify-center text-gray-900 dark:text-white transition-colors duration-200">
+      <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 transition-colors duration-200">
         <div className="text-center mb-8">
-          <h1 className={`text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-200">
             Create Your Course
           </h1>
-          <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className="text-lg text-gray-600 dark:text-gray-300 transition-colors duration-200">
             Transform any YouTube video into an interactive learning experience
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300 transition-colors duration-200">
               YouTube Video URL
             </label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className={`w-full px-4 py-3 rounded-lg border ${
-                darkMode 
-                  ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' 
-                  : 'border-gray-300 focus:border-blue-500'
-              } focus:ring-2 focus:ring-blue-500 transition-colors`}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
               placeholder="https://www.youtube.com/watch?v=..."
               required
             />
           </div>
 
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              Content Difficulty
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300 transition-colors duration-200">
+              Difficulty Level
             </label>
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              className={`w-full px-4 py-3 rounded-lg border ${
-                darkMode 
-                  ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500' 
-                  : 'border-gray-300 focus:border-blue-500'
-              } focus:ring-2 focus:ring-blue-500 transition-colors`}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
             >
-              <option value="easy">Beginner Friendly</option>
-              <option value="medium">Intermediate</option>
-              <option value="hard">Advanced</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
             </select>
           </div>
-
-          {progress && (
-            <div className={`p-4 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-              <div className="flex justify-between mb-2">
-                <span>{progress.message}</span>
-                <span>{Math.round((progress.current_step / progress.total_steps) * 100)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${(progress.current_step / progress.total_steps) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          )}
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-4 px-6 rounded-lg text-white text-lg font-medium transition-colors ${
-              loading
-                ? 'bg-blue-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-2"></div>
-                Processing Video...
-              </div>
-            ) : (
-              'Generate Course'
-            )}
+            {loading ? 'Generating Course...' : 'Generate Course'}
           </button>
         </form>
+
+        {progress && (
+          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg transition-colors duration-200">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 transition-colors duration-200">
+              Progress: {progress.current_step}/{progress.total_steps}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 transition-colors duration-200">
+              {progress.message}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -13,10 +13,19 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Configure paths
-TEMP_DIR = Path("temp")
-QUIZZES_DIR = TEMP_DIR / "quizzes"
-QUIZZES_DIR.mkdir(exist_ok=True)
+# Configure paths - use the same temp directory as main.py
+try:
+    TEMP_DIR = Path(__file__).parent.parent.parent / "temp"
+    QUIZZES_DIR = TEMP_DIR / "quizzes"
+    QUIZZES_DIR.mkdir(exist_ok=True, parents=True)
+    logger.info(f"Quizzes directory ready at: {QUIZZES_DIR}")
+except Exception as e:
+    logger.error(f"Error creating quizzes directory: {e}")
+    # Fallback to current working directory
+    TEMP_DIR = Path.cwd() / "temp"
+    QUIZZES_DIR = TEMP_DIR / "quizzes"
+    QUIZZES_DIR.mkdir(exist_ok=True, parents=True)
+    logger.info(f"Using fallback quizzes directory at: {QUIZZES_DIR}")
 
 # API configurations
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")

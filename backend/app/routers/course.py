@@ -8,7 +8,7 @@ from typing import List, Dict, Any
 router = APIRouter(prefix="/api/course")
 logger = logging.getLogger(__name__)
 
-# Store task status in memory (replace with Redis in production)
+
 task_status = {}
 
 
@@ -18,8 +18,7 @@ async def generate_chunks(request: ChunkRequest):
     Generate content chunks for a YouTube video
     """
     try:
-        # Generate chunks directly from the YouTube URL
-        # Pass as string to avoid Pydantic URL object issues
+
         youtube_url = str(request.youtube_url)
         chunks = await chunking.generate_chunks_from_url(youtube_url, request.level)
         return chunks
