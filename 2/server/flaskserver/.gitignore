@@ -1,7 +1,0 @@
-.env
-venv/
-uploads/
-chroma_db/
-*.iml
-.idea/
-chroma_db/

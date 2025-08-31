@@ -1,0 +1,38 @@
+.chunk-item {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+.chunk-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.chunk-time {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.chunk-summary {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.chunk-transcript {
+  background: var(--bg-primary);
+  padding: 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.chunks-result {
+  margin-top: 2rem;
+}
