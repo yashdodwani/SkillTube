@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Any, List
 import asyncio
-import httpx
+import google.generativeai as genai
 from dotenv import load_dotenv
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
@@ -30,8 +30,9 @@ except Exception as e:
     logger.info(f"Using fallback chunks directory at: {CHUNKS_DIR}")
 
 # API configurations
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
 
 
 def extract_video_id(youtube_url: str) -> str:
@@ -48,14 +49,16 @@ def extract_video_id(youtube_url: str) -> str:
     if parsed_url.netloc in ('www.youtube.com', 'youtube.com'):
         if parsed_url.path == '/watch':
             query = parse_qs(parsed_url.query)
-            return query.get('v', [None])[0]
+            video_id = query.get('v', [None])[0]
+            if video_id:
+                return video_id
         elif parsed_url.path.startswith('/embed/'):
             return parsed_url.path.split('/')[2]
         elif parsed_url.path.startswith('/v/'):
             return parsed_url.path.split('/')[2]
 
-    # If no ID is found, return None
-    return None
+    # If no ID is found, raise an exception
+    raise ValueError(f"Could not extract video ID from URL: {youtube_url}")
 
 
 async def get_transcript_data(youtube_url: str) -> Dict[str, Any]:
@@ -181,77 +184,68 @@ async def generate_chunks(transcript_data: Dict[str, Any], level: str) -> List[D
         Don't include any explanation, just the JSON.
         """
 
-        # Call the LLM API
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json"
-        }
-
-        payload = {
-            "model": "google/gemini-2.0-pro-exp-02-05:free",
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.2,
-            "max_tokens": 2048
-        }
-
-        logger.info("Sending request to LLM for chunking")
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
+        # Call the Google Gemini API
+        logger.info("Sending request to Google Gemini for chunking")
+        
+        try:
+            # Create the generative model
+            model = genai.GenerativeModel('gemini-1.5-flash')
             
-            # Log the response status and headers for debugging
-            logger.info(f"API Response Status: {response.status_code}")
-            logger.info(f"API Response Headers: {dict(response.headers)}")
+            # Configure generation settings
+            generation_config = genai.types.GenerationConfig(
+                temperature=0.2,
+                max_output_tokens=2048,
+            )
+            
+            # Generate content
+            response = await asyncio.to_thread(
+                model.generate_content,
+                prompt,
+                generation_config=generation_config
+            )
+            
+            logger.info("Received response from Google Gemini")
             
             # Check if the response is successful
-            if response.status_code != 200:
-                logger.error(f"API Error: {response.status_code} - {response.text}")
-                raise ValueError(f"API request failed with status {response.status_code}")
+            if not response.text:
+                logger.error("Empty response from Gemini API")
+                raise ValueError("Empty response from Gemini API")
             
-            response_data = response.json()
-            logger.info(f"API Response Data Keys: {list(response_data.keys())}")
-            
-            # Check if we have the expected structure
-            if "choices" not in response_data:
-                logger.error(f"Unexpected API response structure: {response_data}")
-                raise ValueError("API response missing 'choices' field")
-            
-            if not response_data["choices"]:
-                logger.error("API returned empty choices")
-                raise ValueError("API returned empty choices")
-            
-            llm_response = response_data["choices"][0]["message"]["content"]
+            llm_response = response.text
             logger.info(f"LLM Response Length: {len(llm_response)}")
             logger.info(f"LLM Response Preview: {llm_response[:200]}...")
+            
+        except Exception as e:
+            logger.error(f"Error calling Gemini API: {str(e)}")
+            raise ValueError(f"Gemini API request failed: {str(e)}")
 
-            # Extract JSON from response
-            try:
-                # Find JSON in the response
-                json_start = llm_response.find("[")
-                json_end = llm_response.rfind("]") + 1
+        # Extract JSON from response
+        try:
+            # Find JSON in the response
+            json_start = llm_response.find("[")
+            json_end = llm_response.rfind("]") + 1
 
-                if json_start == -1 or json_end == 0:
-                    # No JSON array found, try looking for an object
-                    json_start = llm_response.find("{")
-                    json_end = llm_response.rfind("}") + 1
+            if json_start == -1 or json_end == 0:
+                # No JSON array found, try looking for an object
+                json_start = llm_response.find("{")
+                json_end = llm_response.rfind("}") + 1
 
-                if json_start == -1 or json_end == 0:
-                    logger.error(f"No JSON found in response: {llm_response}")
-                    raise ValueError("No valid JSON found in LLM response")
+            if json_start == -1 or json_end == 0:
+                logger.error(f"No JSON found in response: {llm_response}")
+                raise ValueError("No valid JSON found in LLM response")
 
-                json_str = llm_response[json_start:json_end]
-                logger.info(f"Extracted JSON: {json_str}")
-                llm_chunks = json.loads(json_str)
+            json_str = llm_response[json_start:json_end]
+            logger.info(f"Extracted JSON: {json_str}")
+            llm_chunks = json.loads(json_str)
 
-                # If result is not a list but a single object, wrap it
-                if isinstance(llm_chunks, dict):
-                    llm_chunks = [llm_chunks]
+            # If result is not a list but a single object, wrap it
+            if isinstance(llm_chunks, dict):
+                llm_chunks = [llm_chunks]
 
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON from LLM response: {llm_response}")
-                logger.error(f"JSON Error: {e}")
-                raise ValueError("Invalid JSON response from LLM")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON from LLM response: {llm_response}")
+            logger.error(f"JSON Error: {e}")
+            raise ValueError("Invalid JSON response from LLM")
 
         # Process chunks to match with timestamps
         final_chunks = []

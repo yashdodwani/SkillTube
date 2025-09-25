@@ -14,7 +14,7 @@ Transform YouTube videos into interactive courses using AI-powered content chunk
 
 - **Frontend**: React 18 with modern hooks and functional components
 - **Backend**: FastAPI with async/await support
-- **AI Integration**: OpenRouter API (Gemini 2.0 Pro) for content analysis
+- **AI Integration**: Gemini 1.5 Flashfor content analysis
 - **Database**: File-based caching with SQLAlchemy ready for production
 
 ## 📋 Prerequisites
@@ -22,7 +22,6 @@ Transform YouTube videos into interactive courses using AI-powered content chunk
 - **Python 3.8+**
 - **Node.js 16+**
 - **npm 8+**
-- **OpenRouter API Key** (for AI features)
 
 ## 🛠️ Installation
 
@@ -38,15 +37,8 @@ pip install -r requirements.txt
 ```
 
 ### 3. Set Up Environment Variables
-Create a `.env` file in the root directory:
-```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-DATABASE_URL=postgresql://user:password@localhost/skillvid_db
-HOST=0.0.0.0
-PORT=8000
-ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-LOG_LEVEL=INFO
-```
+Create a `.env.example` file in the root directory:
+
 
 ## 🚀 Quick Start
 
@@ -187,16 +179,6 @@ npm run build
 # Use production ASGI server
 uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
-
-## 🔧 Configuration
-
-### Environment Variables
-- `OPENROUTER_API_KEY`: Required for AI features
-- `DATABASE_URL`: Database connection string
-- `HOST`: Server host (default: 0.0.0.0)
-- `PORT`: Server port (default: 8000)
-- `ALLOWED_ORIGINS`: CORS allowed origins
-- `LOG_LEVEL`: Logging level (default: INFO)
 
 ### Customization
 - Modify CSS variables in `src/index.css` for theming
