@@ -1,4 +1,4 @@
-# SkillVId - AI-Powered Course Generator
+# SkillVid - AI-Powered Course Generator
 
 Transform YouTube videos into interactive courses using AI-powered content chunking and quiz generation.
 
