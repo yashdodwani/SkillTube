@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiService } from '../services/api';
 import './CreateQuiz.css';
 
 function CreateQuiz({ currentChunk, onQuizGenerated, currentQuiz }) {
@@ -20,17 +20,14 @@ function CreateQuiz({ currentChunk, onQuizGenerated, currentQuiz }) {
     setError('');
 
     try {
-      const response = await axios.post('/api/course/quiz', {
-        chunk: currentChunk,
-        level: level
-      });
+      const questions = await apiService.generateQuiz(currentChunk, level);
 
-      setQuestions(response.data);
-      onQuizGenerated(response.data);
+      setQuestions(questions);
+      onQuizGenerated(questions);
       setSelectedAnswers({});
       setShowAnswers(false);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to generate quiz');
+      setError(err.message || 'Failed to generate quiz');
     } finally {
       setIsLoading(false);
     }

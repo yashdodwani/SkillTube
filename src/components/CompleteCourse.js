@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiService } from '../services/api';
 import './CompleteCourse.css';
 
 function CompleteCourse() {
@@ -29,12 +29,9 @@ function CompleteCourse() {
     setResult(null);
 
     try {
-      const response = await axios.post('/api/course/process-complete', {
-        youtube_url: formData.youtubeUrl,
-        level: formData.level
-      });
+      const response = await apiService.processCompleteCourse(formData.youtubeUrl, formData.level);
 
-      if (response.data.status === 'initialized') {
+      if (response.status === 'initialized') {
         const newTaskId = 'task_' + Date.now();
         setTaskId(newTaskId);
         monitorProgress(newTaskId);
@@ -43,7 +40,7 @@ function CompleteCourse() {
         setIsLoading(false);
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to process course');
+      setError(err.message || 'Failed to process course');
       setIsLoading(false);
     }
   };
@@ -51,8 +48,7 @@ function CompleteCourse() {
   const monitorProgress = async (taskId) => {
     const interval = setInterval(async () => {
       try {
-        const response = await axios.get(`/api/course/status/${taskId}`);
-        const status = response.data;
+        const status = await apiService.getCourseStatus(taskId);
         
         setProgress(status);
 

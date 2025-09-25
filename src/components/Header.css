@@ -19,6 +19,10 @@
   font-weight: 700;
   color: var(--primary-color);
   text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .nav {
@@ -33,6 +37,9 @@
   transition: var(--transition);
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .nav-link:hover,

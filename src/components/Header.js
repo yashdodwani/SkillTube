@@ -13,22 +13,23 @@ function Header({ currentSection, onSectionChange }) {
     <header className="header">
       <div className="container">
         <div className="header-content">
-          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); onSectionChange('home'); }}>
+          <button 
+            className="logo" 
+            onClick={() => onSectionChange('home')}
+            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          >
             SkillVId
-          </a>
+          </button>
           <nav className="nav">
             {navItems.map(item => (
-              <a
+              <button
                 key={item.id}
-                href={`#${item.id}`}
                 className={`nav-link ${currentSection === item.id ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSectionChange(item.id);
-                }}
+                onClick={() => onSectionChange(item.id)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 {item.label}
-              </a>
+              </button>
             ))}
           </nav>
         </div>

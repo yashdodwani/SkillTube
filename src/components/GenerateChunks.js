@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { apiService } from '../services/api';
 import './GenerateChunks.css';
 
 function GenerateChunks({ onChunksGenerated, currentChunk }) {
@@ -25,15 +25,12 @@ function GenerateChunks({ onChunksGenerated, currentChunk }) {
     setError('');
 
     try {
-      const response = await axios.post('/api/course/chunks', {
-        youtube_url: formData.youtubeUrl,
-        level: formData.level
-      });
+      const chunks = await apiService.generateChunks(formData.youtubeUrl, formData.level);
 
-      setChunks(response.data);
-      onChunksGenerated(response.data[0]); // Set first chunk as current
+      setChunks(chunks);
+      onChunksGenerated(chunks[0]); // Set first chunk as current
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to generate chunks');
+      setError(err.message || 'Failed to generate chunks');
     } finally {
       setIsLoading(false);
     }
