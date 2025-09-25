@@ -28,7 +28,7 @@ Transform YouTube videos into interactive courses using AI-powered content chunk
 ### 1. Clone the Repository
 ```bash
 git clone <your-repo-url>
-cd skillvid-frontend
+cd <project-directory>
 ```
 
 ### 2. Install Python Dependencies
@@ -42,20 +42,7 @@ Create a `.env.example` file in the root directory:
 
 ## 🚀 Quick Start
 
-### Option 1: Automatic Startup (Recommended)
-Run the startup script that handles both frontend and backend:
-```bash
-python start_app.py
-```
-
-This script will:
-- Check dependencies
-- Install React packages
-- Start React frontend (port 3000)
-- Start Python backend (port 8000)
-- Open your browser automatically
-
-### Option 2: Manual Startup
+### Startup
 
 #### Start React Frontend
 ```bash
@@ -66,7 +53,8 @@ Frontend will be available at: http://localhost:3000
 
 #### Start Python Backend (in another terminal)
 ```bash
-python main.py
+pip install -r requirements.txt
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 Backend will be available at: http://localhost:8000
 
@@ -198,7 +186,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
    - Run `npm install` again
 
 3. **Python Dependencies**
-   - Activate virtual environment
+   - Create and activate a virtual environment (optional)
    - Run `pip install -r requirements.txt`
 
 4. **API Connection Errors**
@@ -208,6 +196,11 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 
 ### Debug Mode
 Enable debug logging by setting `LOG_LEVEL=DEBUG` in `.env`
+
+### Environment Variables
+Create a `.env` file using `env.example` as a template and set:
+- `GOOGLE_API_KEY` for chunk generation (Gemini)
+- `OPENROUTER_API_KEY` for quiz generation
 
 ## 🤝 Contributing
 

@@ -58,6 +58,11 @@ async def generate_questions(chunk: VideoChunk, level: str) -> List[QuizQuestion
 
         logger.info(f"Generating quiz questions for chunk with level: {level}")
 
+        # Ensure API key is configured
+        if not OPENROUTER_API_KEY:
+            logger.error("OPENROUTER_API_KEY is not set")
+            raise ValueError("OPENROUTER_API_KEY is not set. Please configure it in your environment.")
+
         # Determine number of questions based on level
         num_questions = 3
         if level == "medium":
@@ -151,7 +156,7 @@ async def generate_questions(chunk: VideoChunk, level: str) -> List[QuizQuestion
 
         # Save questions to file
         with open(output_path, "w") as f:
-            json.dump([q.dict() for q in questions], f, indent=2)
+            json.dump([q.model_dump() for q in questions], f, indent=2)
 
         logger.info(f"Quiz questions saved to {output_path}")
         return questions

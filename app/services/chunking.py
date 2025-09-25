@@ -33,6 +33,8 @@ except Exception as e:
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
+else:
+    logger.warning("GOOGLE_API_KEY is not set. Chunk generation will fail until it is configured.")
 
 
 def extract_video_id(youtube_url: str) -> str:
@@ -155,6 +157,9 @@ async def generate_chunks(transcript_data: Dict[str, Any], level: str) -> List[D
                 return json.load(f)
 
         logger.info(f"Generating chunks for video: {video_id} with level: {level}")
+
+        if not GOOGLE_API_KEY:
+            raise ValueError("GOOGLE_API_KEY is not set. Please configure it in your environment.")
 
         # Extract full transcript
         full_transcript = transcript_data["text"]

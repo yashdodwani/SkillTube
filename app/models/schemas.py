@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl, validator
+from pydantic import BaseModel, HttpUrl, field_validator
 from typing import List, Literal, Optional, Dict, Any
 import re
 
@@ -6,15 +6,16 @@ class ChunkRequest(BaseModel):
     youtube_url: HttpUrl
     level: Literal["easy", "medium", "hard"]
 
-    @validator('youtube_url')
-    def validate_youtube_url(cls, v):
+    @field_validator("youtube_url")
+    @classmethod
+    def validate_youtube_url(cls, value: HttpUrl) -> HttpUrl:
         patterns = [
             r'^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+',
             r'^https?:\/\/youtu\.be\/[\w-]+'
         ]
-        if not any(re.match(pattern, str(v)) for pattern in patterns):
+        if not any(re.match(pattern, str(value)) for pattern in patterns):
             raise ValueError("Invalid YouTube URL")
-        return v
+        return value
 
 class VideoChunk(BaseModel):
     title: Optional[str] = "Video Segment"

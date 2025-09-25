@@ -1,15 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.routers import course
 import logging
 from pathlib import Path
-from pydantic import BaseModel, HttpUrl
-from typing import List, Dict, Any
-from fastapi import APIRouter, BackgroundTasks
 import time
-import re
 import os
 from dotenv import load_dotenv
 
@@ -44,17 +39,23 @@ except Exception as e:
 
 app = FastAPI(title="Course Generator API", version="1.0.0")
 
-# Configure CORS - Allow all origins for development
+# Configure CORS from environment
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+if allowed_origins_env.strip() == "*":
+    allowed_origins = ["*"]
+else:
+    allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount static files for the frontend
-frontend_path = Path(__file__).parent
+# Static frontend path (serve `public/index.html` if present)
+frontend_path = Path(__file__).parent / "public"
 index_html_path = frontend_path / "index.html"
 if index_html_path.exists():
     logger.info(f"Frontend found at: {index_html_path}")
@@ -67,7 +68,7 @@ app.include_router(course.router)
 @app.get("/")
 async def root():
     """Serve the frontend index.html file"""
-    index_path = Path(__file__).parent / "index.html"
+    index_path = index_html_path
     if index_path.exists():
         logger.info(f"Serving frontend from: {index_path}")
         return FileResponse(str(index_path), media_type="text/html")
@@ -88,7 +89,7 @@ async def catch_all(full_path: str):
         raise HTTPException(status_code=404, detail="Not found")
     
     # Serve index.html for all other routes (SPA routing)
-    index_path = Path(__file__).parent / "index.html"
+    index_path = index_html_path
     if index_path.exists():
         return FileResponse(str(index_path), media_type="text/html")
     else:
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     
     # Check if frontend is available
-    index_path = Path(__file__).parent / "index.html"
+    index_path = index_html_path
     if index_path.exists():
         logger.info(f"🎉 Frontend found! Open http://{host}:{port} in your browser")
         logger.info(f"📁 Frontend file: {index_path}")
