@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What type of workload should be selected when creating the Autonomous AI Database?",
+    "options": [
+      "Transaction Processing",
+      "Data Warehousing",
+      "OLTP",
+      "All of the above"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that the 'workload you want to select' should be 'transaction processing'."
+  },
+  {
+    "question": "What database version should be selected when creating the Autonomous AI Database?",
+    "options": [
+      "Oracle 19c",
+      "Oracle 21c",
+      "Oracle 26 AI",
+      "Oracle 23c"
+    ],
+    "correct_answer": 2,
+    "explanation": "The content states that the 'database 26 AI is what we are going to work with'."
+  },
+  {
+    "question": "What is the purpose of downloading the wallet file when setting up the Autonomous AI Database connection?",
+    "options": [
+      "To set the database password",
+      "To access the database connection strings",
+      "To configure the database firewall",
+      "To enable multi-factor authentication"
+    ],
+    "correct_answer": 1,
+    "explanation": "The content states that the wallet file contains 'certain connection strings' that need to be saved."
+  }
+]

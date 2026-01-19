@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the main focus of the content described?",
+    "options": [
+      "Implementing a hotel finder app using Zenflow",
+      "Defining product requirements for a hotel booking system",
+      "Handling API integrations for hotel data",
+      "Executing a multi-agent development process"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content focuses on the implementation of a hotel finder app using the Zenflow platform."
+  },
+  {
+    "question": "What are the key steps mentioned in the implementation process?",
+    "options": [
+      "Requirements, technical specification, planning, execution",
+      "API integration, database setup, error handling, deployment",
+      "User interface design, backend development, testing, release",
+      "Market research, competitor analysis, feature prioritization, development"
+    ],
+    "correct_answer": 0,
+    "explanation": "The key steps mentioned are requirements, technical specification, planning, and implementation."
+  },
+  {
+    "question": "What is the purpose of the multi-agent feature discussed in the content?",
+    "options": [
+      "To enable parallel task execution by different agents",
+      "To provide a collaborative development environment",
+      "To handle authentication and authorization for the app",
+      "To optimize the performance of the hotel finder app"
+    ],
+    "correct_answer": 0,
+    "explanation": "The multi-agent feature allows for parallel task execution by different agents, such as Claude, Codex, Gemini, or Zenflow itself."
+  }
+]

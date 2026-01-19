@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the key benefit of Oracle 26 AI Database mentioned in the content?",
+    "options": [
+      "Reduced complexity by combining multiple databases into one",
+      "Increased reliability by having multiple failure points",
+      "Faster development time by requiring learning of three different databases",
+      "Reduced latency by having network calls between databases"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content highlights that Oracle 26 AI Database provides a single database solution that combines multiple capabilities, reducing the complexity of managing separate databases."
+  },
+  {
+    "question": "What type of data can be stored directly in tables in the Oracle 26 AI Database?",
+    "options": [
+      "Relational data only",
+      "JSON data only",
+      "Vector data only",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content mentions that the Oracle 26 AI Database has native support for vector data type, JSON, and relational tables, allowing all of these data types to be stored directly in the database."
+  },
+  {
+    "question": "What type of index does the Oracle 26 AI Database use for fast approximate nearest neighbor search?",
+    "options": [
+      "B-tree index",
+      "Hash index",
+      "HNSW index",
+      "Inverted index"
+    ],
+    "correct_answer": 2,
+    "explanation": "The content states that the Oracle 26 AI Database uses HNSW (Hierarchical Navigable Small World) indexes, which provide fast approximate nearest neighbor search with high accuracy."
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the main problem with traditional AI agent architecture described in the content?",
+    "options": [
+      "Data fragmentation across multiple databases",
+      "Lack of persistent memory",
+      "High cost of running multiple databases",
+      "Complexity of data synchronization"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content highlights that the main problem is data fragmentation across multiple databases (vector DB, relational DB, document store) which leads to high costs, complex sync logic, and multiple failure points."
+  },
+  {
+    "question": "What is the proposed solution to the problem of AI agent amnesia?",
+    "options": [
+      "Using a single Oracle 26 AI database",
+      "Implementing multiple databases with sync logic",
+      "Developing a custom persistent memory system",
+      "Relying on cloud-based database services"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content suggests that the proposed solution is to use a single Oracle 26 AI database to address the problem of AI agent amnesia and data fragmentation."
+  },
+  {
+    "question": "What is the key benefit of using the Oracle 26 AI database mentioned in the content?",
+    "options": [
+      "It runs on the always-free tier",
+      "It integrates with popular AI frameworks",
+      "It provides advanced machine learning capabilities",
+      "It offers a unified data storage solution"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content highlights that the best part of using the Oracle 26 AI database is that it runs on their always-free tier, which addresses the high cost of running multiple databases."
+  }
+]

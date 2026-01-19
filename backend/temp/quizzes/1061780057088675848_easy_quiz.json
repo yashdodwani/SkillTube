@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the primary focus of the content described?",
+    "options": [
+      "Implementing a hotel finder app using Zenflow",
+      "Defining product requirements for a hotel booking system",
+      "Handling errors in a hotel management software",
+      "Integrating hotel APIs into a travel booking platform"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content focuses on the implementation of a hotel finder app using the Zenflow platform."
+  },
+  {
+    "question": "What are the key steps outlined in the implementation process?",
+    "options": [
+      "Defining requirements, technical specifications, planning, and execution",
+      "Integrating hotel APIs, designing the user interface, testing, and deployment",
+      "Selecting the development team, managing project timelines, and securing funding",
+      "Analyzing market trends, identifying target customers, and developing a marketing strategy"
+    ],
+    "correct_answer": 0,
+    "explanation": "The key steps outlined in the implementation process are defining requirements, technical specifications, planning, and execution."
+  },
+  {
+    "question": "What feature of the Zenflow platform is mentioned in the content?",
+    "options": [
+      "Multi-agent authentication",
+      "Automated testing",
+      "Cloud-based deployment",
+      "Responsive design"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content mentions the multi-agent authentication or multi-agent review feature of the Zenflow platform."
+  }
+]

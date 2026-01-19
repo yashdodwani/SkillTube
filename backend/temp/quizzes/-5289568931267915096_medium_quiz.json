@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the core message of the song introduced in this segment?",
+    "options": [
+      "Never give up on someone",
+      "Confessing feelings for someone",
+      "Describing a game being played",
+      "Explaining the rules of love"
+    ],
+    "correct_answer": 0,
+    "explanation": "The segment introduces the song's message of never giving up on someone, as stated in the lyrics 'Never gonna give you up'."
+  },
+  {
+    "question": "What does the singer claim they are thinking of in the lyrics?",
+    "options": [
+      "A full commitment",
+      "Telling the person how they feel",
+      "Explaining the rules of love",
+      "Describing their heart aching"
+    ],
+    "correct_answer": 0,
+    "explanation": "The lyrics state 'A full commitment's what I'm thinking of', indicating the singer is thinking of a full commitment."
+  },
+  {
+    "question": "According to the lyrics, what does the singer claim they wouldn't get from any other guy?",
+    "options": [
+      "A full commitment",
+      "Telling them how they're feeling",
+      "Never giving them up",
+      "Explaining the rules of love"
+    ],
+    "correct_answer": 2,
+    "explanation": "The lyrics state 'You wouldn't get this from any other guy', referring to the singer's claim of never giving the person up."
+  },
+  {
+    "question": "What does the singer claim the person's heart has been doing, according to the lyrics?",
+    "options": [
+      "Aching but they're too shy to say it",
+      "Knowing the game they're gonna play",
+      "Telling the singer how they're feeling",
+      "Explaining the rules of love"
+    ],
+    "correct_answer": 0,
+    "explanation": "The lyrics state 'Your heart's been aching but you're too shy to say it', indicating the person's heart has been aching but they're too shy to express it."
+  }
+]

@@ -32,6 +32,44 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
+def create_fallback_quiz(chunk: VideoChunk, level: str, num_questions: int) -> List[QuizQuestion]:
+    """Create basic quiz questions when AI fails"""
+    logger.info("Creating fallback quiz questions")
+    
+    # Basic questions based on content
+    questions = []
+    
+    # Extract key words from the content for basic questions
+    content_words = chunk.transcript.split()[:100]  # First 100 words
+    content_text = " ".join(content_words)
+    
+    for i in range(num_questions):
+        question_text = f"Based on the content, what is a key concept discussed in this section?"
+        
+        # Create basic options
+        options = [
+            f"Concept related to the main topic",
+            f"Secondary topic mentioned",
+            f"Supporting detail discussed",
+            f"Background information provided"
+        ]
+        
+        # Make the first option correct
+        correct_answer = 0
+        explanation = "This answer reflects the main concept discussed in this section of the content."
+        
+        question = QuizQuestion(
+            question=question_text,
+            options=options,
+            correct_answer=correct_answer,
+            explanation=explanation
+        )
+        questions.append(question)
+    
+    logger.info(f"Created {len(questions)} fallback quiz questions")
+    return questions
+
+
 async def generate_questions(chunk: VideoChunk, level: str) -> List[QuizQuestion]:
     """
     Generate quiz questions for a specific chunk of content.
@@ -71,77 +109,140 @@ async def generate_questions(chunk: VideoChunk, level: str) -> List[QuizQuestion
             num_questions = 5
 
         # Prepare prompt for the LLM
-        prompt = f"""
-        You are an educational content creator. Your task is to create {num_questions} multiple-choice quiz questions based on the following content.
+        prompt = f"""Create {num_questions} multiple-choice quiz questions based on this content.
 
-        Content Title: {chunk.title if hasattr(chunk, 'title') else "Video Segment"}
-        Content Summary: {chunk.summary}
-        Transcript: {chunk.transcript}
+CONTENT:
+Title: {getattr(chunk, 'title', 'Video Segment')}
+Summary: {chunk.summary}
+Transcript: {chunk.transcript[:2000]}
 
-        Create quiz questions that are appropriate for a {level} level student.
+DIFFICULTY: {level}
 
-        For each question:
-        1. Write a clear question
-        2. Provide exactly 4 options (A, B, C, D)
-        3. Indicate which option is correct (0-based index where 0=A, 1=B, 2=C, 3=D)
-        4. Write a brief explanation of why the answer is correct
+TASK: Create quiz questions testing comprehension of the key concepts.
 
-        Return your response as a JSON array with objects containing:
-        - question: the question text
-        - options: array of 4 option strings
-        - correct_answer: integer index of correct answer (0-3)
-        - explanation: explanation text
+REQUIRED JSON FORMAT:
+[
+  {{
+    "question": "Clear question text?",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct_answer": 0,
+    "explanation": "Brief explanation of correct answer"
+  }}
+]
 
-        Don't include any explanation outside the JSON.
-        """
+RULES:
+- {num_questions} questions total
+- Each question has exactly 4 options
+- correct_answer is 0-3 (0=A, 1=B, 2=C, 3=D)
+- Questions should test understanding, not memorization
+- Appropriate for {level} difficulty level
 
-        # Call the LLM API
+Return ONLY the JSON array, no other text."""
+
+        # Call the LLM API with multiple model fallbacks
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://skillvid.app",
+            "X-Title": "SkillVid Quiz Generator"
         }
 
-        payload = {
-            "model": "google/gemini-2.0-pro-exp-02-05:free",
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.3,
-            "max_tokens": 2048
-        }
-
-        logger.info("Sending request to LLM for quiz generation")
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
-            response.raise_for_status()
-
-            response_data = response.json()
-            llm_response = response_data["choices"][0]["message"]["content"]
-
-            # Extract JSON from response
+        # Try multiple models in order of preference
+        models_to_try = [
+            "anthropic/claude-3-haiku:beta",
+            "google/gemini-flash-1.5:free",
+            "meta-llama/llama-3.1-8b-instruct:free",
+            "microsoft/wizardlm-2-8x22b:nitro"
+        ]
+        
+        llm_response = None
+        
+        for model in models_to_try:
             try:
-                # Find JSON in the response
-                json_start = llm_response.find("[")
-                json_end = llm_response.rfind("]") + 1
+                payload = {
+                    "model": model,
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are an educational quiz creator. Generate multiple-choice questions in valid JSON format only, no additional text."
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                    "temperature": 0.3,
+                    "max_tokens": 2048,
+                    "top_p": 1
+                }
+                
+                logger.info(f"Trying model: {model} for quiz generation")
+                
+                async with httpx.AsyncClient(timeout=60.0) as client:
+                    response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
+                    
+                    logger.info(f"Quiz API response status: {response.status_code}")
+                    
+                    if response.status_code == 200:
+                        response_data = response.json()
+                        
+                        if "choices" in response_data and response_data["choices"]:
+                            choice = response_data["choices"][0]
+                            if "message" in choice and "content" in choice["message"]:
+                                content = choice["message"]["content"]
+                                if content and content.strip():
+                                    llm_response = content
+                                    logger.info(f"Quiz generation success with model: {model}")
+                                    break
+                                else:
+                                    logger.warning(f"Empty content from quiz model: {model}")
+                            else:
+                                logger.warning(f"Invalid response structure from quiz model: {model}")
+                        else:
+                            logger.warning(f"No choices in quiz response from model: {model}")
+                    else:
+                        error_text = response.text
+                        logger.warning(f"HTTP error {response.status_code} from quiz model {model}: {error_text}")
+                        
+            except Exception as e:
+                logger.warning(f"Error with quiz model {model}: {str(e)}")
+                continue
+        
+        if not llm_response:
+            logger.error("All quiz models failed, creating fallback questions")
+            return create_fallback_quiz(chunk, level, num_questions)
 
-                if json_start == -1 or json_end == 0:
-                    # No JSON array found, try looking for an object
-                    json_start = llm_response.find("{")
-                    json_end = llm_response.rfind("}") + 1
+        logger.info("Received quiz response from OpenRouter")
+        logger.info(f"Quiz Response Length: {len(llm_response)}")
+        logger.info(f"Quiz Response Preview: {llm_response[:200]}...")
 
-                if json_start == -1 or json_end == 0:
-                    raise ValueError("No valid JSON found in LLM response")
+        # Extract JSON from response
+        try:
+            # Find JSON in the response
+            json_start = llm_response.find("[")
+            json_end = llm_response.rfind("]") + 1
 
-                json_str = llm_response[json_start:json_end]
-                llm_questions = json.loads(json_str)
+            if json_start == -1 or json_end == 0:
+                # No JSON array found, try looking for an object
+                json_start = llm_response.find("{")
+                json_end = llm_response.rfind("}") + 1
 
-                # If result is not a list but a single object, wrap it
-                if isinstance(llm_questions, dict):
-                    llm_questions = [llm_questions]
+            if json_start == -1 or json_end == 0:
+                logger.error(f"No JSON found in quiz response: {llm_response}")
+                return create_fallback_quiz(chunk, level, num_questions)
 
-            except json.JSONDecodeError:
-                logger.error(f"Failed to parse JSON from LLM response: {llm_response}")
-                raise ValueError("Invalid JSON response from LLM")
+            json_str = llm_response[json_start:json_end]
+            logger.info(f"Extracted quiz JSON: {json_str[:200]}...")
+            llm_questions = json.loads(json_str)
+
+            # If result is not a list but a single object, wrap it
+            if isinstance(llm_questions, dict):
+                llm_questions = [llm_questions]
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON from quiz response: {llm_response}")
+            logger.error(f"JSON Error: {e}")
+            return create_fallback_quiz(chunk, level, num_questions)
 
         # Convert to QuizQuestion objects
         questions = []

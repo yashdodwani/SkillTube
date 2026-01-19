@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is one of the key features of the Zenflow platform highlighted in the content?",
+    "options": [
+      "Quick changes",
+      "Fixing bugs",
+      "Spec and build",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content mentions that the Zenflow platform has four major features: quick changes, fixing bugs, spec and build, and full SDLC workflow."
+  },
+  {
+    "question": "What can you do in the 'spec and build' feature of Zenflow?",
+    "options": [
+      "Write product requirement documents",
+      "Connect your GitHub repository",
+      "Run parallel tasks",
+      "Provide instructions to change the code"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content states that the 'spec and build' feature allows you to 'figure out if there's a specific set of instructions that you can give it to the code and it will be able to change that on the way'."
+  },
+  {
+    "question": "What can you do in the 'full SDLC workflow' feature of Zenflow?",
+    "options": [
+      "Create a new project",
+      "Configure multi-agent verification settings",
+      "Provide a product requirement document",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content mentions that in the 'full SDLC workflow' feature, you can provide a 'PRD document' (product requirement document) for a 'hotel finder app' project."
+  }
+]

@@ -49,7 +49,8 @@ async def process_complete_course(task_id: str, request: ChunkRequest):
             status="processing",
             current_step=1,
             total_steps=2,
-            message="Generating content chunks"
+            message="Generating content chunks",
+            task_id=task_id
         )
 
         # 1. Generate content chunks
@@ -70,8 +71,10 @@ async def process_complete_course(task_id: str, request: ChunkRequest):
         task_status[task_id].status = "completed"
         task_status[task_id].message = "Course generation completed"
 
-        # Store the results in task_status
+        # Store the results in task_status with video info
         task_status[task_id].result = all_questions
+        task_status[task_id].video_url = youtube_url
+        task_status[task_id].video_id = chunking.extract_video_id(youtube_url)
 
     except Exception as e:
         logger.error(f"Error processing complete course: {str(e)}")
@@ -79,7 +82,7 @@ async def process_complete_course(task_id: str, request: ChunkRequest):
         task_status[task_id].message = f"Error: {str(e)}"
 
 
-@router.post("/process-complete", response_model=ProcessingStatus)
+@router.post("/process-complete")
 async def process_course(request: ChunkRequest, background_tasks: BackgroundTasks):
     """
     Process a complete course generation in the background
@@ -97,7 +100,10 @@ async def process_course(request: ChunkRequest, background_tasks: BackgroundTask
     # Start processing in background
     background_tasks.add_task(process_complete_course, task_id, request)
 
-    return task_status[task_id]
+    # Return the task status with task_id
+    response = task_status[task_id]
+    response.task_id = task_id  # Add task_id to response
+    return response
 
 
 @router.get("/status/{task_id}", response_model=ProcessingStatus)

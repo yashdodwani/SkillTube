@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the purpose of the 'main.py' file in the context of the deep research agent?",
+    "options": [
+      "A) To store the environment variables for the database connection",
+      "B) To contain the entire research agent code and demonstrate its usefulness",
+      "C) To run the agent demo and showcase its integration with the database",
+      "D) To import libraries and handle the configuration for the agent"
+    ],
+    "correct_answer": 1,
+    "explanation": "The 'main.py' file contains the entire research agent code that is explained and demonstrated for its utility."
+  },
+  {
+    "question": "Which Oracle database driver is used in the research agent to connect to the Oracle 26 AI autonomous database?",
+    "options": [
+      "A) Oracle DB driver",
+      "B) Thin mode driver",
+      "C) Thick mode driver with Oracle client libraries",
+      "D) TLS authentication wallet"
+    ],
+    "correct_answer": 0,
+    "explanation": "The Oracle DB driver is the official Python driver used for connecting to the Oracle 26 AI autonomous database, and it supports both thin and thick mode connections."
+  },
+  {
+    "question": "Why is the vector type schema in the research agent configured with 1536 dimensions and float 32?",
+    "options": [
+      "A) To match the OpenAI's text embedding large model",
+      "B) To match the OpenAI's text embedding small model",
+      "C) To match the OpenAI's text embedding three small model and the HNSW index",
+      "D) To ensure compatibility with the Oracle 26 AI database's native vector data type"
+    ],
+    "correct_answer": 2,
+    "explanation": "The schema is configured with 1536 dimensions and float 32 to match the OpenAI's text embedding three small model and the HNSW index, which is used for lightning-fast similarity search."
+  }
+]

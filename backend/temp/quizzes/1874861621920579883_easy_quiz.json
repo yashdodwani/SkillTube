@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What are the four major features highlighted in the Zenflow platform?",
+    "options": [
+      "Version control, code review, continuous integration, deployment",
+      "Quick change, bug fixing, spec and build, full SDLC workflow",
+      "Code editing, syntax highlighting, debugging, version tracking",
+      "User authentication, database management, front-end development, back-end services"
+    ],
+    "correct_answer": 1,
+    "explanation": "The Zenflow platform is described as having quick change, bug fixing, spec and build, and full SDLC workflow as its key features."
+  },
+  {
+    "question": "How can a user interact with the Zenflow platform?",
+    "options": [
+      "Only as a separate software application",
+      "Only integrated within Visual Studio Code",
+      "Both as a separate software application and integrated within Visual Studio Code",
+      "Only through a web browser interface"
+    ],
+    "correct_answer": 2,
+    "explanation": "Zenflow can be used as a separate software or integrated within Visual Studio Code, providing flexibility for the user."
+  },
+  {
+    "question": "What is the purpose of the 'quick change' feature in Zenflow?",
+    "options": [
+      "To deploy the application to production",
+      "To write and execute unit tests",
+      "To make small, immediate updates to the codebase",
+      "To generate documentation for the project"
+    ],
+    "correct_answer": 2,
+    "explanation": "The 'quick change' feature allows users to make immediate and small updates to their codebase, which is particularly useful for connected repositories like those on GitHub."
+  }
+]

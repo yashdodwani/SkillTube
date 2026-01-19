@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the main theme of the lyrics?",
+    "options": [
+      "Commitment and loyalty",
+      "Unrequited love",
+      "Deception and betrayal",
+      "Heartbreak and sorrow"
+    ],
+    "correct_answer": 0,
+    "explanation": "The lyrics focus on the singer's commitment and loyalty to the listener, emphasizing that they will never give up, let them down, or desert them."
+  },
+  {
+    "question": "What does the singer promise to never do?",
+    "options": [
+      "Cry",
+      "Lie",
+      "Say goodbye",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The singer promises to never give the listener up, let them down, run around and desert them, make them cry, say goodbye, or tell a lie and hurt them."
+  },
+  {
+    "question": "What does the singer suggest they both know about the situation?",
+    "options": [
+      "That the listener's heart has been aching",
+      "That they have known each other for a long time",
+      "That they are going to play a game",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The lyrics suggest that the singer and listener both know what has been going on, and that they are going to play the game together."
+  },
+  {
+    "question": "What is the singer's goal in the lyrics?",
+    "options": [
+      "To make the listener understand their feelings",
+      "To convince the listener to give them up",
+      "To say goodbye to the listener",
+      "To run around and desert the listener"
+    ],
+    "correct_answer": 0,
+    "explanation": "The singer's goal is to make the listener understand how they are feeling and the depth of their commitment and loyalty."
+  }
+]

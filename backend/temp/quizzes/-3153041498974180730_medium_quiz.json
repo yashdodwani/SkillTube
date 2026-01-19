@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the main focus of machine learning?",
+    "options": [
+      "Algorithms that can learn from data",
+      "Artificial intelligence applications",
+      "Predicting future events",
+      "Automating repetitive tasks"
+    ],
+    "correct_answer": 0,
+    "explanation": "Machine learning focuses on algorithms that can learn from data, rather than being explicitly programmed for every scenario."
+  },
+  {
+    "question": "What is the key difference between machine learning and traditional programming?",
+    "options": [
+      "Machine learning models are trained on datasets",
+      "Machine learning models are more accurate",
+      "Machine learning models are faster to develop",
+      "Machine learning models are more flexible"
+    ],
+    "correct_answer": 0,
+    "explanation": "The key difference is that machine learning models are trained on datasets, rather than being explicitly programmed for every scenario."
+  },
+  {
+    "question": "Which of the following is a common application of machine learning?",
+    "options": [
+      "Predicting stock prices",
+      "Automating manufacturing processes",
+      "Translating between languages",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "Machine learning has a wide range of applications, including predicting stock prices, automating manufacturing processes, and translating between languages."
+  },
+  {
+    "question": "What is the main goal of machine learning?",
+    "options": [
+      "To replace human decision-making",
+      "To automate repetitive tasks",
+      "To make accurate predictions or decisions",
+      "To create more intelligent artificial intelligence"
+    ],
+    "correct_answer": 2,
+    "explanation": "The main goal of machine learning is to make accurate predictions or decisions, without being explicitly programmed for every scenario."
+  }
+]

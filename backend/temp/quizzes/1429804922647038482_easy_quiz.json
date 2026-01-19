@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the main problem with speed without structure in production-ready code?",
+    "options": [
+      "Speed without structure is always slow",
+      "Speed without structure is always fast",
+      "Speed without structure is always reliable",
+      "Speed without structure is always secure"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that 'speed without structure is always slow' for production-ready code."
+  },
+  {
+    "question": "What are the three key features of the Zenflow platform discussed in the content?",
+    "options": [
+      "Workflow orchestration, spec-driven development, and multi-agent verification",
+      "Workflow orchestration, data analysis, and model deployment",
+      "Workflow orchestration, code generation, and model training",
+      "Workflow orchestration, data preprocessing, and model evaluation"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content lists the three key features of Zenflow as workflow orchestration, spec-driven development, and multi-agent verification."
+  },
+  {
+    "question": "What is the purpose of multi-agent verification in the context of AI models?",
+    "options": [
+      "To compare the outputs of different AI models and select the best one",
+      "To train multiple AI models simultaneously",
+      "To verify the security of AI models before deployment",
+      "To monitor the performance of AI models in production"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that multi-agent verification is used to compare the results of different AI models, such as Codex and Claude, to get the best output."
+  }
+]

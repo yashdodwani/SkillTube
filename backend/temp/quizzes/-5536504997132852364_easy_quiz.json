@@ -1,0 +1,35 @@
+[
+  {
+    "question": "What is the main problem with AI being the 'world's fastest software engineer' according to the content?",
+    "options": [
+      "Speed without structure is always slow",
+      "AI is not actually the world's fastest software engineer",
+      "Production-ready code requires orchestration",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content states that while AI may be the world's fastest software engineer, for production-ready code, 'speed without structure is always slow', and what companies really need is orchestration."
+  },
+  {
+    "question": "What are the three key things the Zenflow platform provides according to the content?",
+    "options": [
+      "Workflow orchestration, spec-driven development, and multi-agent verification",
+      "Workflow orchestration, code generation, and multi-agent verification",
+      "Workflow orchestration, spec-driven development, and code generation",
+      "Workflow orchestration, code generation, and code optimization"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that the three key things the Zenflow platform provides are workflow orchestration, spec-driven development, and multi-agent verification."
+  },
+  {
+    "question": "What is the purpose of the multi-agent verification feature mentioned in the content?",
+    "options": [
+      "To compare the outputs of different AI models and get the best result",
+      "To verify that the code developed matches the given specification",
+      "To orchestrate multiple tasks and revisit them as needed",
+      "To generate code automatically from a given specification"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that the multi-agent verification feature allows you to 'compare the results of Codex and Claude at the same time so that you get the best output'."
+  }
+]

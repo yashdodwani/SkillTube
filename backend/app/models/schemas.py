@@ -40,6 +40,9 @@ class ProcessingStatus(BaseModel):
     total_steps: int
     message: str
     result: Optional[List[Dict[str, Any]]] = None
+    task_id: Optional[str] = None
+    video_url: Optional[str] = None
+    video_id: Optional[str] = None
 
 class ChunkData(BaseModel):
     title: str
