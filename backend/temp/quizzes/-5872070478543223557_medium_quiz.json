@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the primary purpose of the content described?",
+    "options": [
+      "To set up a free Oracle Cloud account",
+      "To build a deep research agent using Oracle 26 AI",
+      "To explain how to verify email and add payment method",
+      "To describe the steps to create an autonomous AI database"
+    ],
+    "correct_answer": 1,
+    "explanation": "The primary purpose is to walk through the steps to build a deep research agent using the Oracle 26 AI database."
+  },
+  {
+    "question": "What is the first step after signing up for the Oracle Cloud free tier?",
+    "options": [
+      "Click on the hamburger menu",
+      "Select Oracle AI database",
+      "Create an autonomous AI database",
+      "Fill in your details and verify your email"
+    ],
+    "correct_answer": 3,
+    "explanation": "The first step is to fill in your details and verify your email after signing up for the free tier."
+  },
+  {
+    "question": "What type of workload should be selected when creating the autonomous AI database?",
+    "options": [
+      "Transaction processing",
+      "Data warehousing",
+      "Machine learning",
+      "Batch processing"
+    ],
+    "correct_answer": 0,
+    "explanation": "The workload should be selected as transaction processing."
+  },
+  {
+    "question": "What database version is used to build the deep research agent?",
+    "options": [
+      "Oracle 24 AI",
+      "Oracle 25 AI",
+      "Oracle 26 AI",
+      "Oracle 27 AI"
+    ],
+    "correct_answer": 2,
+    "explanation": "The database version used is Oracle 26 AI."
+  }
+]

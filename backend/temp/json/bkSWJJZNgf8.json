@@ -1,0 +1,862 @@
+{
+  "video_id": "bkSWJJZNgf8",
+  "youtube_url": "https://youtu.be/bkSWJJZNgf8?si=s2wyb53pPIMo7jJe",
+  "text": "Hello Friends, Welcome to Gate Smashers\nThe topic is Syllabus of operating system Before I start this video\nI just want to request you all, especially those who are watching\nmy video first time Please subscribe my channel\n& please share with your friends and please press the bell button\nfor latest notifications Now we are starting this video What we are going to talk in this video is\nSyllabus of operating system Now you must be thinking\nSyllabus of operating system?? I mean its already available at many places If you wish to download syllabus of\noperating system of a particular university, or for GATE exam, or for UGC NET exam,\nIt'll be easily available to you But... What's my main motive\nto make this video is.... First I'm giving you clear cut information that if you are\npreparing operating system for GATE or UGC NET Then what are those topics that are mandatory,\nstar mark... Means you must do before exam And what are those topics that you can prepare\nby just taking an overview before the exam So what's the benefit with this is... First those who prepares at very late time\nor starts to study just before the exam Then it's very beneficial for them... Even it's beneficial\nfor those who are doing proper study Because I'm going to cover all the topics\nIncluding the main topics and their sub topics also And all the topics that we are mentioning\nin this video is based on what??... Questions All the questions that have appeared in last years\nWhether it's GATE exam or UGC NET exam Because their pattern of questions is same Many times GATE's questions\nappears in UGC NET exam In GATE's exam, questions gets repeat\nmany times but with a different language That's why this video is very important here\nThe second point here is... Smart Work As we all know that hard work\nis very important.... But along with hard work,\nSmart work is also very important If you have remember that, right now we have got latest report from Forbes, according to it, World's no.1 richest man\ni.e. Amazon's head, so see how much smart work\nthat guy has done He don't have any industries, where he would be manufacturing something\nlike shoes, apparel or anything else that they are selling in their\napplication or website But still his total wealth... has surpassed all the billionaires which includes our\nIndia's Mukesh Ambani and many other Billionaires So that's an example of smart work\nDefinitely there's hard work But along with it, smart work is also there\nWithout any industry, Without any big investment they are just transferring goods here and there\nand this is called smart work So we are implementing\nthat same smart work here So the first topic here is\nbasic introduction So what comes here in\nbasic introduction is... Normal definition of operating system\nAlong with that, Types of operating system Types of operating system consist Batch operating system, Multi program,\nMulti tasking, Real time... you should know all that After that what I have here is...\nProcess Diagram Means, when we execute a process\nor when CPU executes a process Then, Though what stages\nthat process passes Other than Types of operating system &\nprocess Diagram... What we have here is Basic system call, Definition of system calls\nwhich includes your Fork system call, Other than that you should know\nabout basics like fork and kernel system calls But the main important point here is\ndiagram of the process Means the stages of the process\nThat is very important point and then we have process scheduling\nWhich we can call CPU scheduling also So scheduling includes\na lot of various algorithms And this whole topic is important... I can't say\nany particular thing important in this this whole topic is important It has variety of algorithms\nlike FIFO, SJF, Pre-emptive, Round Robin Okay?... It consists variety of algorithms So this portion is very important because every year there will be a question in\nGATE & UGC NET from this topic So you can say that\nthis topic is mandatory for you Means you have to prepare\nthis topic before exam and it's very easy If you would practice 1-2 numerical\nof each, then you can easily solve this Third topic is process synchronization In this topic there comes\nthe concept of Semaphore Concept of Semaphore...\nBinary Semaphore especially comes in this You must have to prepare it before the exam,\nbecause that is the most important part, other than this there is Peterson solution, you should\nknow the basic that how it synchronize the processes but here question comes\nfrom the concept of semaphore This is little bit complex topic but if you'll study it properly then definitely\nit'll be clear to you that how Semaphore works So I would say that this semaphore topic\nis mandatory that you must do before the exam The next is Deadlock and Threads In Deadlock and Threads,\nThe Deadlock portion is very easy portion Basic definition, Deadlock Prevention & Avoidance And especially it has Banker's algorithm You should know how\nbanker's algorithm works... It's very easy You can check my videos for this I've explained this with very nice example there,\neven through GATE's question So you have to do Banker's algorithm\nOther than this I've mentioned basic questions also\nin my videos based on Deadlock This topic is totally completed in my video Process synchronization also Process scheduling, and the basic one also....\nAll this is already covered Then.... Memory management\nIn memory management we have here is Especially Concept of paging Concept of segmentation And other than that... Fragmentation Many times question comes on\ninternal and external fragmentation So you must do this portion Although there comes the concept of\nmulti-level paging also... And segmentation with paging\nthey are little bit complex topics If you have time and you are\ndoing proper preparation of it then definitely do the portion of\nmulti-level paging, segmented paging etc. But if you are just giving normally then\nfor this you've to do basic paging, how segmentation works,\ntypes of fragmentation and other than that\nhere comes the concept of virtual memory Make sure to do\nthe concept of virtual memory Here you get numerical questions like you'll be given time,\nand you've to find out effective memory excess time You should know Basics of thrashing, and other than this the very important point\nis page replacement algorithms I would definitely like to highlight it here\nbecause why it is important?? Because first of all it's a very easy topic, if you'll just practice 1-2 question\nthen you'll never do it wrong That's why this portion... and every year\nquestion is coming from this topic It's easy and also question is coming\nthen obviously you have o secure it And talking about GATE exam, It's not important\nhow many no. of questions I'm attempting What important is How many no. of correct\nquestions I'm attempting... Means correctness is important there There's no negative marking in UGC NET until now\nso you can take little bit risk there... But Here you have to move\ntowards correctness first Because in case you answered wrong then negative\nmarking in GATE's exam gives a lot of trouble After page replacement algorithms\nyou get Disk Scheduling In Disk Scheduling we have this numerical portion here\nYou can call it numerical, kind of And it's Disk scheduling, here also we get scan algorithm, Cscan algorithm A basic FCFS And other basic algorithms\nI've already made videos on this also So you can cover all those videos\nI've explained every single question You can practice it there properly After Disk scheduling,\nwe have UNIX commands This portion comes in UGC NET more\nas compared to the GATE exam But still this can get covered\nin GATE's exam also UNIX command comes in\nbasic Linux commands For example LS Command, MKDIR, CD\nThere're many commands But all the basic commands\nLike CD, CHMOD command Just now recently in July 2018 exam of UGC NET,\nA question has appeared based on this And other than this you should\nknow about open system call also Other than open system call, you should be\naware of system calls related to file and you should know their parameters also So you can get question based on\nbasic Linux command like this Although this question haven't been\nasked much in GATE exam But for UGC NET this portion\nis very important Then comes file management and security,\nthis portion that specially comes in file management That how various algorithms fetch data from the files\nwhere you get sequential access , Random Access Linked Access.... There are 3-4 methods\nwhose basics you should know You'll not get a lot of questions based on this but you should know working of these algorithms,\nwhat are advantages and disadvantages between them, You should know what are their complexities\nMeans how's the working Sequential, Random and Linked There is allocation also\nAnd Accessing of the files also And in security we have basic definition What is virus?, what are vulnerability?,\nWhat are loopholes? They can ask basics of encryption But encryption actually gets covered in\nthe cryptography portion in network But if we'll see from this point,\nthen you should know just some basics And this portion will get covered there\nso you can relate it from there So basic definition of virus,\nloopholes, vulnerabilities and other than this what are attacks,\ntypes of attacks, you should know basic of all this So here... This is whole syllabus of operating system\nNo matter what exam you are preparing for I have marked double star on\nthis first portion i.e. Process scheduling because you can't leave this portion The second one here is\nMemory Management portion No matter what\nyou have to do this portion Then the portion of Disk Scheduling, This is also very important because First\nthe algorithms here are very easy, if you'll just practice 1-2 questions\nthen you'll always remember this Now process synchronization, Deadlock\nare also very important But as I said before, Process Synchronization\nis little bit complex and tricky topic If you can do it then its very good otherwise you can\ncheck out the concept of Binary Semaphore Deadlock & threat concept are little bit theoretical\nHere only Banker's Algorithm is a numerical Other than this there's all theory in it\nDeadlock Avoidance, No Pre-emption, circular weight etc. And in thread we have two types of threads So you should know basic about kernel level thread\nor user level thread So this is the whole syllabus\nof operating system here So you can follow it no matter\nwhat exam you are preparing for Alright?.... Thank You!",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 4.0,
+      "text": "Hello Friends, Welcome to Gate Smashers\nThe topic is Syllabus of operating system"
+    },
+    {
+      "start": 5.0,
+      "end": 8.371,
+      "text": "Before I start this video\nI just want to request you all,"
+    },
+    {
+      "start": 8.0,
+      "end": 10.428,
+      "text": "especially those who are watching\nmy video first time"
+    },
+    {
+      "start": 11.0,
+      "end": 13.729,
+      "text": "Please subscribe my channel\n& please share with your friends"
+    },
+    {
+      "start": 14.0,
+      "end": 17.0,
+      "text": "and please press the bell button\nfor latest notifications"
+    },
+    {
+      "start": 18.0,
+      "end": 19.586,
+      "text": "Now we are starting this video"
+    },
+    {
+      "start": 21.0,
+      "end": 25.142,
+      "text": "What we are going to talk in this video is\nSyllabus of operating system"
+    },
+    {
+      "start": 25.0,
+      "end": 28.086,
+      "text": "Now you must be thinking\nSyllabus of operating system??"
+    },
+    {
+      "start": 29.0,
+      "end": 31.286,
+      "text": "I mean its already available at many places"
+    },
+    {
+      "start": 32.0,
+      "end": 36.0,
+      "text": "If you wish to download syllabus of\noperating system of a particular university,"
+    },
+    {
+      "start": 36.0,
+      "end": 41.457,
+      "text": "or for GATE exam, or for UGC NET exam,\nIt'll be easily available to you"
+    },
+    {
+      "start": 42.0,
+      "end": 45.829,
+      "text": "But... What's my main motive\nto make this video is.... First"
+    },
+    {
+      "start": 46.0,
+      "end": 52.657,
+      "text": "I'm giving you clear cut information that if you are\npreparing operating system for GATE or UGC NET"
+    },
+    {
+      "start": 53.0,
+      "end": 58.042,
+      "text": "Then what are those topics that are mandatory,\nstar mark... Means you must do before exam"
+    },
+    {
+      "start": 59.0,
+      "end": 63.714,
+      "text": "And what are those topics that you can prepare\nby just taking an overview before the exam"
+    },
+    {
+      "start": 64.0,
+      "end": 65.571,
+      "text": "So what's the benefit with this is..."
+    },
+    {
+      "start": 66.0,
+      "end": 72.584,
+      "text": "First those who prepares at very late time\nor starts to study just before the exam"
+    },
+    {
+      "start": 73.0,
+      "end": 78.7,
+      "text": "Then it's very beneficial for them... Even it's beneficial\nfor those who are doing proper study"
+    },
+    {
+      "start": 79.0,
+      "end": 85.272,
+      "text": "Because I'm going to cover all the topics\nIncluding the main topics and their sub topics also"
+    },
+    {
+      "start": 86.0,
+      "end": 90.443,
+      "text": "And all the topics that we are mentioning\nin this video is based on what??... Questions"
+    },
+    {
+      "start": 91.0,
+      "end": 96.329,
+      "text": "All the questions that have appeared in last years\nWhether it's GATE exam or UGC NET exam"
+    },
+    {
+      "start": 97.0,
+      "end": 100.443,
+      "text": "Because their pattern of questions is same"
+    },
+    {
+      "start": 100.0,
+      "end": 103.271,
+      "text": "Many times GATE's questions\nappears in UGC NET exam"
+    },
+    {
+      "start": 104.0,
+      "end": 108.886,
+      "text": "In GATE's exam, questions gets repeat\nmany times but with a different language"
+    },
+    {
+      "start": 112.0,
+      "end": 117.271,
+      "text": "That's why this video is very important here\nThe second point here is... Smart Work"
+    },
+    {
+      "start": 118.0,
+      "end": 121.086,
+      "text": "As we all know that hard work\nis very important.... But"
+    },
+    {
+      "start": 121.0,
+      "end": 124.184,
+      "text": "along with hard work,\nSmart work is also very important"
+    },
+    {
+      "start": 124.0,
+      "end": 125.671,
+      "text": "If you have remember that, right now"
+    },
+    {
+      "start": 127.0,
+      "end": 129.729,
+      "text": "we have got latest report from Forbes,"
+    },
+    {
+      "start": 130.0,
+      "end": 135.058,
+      "text": "according to it, World's no.1 richest man\ni.e. Amazon's head,"
+    },
+    {
+      "start": 136.0,
+      "end": 141.271,
+      "text": "so see how much smart work\nthat guy has done"
+    },
+    {
+      "start": 142.0,
+      "end": 143.414,
+      "text": "He don't have any industries,"
+    },
+    {
+      "start": 144.0,
+      "end": 148.757,
+      "text": "where he would be manufacturing something\nlike shoes, apparel or anything else"
+    },
+    {
+      "start": 148.0,
+      "end": 151.686,
+      "text": "that they are selling in their\napplication or website"
+    },
+    {
+      "start": 153.0,
+      "end": 156.814,
+      "text": "But still his total wealth..."
+    },
+    {
+      "start": 157.0,
+      "end": 166.015,
+      "text": "has surpassed all the billionaires which includes our\nIndia's Mukesh Ambani and many other Billionaires"
+    },
+    {
+      "start": 166.0,
+      "end": 169.014,
+      "text": "So that's an example of smart work\nDefinitely there's hard work"
+    },
+    {
+      "start": 170.0,
+      "end": 175.7,
+      "text": "But along with it, smart work is also there\nWithout any industry, Without any big investment"
+    },
+    {
+      "start": 176.0,
+      "end": 180.185,
+      "text": "they are just transferring goods here and there\nand this is called smart work"
+    },
+    {
+      "start": 180.0,
+      "end": 183.199,
+      "text": "So we are implementing\nthat same smart work here"
+    },
+    {
+      "start": 183.0,
+      "end": 186.186,
+      "text": "So the first topic here is\nbasic introduction"
+    },
+    {
+      "start": 187.0,
+      "end": 188.871,
+      "text": "So what comes here in\nbasic introduction is..."
+    },
+    {
+      "start": 189.0,
+      "end": 195.271,
+      "text": "Normal definition of operating system\nAlong with that, Types of operating system"
+    },
+    {
+      "start": 197.0,
+      "end": 198.272,
+      "text": "Types of operating system consist"
+    },
+    {
+      "start": 199.0,
+      "end": 203.785,
+      "text": "Batch operating system, Multi program,\nMulti tasking, Real time... you should know all that"
+    },
+    {
+      "start": 204.0,
+      "end": 208.643,
+      "text": "After that what I have here is...\nProcess Diagram"
+    },
+    {
+      "start": 209.0,
+      "end": 213.658,
+      "text": "Means, when we execute a process\nor when CPU executes a process"
+    },
+    {
+      "start": 214.0,
+      "end": 217.072,
+      "text": "Then, Though what stages\nthat process passes"
+    },
+    {
+      "start": 218.0,
+      "end": 224.057,
+      "text": "Other than Types of operating system &\nprocess Diagram... What we have here is"
+    },
+    {
+      "start": 224.0,
+      "end": 230.957,
+      "text": "Basic system call, Definition of system calls\nwhich includes your Fork system call,"
+    },
+    {
+      "start": 231.0,
+      "end": 236.757,
+      "text": "Other than that you should know\nabout basics like fork and kernel system calls"
+    },
+    {
+      "start": 237.0,
+      "end": 242.386,
+      "text": "But the main important point here is\ndiagram of the process"
+    },
+    {
+      "start": 242.0,
+      "end": 247.371,
+      "text": "Means the stages of the process\nThat is very important point"
+    },
+    {
+      "start": 248.0,
+      "end": 252.829,
+      "text": "and then we have process scheduling\nWhich we can call CPU scheduling also"
+    },
+    {
+      "start": 254.0,
+      "end": 257.871,
+      "text": "So scheduling includes\na lot of various algorithms"
+    },
+    {
+      "start": 258.0,
+      "end": 263.372,
+      "text": "And this whole topic is important... I can't say\nany particular thing important in this"
+    },
+    {
+      "start": 264.0,
+      "end": 266.257,
+      "text": "this whole topic is important"
+    },
+    {
+      "start": 266.0,
+      "end": 274.657,
+      "text": "It has variety of algorithms\nlike FIFO, SJF, Pre-emptive, Round Robin"
+    },
+    {
+      "start": 275.0,
+      "end": 279.743,
+      "text": "Okay?... It consists variety of algorithms"
+    },
+    {
+      "start": 281.0,
+      "end": 283.8,
+      "text": "So this portion is very important because"
+    },
+    {
+      "start": 284.0,
+      "end": 288.871,
+      "text": "every year there will be a question in\nGATE & UGC NET from this topic"
+    },
+    {
+      "start": 289.0,
+      "end": 292.756,
+      "text": "So you can say that\nthis topic is mandatory for you"
+    },
+    {
+      "start": 293.0,
+      "end": 295.929,
+      "text": "Means you have to prepare\nthis topic before exam and it's very easy"
+    },
+    {
+      "start": 297.0,
+      "end": 302.114,
+      "text": "If you would practice 1-2 numerical\nof each, then you can easily solve this"
+    },
+    {
+      "start": 302.0,
+      "end": 304.757,
+      "text": "Third topic is process synchronization"
+    },
+    {
+      "start": 306.0,
+      "end": 309.1,
+      "text": "In this topic there comes\nthe concept of Semaphore"
+    },
+    {
+      "start": 311.0,
+      "end": 316.714,
+      "text": "Concept of Semaphore...\nBinary Semaphore especially comes in this"
+    },
+    {
+      "start": 317.0,
+      "end": 322.0,
+      "text": "You must have to prepare it before the exam,\nbecause that is the most important part,"
+    },
+    {
+      "start": 322.0,
+      "end": 328.114,
+      "text": "other than this there is Peterson solution, you should\nknow the basic that how it synchronize the processes"
+    },
+    {
+      "start": 329.0,
+      "end": 332.057,
+      "text": "but here question comes\nfrom the concept of semaphore"
+    },
+    {
+      "start": 332.0,
+      "end": 334.643,
+      "text": "This is little bit complex topic"
+    },
+    {
+      "start": 335.0,
+      "end": 341.285,
+      "text": "but if you'll study it properly then definitely\nit'll be clear to you that how Semaphore works"
+    },
+    {
+      "start": 342.0,
+      "end": 348.557,
+      "text": "So I would say that this semaphore topic\nis mandatory that you must do before the exam"
+    },
+    {
+      "start": 349.0,
+      "end": 350.342,
+      "text": "The next is Deadlock and Threads"
+    },
+    {
+      "start": 351.0,
+      "end": 355.742,
+      "text": "In Deadlock and Threads,\nThe Deadlock portion is very easy portion"
+    },
+    {
+      "start": 356.0,
+      "end": 359.314,
+      "text": "Basic definition, Deadlock Prevention & Avoidance"
+    },
+    {
+      "start": 360.0,
+      "end": 362.143,
+      "text": "And especially it has Banker's algorithm"
+    },
+    {
+      "start": 363.0,
+      "end": 366.686,
+      "text": "You should know how\nbanker's algorithm works... It's very easy"
+    },
+    {
+      "start": 367.0,
+      "end": 368.872,
+      "text": "You can check my videos for this"
+    },
+    {
+      "start": 369.0,
+      "end": 373.514,
+      "text": "I've explained this with very nice example there,\neven through GATE's question"
+    },
+    {
+      "start": 374.0,
+      "end": 377.071,
+      "text": "So you have to do Banker's algorithm\nOther than this"
+    },
+    {
+      "start": 377.0,
+      "end": 381.386,
+      "text": "I've mentioned basic questions also\nin my videos based on Deadlock"
+    },
+    {
+      "start": 382.0,
+      "end": 385.114,
+      "text": "This topic is totally completed in my video"
+    },
+    {
+      "start": 386.0,
+      "end": 387.272,
+      "text": "Process synchronization also"
+    },
+    {
+      "start": 388.0,
+      "end": 391.657,
+      "text": "Process scheduling, and the basic one also....\nAll this is already covered"
+    },
+    {
+      "start": 395.0,
+      "end": 398.799,
+      "text": "Then.... Memory management\nIn memory management we have here is"
+    },
+    {
+      "start": 400.0,
+      "end": 400.35,
+      "text": "Especially"
+    },
+    {
+      "start": 402.0,
+      "end": 402.928,
+      "text": "Concept of paging"
+    },
+    {
+      "start": 404.0,
+      "end": 405.115,
+      "text": "Concept of segmentation"
+    },
+    {
+      "start": 407.0,
+      "end": 409.157,
+      "text": "And other than that... Fragmentation"
+    },
+    {
+      "start": 410.0,
+      "end": 413.328,
+      "text": "Many times question comes on\ninternal and external fragmentation"
+    },
+    {
+      "start": 414.0,
+      "end": 415.814,
+      "text": "So you must do this portion"
+    },
+    {
+      "start": 416.0,
+      "end": 419.614,
+      "text": "Although there comes the concept of\nmulti-level paging also... And"
+    },
+    {
+      "start": 420.0,
+      "end": 422.986,
+      "text": "segmentation with paging\nthey are little bit complex topics"
+    },
+    {
+      "start": 424.0,
+      "end": 427.157,
+      "text": "If you have time and you are\ndoing proper preparation of it"
+    },
+    {
+      "start": 427.0,
+      "end": 431.028,
+      "text": "then definitely do the portion of\nmulti-level paging, segmented paging etc."
+    },
+    {
+      "start": 432.0,
+      "end": 436.0,
+      "text": "But if you are just giving normally then\nfor this you've to do basic paging,"
+    },
+    {
+      "start": 436.0,
+      "end": 439.271,
+      "text": "how segmentation works,\ntypes of fragmentation"
+    },
+    {
+      "start": 440.0,
+      "end": 443.686,
+      "text": "and other than that\nhere comes the concept of virtual memory"
+    },
+    {
+      "start": 445.0,
+      "end": 447.541,
+      "text": "Make sure to do\nthe concept of virtual memory"
+    },
+    {
+      "start": 448.0,
+      "end": 458.971,
+      "text": "Here you get numerical questions like you'll be given time,\nand you've to find out effective memory excess time"
+    },
+    {
+      "start": 460.0,
+      "end": 461.8,
+      "text": "You should know Basics of thrashing,"
+    },
+    {
+      "start": 462.0,
+      "end": 470.7,
+      "text": "and other than this the very important point\nis page replacement algorithms"
+    },
+    {
+      "start": 471.0,
+      "end": 475.986,
+      "text": "I would definitely like to highlight it here\nbecause why it is important??"
+    },
+    {
+      "start": 477.0,
+      "end": 479.772,
+      "text": "Because first of all it's a very easy topic,"
+    },
+    {
+      "start": 481.0,
+      "end": 486.043,
+      "text": "if you'll just practice 1-2 question\nthen you'll never do it wrong"
+    },
+    {
+      "start": 486.0,
+      "end": 489.172,
+      "text": "That's why this portion... and every year\nquestion is coming from this topic"
+    },
+    {
+      "start": 490.0,
+      "end": 493.029,
+      "text": "It's easy and also question is coming\nthen obviously you have o secure it"
+    },
+    {
+      "start": 493.0,
+      "end": 498.757,
+      "text": "And talking about GATE exam, It's not important\nhow many no. of questions I'm attempting"
+    },
+    {
+      "start": 499.0,
+      "end": 504.286,
+      "text": "What important is How many no. of correct\nquestions I'm attempting... Means correctness is important there"
+    },
+    {
+      "start": 505.0,
+      "end": 510.043,
+      "text": "There's no negative marking in UGC NET until now\nso you can take little bit risk there... But"
+    },
+    {
+      "start": 510.0,
+      "end": 512.829,
+      "text": "Here you have to move\ntowards correctness first"
+    },
+    {
+      "start": 513.0,
+      "end": 518.857,
+      "text": "Because in case you answered wrong then negative\nmarking in GATE's exam gives a lot of trouble"
+    },
+    {
+      "start": 520.0,
+      "end": 523.513,
+      "text": "After page replacement algorithms\nyou get Disk Scheduling"
+    },
+    {
+      "start": 524.0,
+      "end": 529.071,
+      "text": "In Disk Scheduling we have this numerical portion here\nYou can call it numerical, kind of"
+    },
+    {
+      "start": 530.0,
+      "end": 533.057,
+      "text": "And it's Disk scheduling, here also we get"
+    },
+    {
+      "start": 535.0,
+      "end": 537.586,
+      "text": "scan algorithm, Cscan algorithm"
+    },
+    {
+      "start": 542.0,
+      "end": 543.629,
+      "text": "A basic FCFS"
+    },
+    {
+      "start": 546.0,
+      "end": 553.143,
+      "text": "And other basic algorithms\nI've already made videos on this also"
+    },
+    {
+      "start": 554.0,
+      "end": 558.1,
+      "text": "So you can cover all those videos\nI've explained every single question"
+    },
+    {
+      "start": 558.0,
+      "end": 560.671,
+      "text": "You can practice it there properly"
+    },
+    {
+      "start": 561.0,
+      "end": 562.985,
+      "text": "After Disk scheduling,\nwe have UNIX commands"
+    },
+    {
+      "start": 564.0,
+      "end": 568.614,
+      "text": "This portion comes in UGC NET more\nas compared to the GATE exam"
+    },
+    {
+      "start": 569.0,
+      "end": 572.414,
+      "text": "But still this can get covered\nin GATE's exam also"
+    },
+    {
+      "start": 573.0,
+      "end": 575.157,
+      "text": "UNIX command comes in\nbasic Linux commands"
+    },
+    {
+      "start": 576.0,
+      "end": 581.114,
+      "text": "For example LS Command, MKDIR, CD\nThere're many commands"
+    },
+    {
+      "start": 581.0,
+      "end": 585.914,
+      "text": "But all the basic commands\nLike CD, CHMOD command"
+    },
+    {
+      "start": 586.0,
+      "end": 594.456,
+      "text": "Just now recently in July 2018 exam of UGC NET,\nA question has appeared based on this"
+    },
+    {
+      "start": 595.0,
+      "end": 598.099,
+      "text": "And other than this you should\nknow about open system call also"
+    },
+    {
+      "start": 599.0,
+      "end": 606.9,
+      "text": "Other than open system call, you should be\naware of system calls related to file"
+    },
+    {
+      "start": 607.0,
+      "end": 610.3,
+      "text": "and you should know their parameters also"
+    },
+    {
+      "start": 610.0,
+      "end": 613.129,
+      "text": "So you can get question based on\nbasic Linux command like this"
+    },
+    {
+      "start": 613.0,
+      "end": 616.085,
+      "text": "Although this question haven't been\nasked much in GATE exam"
+    },
+    {
+      "start": 617.0,
+      "end": 619.771,
+      "text": "But for UGC NET this portion\nis very important"
+    },
+    {
+      "start": 620.0,
+      "end": 625.514,
+      "text": "Then comes file management and security,\nthis portion that specially comes in file management"
+    },
+    {
+      "start": 626.0,
+      "end": 633.071,
+      "text": "That how various algorithms fetch data from the files\nwhere you get sequential access ,"
+    },
+    {
+      "start": 634.0,
+      "end": 634.87,
+      "text": "Random Access"
+    },
+    {
+      "start": 637.0,
+      "end": 641.457,
+      "text": "Linked Access.... There are 3-4 methods\nwhose basics you should know"
+    },
+    {
+      "start": 642.0,
+      "end": 646.771,
+      "text": "You'll not get a lot of questions based on this"
+    },
+    {
+      "start": 647.0,
+      "end": 652.371,
+      "text": "but you should know working of these algorithms,\nwhat are advantages and disadvantages between them,"
+    },
+    {
+      "start": 653.0,
+      "end": 656.186,
+      "text": "You should know what are their complexities\nMeans how's the working"
+    },
+    {
+      "start": 657.0,
+      "end": 659.086,
+      "text": "Sequential, Random and Linked"
+    },
+    {
+      "start": 659.0,
+      "end": 662.3,
+      "text": "There is allocation also\nAnd Accessing of the files also"
+    },
+    {
+      "start": 663.0,
+      "end": 665.885,
+      "text": "And in security we have basic definition"
+    },
+    {
+      "start": 666.0,
+      "end": 669.129,
+      "text": "What is virus?, what are vulnerability?,\nWhat are loopholes?"
+    },
+    {
+      "start": 670.0,
+      "end": 671.557,
+      "text": "They can ask basics of encryption"
+    },
+    {
+      "start": 671.0,
+      "end": 676.9,
+      "text": "But encryption actually gets covered in\nthe cryptography portion in network"
+    },
+    {
+      "start": 678.0,
+      "end": 681.472,
+      "text": "But if we'll see from this point,\nthen you should know just some basics"
+    },
+    {
+      "start": 681.0,
+      "end": 684.772,
+      "text": "And this portion will get covered there\nso you can relate it from there"
+    },
+    {
+      "start": 686.0,
+      "end": 688.757,
+      "text": "So basic definition of virus,\nloopholes, vulnerabilities"
+    },
+    {
+      "start": 689.0,
+      "end": 692.214,
+      "text": "and other than this what are attacks,\ntypes of attacks,"
+    },
+    {
+      "start": 693.0,
+      "end": 694.814,
+      "text": "you should know basic of all this"
+    },
+    {
+      "start": 695.0,
+      "end": 696.0,
+      "text": "So here..."
+    },
+    {
+      "start": 697.0,
+      "end": 702.772,
+      "text": "This is whole syllabus of operating system\nNo matter what exam you are preparing for"
+    },
+    {
+      "start": 703.0,
+      "end": 707.385,
+      "text": "I have marked double star on\nthis first portion i.e. Process scheduling"
+    },
+    {
+      "start": 708.0,
+      "end": 710.329,
+      "text": "because you can't leave this portion"
+    },
+    {
+      "start": 711.0,
+      "end": 714.971,
+      "text": "The second one here is\nMemory Management portion"
+    },
+    {
+      "start": 716.0,
+      "end": 719.729,
+      "text": "No matter what\nyou have to do this portion"
+    },
+    {
+      "start": 720.0,
+      "end": 722.815,
+      "text": "Then the portion of Disk Scheduling,"
+    },
+    {
+      "start": 723.0,
+      "end": 728.286,
+      "text": "This is also very important because First\nthe algorithms here are very easy,"
+    },
+    {
+      "start": 728.0,
+      "end": 731.013,
+      "text": "if you'll just practice 1-2 questions\nthen you'll always remember this"
+    },
+    {
+      "start": 732.0,
+      "end": 735.786,
+      "text": "Now process synchronization, Deadlock\nare also very important"
+    },
+    {
+      "start": 736.0,
+      "end": 741.372,
+      "text": "But as I said before, Process Synchronization\nis little bit complex and tricky topic"
+    },
+    {
+      "start": 742.0,
+      "end": 747.057,
+      "text": "If you can do it then its very good otherwise you can\ncheck out the concept of Binary Semaphore"
+    },
+    {
+      "start": 747.0,
+      "end": 755.3,
+      "text": "Deadlock & threat concept are little bit theoretical\nHere only Banker's Algorithm is a numerical"
+    },
+    {
+      "start": 756.0,
+      "end": 760.386,
+      "text": "Other than this there's all theory in it\nDeadlock Avoidance, No Pre-emption, circular weight etc."
+    },
+    {
+      "start": 761.0,
+      "end": 764.428,
+      "text": "And in thread we have two types of threads"
+    },
+    {
+      "start": 765.0,
+      "end": 769.271,
+      "text": "So you should know basic about kernel level thread\nor user level thread"
+    },
+    {
+      "start": 770.0,
+      "end": 773.628,
+      "text": "So this is the whole syllabus\nof operating system here"
+    },
+    {
+      "start": 774.0,
+      "end": 777.5,
+      "text": "So you can follow it no matter\nwhat exam you are preparing for"
+    },
+    {
+      "start": 778.0,
+      "end": 779.0,
+      "text": "Alright?.... Thank You!"
+    }
+  ]
+}

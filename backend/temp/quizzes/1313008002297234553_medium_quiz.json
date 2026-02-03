@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the main problem with traditional AI agent architecture described in the content?",
+    "options": [
+      "Data fragmentation across multiple databases",
+      "Lack of persistent memory",
+      "High cost of maintaining multiple databases",
+      "All of the above"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content discusses the problem of data fragmentation across multiple databases, the high cost of maintaining them, and the lack of persistent memory as key issues with traditional AI agent architecture."
+  },
+  {
+    "question": "What type of database does the content suggest using to solve the problem of persistent memory?",
+    "options": [
+      "Vector DB",
+      "Relational DB",
+      "Document Store",
+      "Oracle 26 AI Database"
+    ],
+    "correct_answer": 3,
+    "explanation": "The content suggests using the Oracle 26 AI Database as a solution to provide persistent memory for the AI agent."
+  },
+  {
+    "question": "What are the key limitations of using multiple databases mentioned in the content?",
+    "options": [
+      "High cost, complex sync logic, and multiple failure points",
+      "Lack of persistent memory",
+      "Data fragmentation",
+      "All of the above"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content discusses the key limitations of using multiple databases as high cost, complex sync logic, and multiple failure points."
+  },
+  {
+    "question": "What feature of the Oracle 26 AI Database does the content highlight as an advantage?",
+    "options": [
+      "It runs on their always free tier",
+      "It provides a single database solution",
+      "It integrates with Pine Cone and PostgreSQL",
+      "All of the above"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content specifically mentions that the Oracle 26 AI Database runs on their always free tier as an advantage."
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the key benefit of the Oracle 26 AI database highlighted in the content?",
+    "options": [
+      "Reduced data fragmentation",
+      "Improved network latency",
+      "Increased database reliability",
+      "Faster development time"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content highlights that the Oracle 26 AI database solves the problem of data fragmentation by providing a single database with multiple data types and features."
+  },
+  {
+    "question": "Which feature of the Oracle 26 AI database allows for direct storage of embeddings in tables?",
+    "options": [
+      "Native vector data type",
+      "HNSW indexes",
+      "JSON support",
+      "Relational tables"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that the Oracle 26 AI database has a native vector data type that allows for storing embeddings directly in tables without conversion or serialization."
+  },
+  {
+    "question": "What type of search does the HNSW index in the Oracle 26 AI database provide?",
+    "options": [
+      "Exact nearest neighbor search",
+      "Approximate nearest neighbor search",
+      "Fuzzy string search",
+      "Graph traversal search"
+    ],
+    "correct_answer": 1,
+    "explanation": "The content mentions that the HNSW index in the Oracle 26 AI database provides the fastest approximate nearest neighbor search with 95% accuracy and sub-millisecond queries."
+  },
+  {
+    "question": "What is the key advantage of the Oracle 26 AI database in terms of development time?",
+    "options": [
+      "Reduced learning time",
+      "Faster deployment",
+      "Easier maintenance",
+      "Improved scalability"
+    ],
+    "correct_answer": 0,
+    "explanation": "The content states that the Oracle 26 AI database reduces the learning time, as there is only one API to learn, compared to having to learn multiple different databases."
+  }
+]

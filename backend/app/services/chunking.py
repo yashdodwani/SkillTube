@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse, parse_qs
 from ..models.schemas import VideoChunk
 
-# Load environment variables
-load_dotenv()
+# Load environment variables with override to ensure .env values take precedence
+load_dotenv(override=True)
 
 logger = logging.getLogger(__name__)
 
@@ -18,15 +18,21 @@ logger = logging.getLogger(__name__)
 try:
     TEMP_DIR = Path(__file__).parent.parent.parent / "temp"
     CHUNKS_DIR = TEMP_DIR / "chunks"
+    TRANSCRIPTS_DIR = TEMP_DIR / "json"
     CHUNKS_DIR.mkdir(exist_ok=True, parents=True)
+    TRANSCRIPTS_DIR.mkdir(exist_ok=True, parents=True)
     logger.info(f"Chunks directory ready at: {CHUNKS_DIR}")
+    logger.info(f"Transcripts directory ready at: {TRANSCRIPTS_DIR}")
 except Exception as e:
-    logger.error(f"Error creating chunks directory: {e}")
+    logger.error(f"Error creating directories: {e}")
     # Fallback to current working directory
     TEMP_DIR = Path.cwd() / "temp"
     CHUNKS_DIR = TEMP_DIR / "chunks"
+    TRANSCRIPTS_DIR = TEMP_DIR / "json"
     CHUNKS_DIR.mkdir(exist_ok=True, parents=True)
+    TRANSCRIPTS_DIR.mkdir(exist_ok=True, parents=True)
     logger.info(f"Using fallback chunks directory at: {CHUNKS_DIR}")
+    logger.info(f"Using fallback transcripts directory at: {TRANSCRIPTS_DIR}")
 
 # API configurations
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
@@ -218,6 +224,16 @@ async def generate_chunks_from_url(youtube_url, level: str) -> List[VideoChunk]:
 
         # Get transcript data
         transcript_data = await get_transcript_data(youtube_url)
+        
+        # Save transcript to JSON file
+        video_id = extract_video_id(youtube_url)
+        transcript_path = TRANSCRIPTS_DIR / f"{video_id}.json"
+        try:
+            with open(transcript_path, "w", encoding="utf-8") as f:
+                json.dump(transcript_data, f, indent=2, ensure_ascii=False)
+            logger.info(f"Transcript saved to {transcript_path}")
+        except Exception as e:
+            logger.warning(f"Failed to save transcript: {e}")
 
         # Generate chunks from transcript data
         chunks = await generate_chunks(transcript_data, level)
@@ -364,12 +380,11 @@ Return ONLY the JSON array, no other text."""
                 "X-Title": "SkillVid Course Generator"  # Optional: for tracking
             }
 
-            # Try multiple models in order of preference
+            # Try multiple models in order of preference (all free)
             models_to_try = [
-                "anthropic/claude-3-haiku:beta",
-                "google/gemini-flash-1.5:free", 
-                "meta-llama/llama-3.1-8b-instruct:free",
-                "microsoft/wizardlm-2-8x22b:nitro"
+                "openai/gpt-oss-120b:free",
+                "meta-llama/llama-3.3-70b-instruct:free",
+                "google/gemma-3-27b-it:free"
             ]
             
             llm_response = None
@@ -418,14 +433,16 @@ Return ONLY the JSON array, no other text."""
                             else:
                                 logger.warning(f"No choices in response from model: {model}")
                         else:
-                            logger.warning(f"HTTP error {response.status_code} from model: {model}")
+                            error_text = response.text[:500]  # First 500 chars of error
+                            logger.error(f"HTTP error {response.status_code} from model {model}: {error_text}")
                             
                 except Exception as e:
-                    logger.warning(f"Error with model {model}: {str(e)}")
+                    logger.error(f"Exception with model {model}: {type(e).__name__}: {str(e)}")
                     continue
             
             if not llm_response:
-                raise ValueError("All models failed to generate a valid response")
+                logger.error("All models failed. Falling back to automatic chunking.")
+                return create_fallback_chunks(segments, level)
             
             logger.info("Received response from OpenRouter")
             logger.info(f"LLM Response Length: {len(llm_response)}")

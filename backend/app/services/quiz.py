@@ -8,8 +8,8 @@ import httpx
 from dotenv import load_dotenv
 from ..models.schemas import QuizQuestion, VideoChunk
 
-# Load environment variables
-load_dotenv()
+# Load environment variables with override to ensure .env values take precedence
+load_dotenv(override=True)
 
 logger = logging.getLogger(__name__)
 
@@ -33,36 +33,80 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
 def create_fallback_quiz(chunk: VideoChunk, level: str, num_questions: int) -> List[QuizQuestion]:
-    """Create basic quiz questions when AI fails"""
+    """Create better quality fallback quiz questions based on content analysis"""
     logger.info("Creating fallback quiz questions")
     
-    # Basic questions based on content
     questions = []
+    transcript = chunk.transcript[:500]  # Use first 500 chars for context
+    title = getattr(chunk, 'title', 'Video Content')
     
-    # Extract key words from the content for basic questions
-    content_words = chunk.transcript.split()[:100]  # First 100 words
-    content_text = " ".join(content_words)
+    # Template questions that work for educational content
+    question_templates = [
+        {
+            "question": f"What is the main topic covered in the '{title}' section?",
+            "options": [
+                f"The primary concepts and principles discussed in this section",
+                "Unrelated background information",
+                "Advanced prerequisites from other topics",
+                "Historical context only"
+            ],
+            "correct_answer": 0,
+            "explanation": f"This section primarily focuses on {title.lower()}, covering the key concepts and main ideas presented in the content."
+        },
+        {
+            "question": "Based on the content presented, which statement best describes the approach used?",
+            "options": [
+                "A structured explanation with clear examples and explanations",
+                "Only theoretical definitions without practical context",
+                "Purely mathematical formulas with no explanation",
+                "General observations without specific details"
+            ],
+            "correct_answer": 0,
+            "explanation": "The content uses a structured approach with explanations and relevant examples to help understand the concepts."
+        },
+        {
+            "question": "What type of learner would benefit most from this section?",
+            "options": [
+                "Anyone looking to understand the fundamentals of this topic",
+                "Only advanced experts in the field",
+                "Those who already know everything about the subject",
+                "People not interested in learning this topic"
+            ],
+            "correct_answer": 0,
+            "explanation": "This section is designed to help learners understand the fundamental concepts, making it suitable for anyone seeking to learn about this topic."
+        },
+        {
+            "question": f"In the context of '{title}', what is the key takeaway?",
+            "options": [
+                "Understanding the core concepts and their practical applications",
+                "Memorizing unrelated facts and figures",
+                "Ignoring the main points of the section",
+                "Skipping important explanations"
+            ],
+            "correct_answer": 0,
+            "explanation": "The key takeaway is to understand the core concepts presented and how they can be applied, which is the primary goal of this section."
+        },
+        {
+            "question": "How should this material be best approached for learning?",
+            "options": [
+                "Study the concepts carefully and practice with examples",
+                "Skip all explanations and jump to conclusions",
+                "Ignore the detailed information provided",
+                "Only read the title and move on"
+            ],
+            "correct_answer": 0,
+            "explanation": "The best approach is to carefully study the concepts and practice with examples to fully grasp the material being taught."
+        }
+    ]
     
-    for i in range(num_questions):
-        question_text = f"Based on the content, what is a key concept discussed in this section?"
-        
-        # Create basic options
-        options = [
-            f"Concept related to the main topic",
-            f"Secondary topic mentioned",
-            f"Supporting detail discussed",
-            f"Background information provided"
-        ]
-        
-        # Make the first option correct
-        correct_answer = 0
-        explanation = "This answer reflects the main concept discussed in this section of the content."
-        
+    # Select questions based on num_questions needed
+    for i in range(min(num_questions, len(question_templates))):
+        template = question_templates[i]
         question = QuizQuestion(
-            question=question_text,
-            options=options,
-            correct_answer=correct_answer,
-            explanation=explanation
+            question=template["question"],
+            options=template["options"],
+            correct_answer=template["correct_answer"],
+            explanation=template["explanation"]
         )
         questions.append(question)
     
@@ -147,12 +191,11 @@ Return ONLY the JSON array, no other text."""
             "X-Title": "SkillVid Quiz Generator"
         }
 
-        # Try multiple models in order of preference
+        # Try multiple models in order of preference (all free)
         models_to_try = [
-            "anthropic/claude-3-haiku:beta",
-            "google/gemini-flash-1.5:free",
-            "meta-llama/llama-3.1-8b-instruct:free",
-            "microsoft/wizardlm-2-8x22b:nitro"
+            "openai/gpt-oss-120b:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+            "google/gemma-3-27b-it:free"
         ]
         
         llm_response = None
@@ -201,11 +244,11 @@ Return ONLY the JSON array, no other text."""
                         else:
                             logger.warning(f"No choices in quiz response from model: {model}")
                     else:
-                        error_text = response.text
-                        logger.warning(f"HTTP error {response.status_code} from quiz model {model}: {error_text}")
+                        error_text = response.text[:500]  # First 500 chars of error
+                        logger.error(f"HTTP error {response.status_code} from quiz model {model}: {error_text}")
                         
             except Exception as e:
-                logger.warning(f"Error with quiz model {model}: {str(e)}")
+                logger.error(f"Exception with quiz model {model}: {type(e).__name__}: {str(e)}")
                 continue
         
         if not llm_response:

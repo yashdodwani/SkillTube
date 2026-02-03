@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, BookOpen, Brain, Trophy, ArrowRight, Youtube, Zap, Target } from 'lucide-react';
+import { PlayCircle, BookOpen, Brain, Trophy, ArrowRight, Youtube, Zap, Target, Clock, History } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
@@ -8,12 +8,36 @@ import { courseAPI } from '../services/api';
 import { isValidYouTubeUrl, extractVideoId } from '../utils/youtube';
 import { useToast } from '../components/ui/Toaster';
 
+interface CourseHistoryItem {
+  video_id: string;
+  video_url: string;
+  level: string;
+  num_chunks: number;
+  created_at: string;
+  title: string;
+}
+
 export default function Home() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [level, setLevel] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [isLoading, setIsLoading] = useState(false);
+  const [history, setHistory] = useState<CourseHistoryItem[]>([]);
   const navigate = useNavigate();
   const { addToast } = useToast();
+
+  // Load course history on mount
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const loadHistory = async () => {
+    try {
+      const historyData = await courseAPI.getCourseHistory();
+      setHistory(historyData);
+    } catch (error) {
+      console.error('Error loading history:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,28 +240,56 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Example URLs */}
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-center">Try These Example URLs</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <button
-              onClick={() => setYoutubeUrl('https://www.youtube.com/watch?v=dQw4w9WgXcQ')}
-              className="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors"
-            >
-              <div className="flex items-center">
-                <Youtube className="h-5 w-5 text-red-500 mr-3" />
-                <div>
-                  <div className="font-medium">Sample Educational Video</div>
-                  <div className="text-sm text-gray-500">Programming Tutorial</div>
-                </div>
-              </div>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Course History */}
+      {history.length > 0 && (
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <History className="mr-2 h-5 w-5" />
+              Course History
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {history.slice(0, 5).map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setYoutubeUrl(item.video_url);
+                    setLevel(item.level as 'easy' | 'medium' | 'hard');
+                  }}
+                  className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <img
+                        src={`https://img.youtube.com/vi/${item.video_id}/mqdefault.jpg`}
+                        alt={item.title}
+                        className="w-24 h-16 object-cover rounded"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 truncate mb-1">
+                        {item.title}
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <span className="capitalize">{item.level}</span>
+                        <span>•</span>
+                        <span>{item.num_chunks} sections</span>
+                        <span>•</span>
+                        <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <ArrowRight className="h-5 w-5 text-gray-400" />
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

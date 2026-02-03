@@ -24,6 +24,21 @@ export default function Course() {
   const [isLoading, setIsLoading] = useState(true);
   const [videoId, setVideoId] = useState<string>('');
 
+  // Load completed chunks from localStorage
+  useEffect(() => {
+    if (taskId) {
+      const saved = localStorage.getItem(`course_${taskId}_completed`);
+      if (saved) {
+        try {
+          const completed = JSON.parse(saved);
+          setCompletedChunks(new Set(completed));
+        } catch (e) {
+          console.error('Error loading saved progress:', e);
+        }
+      }
+    }
+  }, [taskId]);
+
   useEffect(() => {
     if (!taskId) {
       navigate('/');
@@ -95,24 +110,40 @@ export default function Course() {
   };
 
   const handleCompleteChunk = () => {
-    // Check if all questions were answered correctly
-    const allCorrect = currentQuestions.every((question, index) => {
+    // Calculate score
+    const correctCount = currentQuestions.filter((question, index) => {
       const questionKey = `${currentChunkIndex}-${index}`;
       return selectedAnswers[questionKey] === question.correct_answer;
+    }).length;
+    
+    const score = Math.round((correctCount / currentQuestions.length) * 100);
+    
+    // Always mark chunk as completed
+    setCompletedChunks(prev => {
+      const newCompleted = new Set([...prev, currentChunkIndex]);
+      // Save to localStorage for persistence
+      localStorage.setItem(`course_${taskId}_completed`, JSON.stringify([...newCompleted]));
+      return newCompleted;
     });
 
-    if (allCorrect) {
-      setCompletedChunks(prev => new Set([...prev, currentChunkIndex]));
+    // Give appropriate feedback based on score
+    if (score === 100) {
       addToast({
         type: 'success',
-        title: 'Chunk Completed!',
-        description: 'Great job! You can now proceed to the next section.'
+        title: 'Perfect Score! 🎉',
+        description: 'You got all questions correct!'
+      });
+    } else if (score >= 70) {
+      addToast({
+        type: 'success',
+        title: 'Section Completed!',
+        description: `Good job! You scored ${score}%.`
       });
     } else {
       addToast({
         type: 'warning',
-        title: 'Some Incorrect Answers',
-        description: 'Review the explanations and try again.'
+        title: 'Section Completed',
+        description: `You scored ${score}%. Review the explanations to improve.`
       });
     }
 
@@ -124,7 +155,7 @@ export default function Course() {
     } else {
       addToast({
         type: 'success',
-        title: 'Course Completed!',
+        title: 'Course Completed! 🎓',
         description: 'Congratulations on completing the entire course!'
       });
     }
@@ -386,7 +417,30 @@ export default function Course() {
                 </div>
               ) : (
                 <div>
-                  <h3 className="text-lg font-bold mb-6">Quiz Results</h3>
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold mb-3">Quiz Results</h3>
+                    {(() => {
+                      const correctCount = currentQuestions.filter((question, index) => {
+                        const questionKey = `${currentChunkIndex}-${index}`;
+                        return selectedAnswers[questionKey] === question.correct_answer;
+                      }).length;
+                      const score = Math.round((correctCount / currentQuestions.length) * 100);
+                      
+                      return (
+                        <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-4 mb-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-2xl font-bold text-primary-700">
+                              {score}%
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              {correctCount} of {currentQuestions.length} correct
+                            </span>
+                          </div>
+                          <Progress value={correctCount} max={currentQuestions.length} className="h-2" />
+                        </div>
+                      );
+                    })()}
+                  </div>
                   
                   <div className="space-y-6">
                     {currentQuestions.map((question, index) => {
@@ -436,7 +490,22 @@ export default function Course() {
                     })}
                   </div>
                   
-                  <div className="mt-8 text-center">
+                  <div className="mt-8 flex justify-center gap-4">
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setShowResults(false);
+                        setCurrentQuestionIndex(0);
+                        // Clear answers for this chunk
+                        const newAnswers = { ...selectedAnswers };
+                        currentQuestions.forEach((_, index) => {
+                          delete newAnswers[`${currentChunkIndex}-${index}`];
+                        });
+                        setSelectedAnswers(newAnswers);
+                      }}
+                    >
+                      Retry Quiz
+                    </Button>
                     <Button onClick={handleCompleteChunk} size="lg">
                       {currentChunkIndex < courseData.length - 1 ? 'Continue to Next Section' : 'Complete Course'}
                     </Button>

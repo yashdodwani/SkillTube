@@ -3,7 +3,11 @@ from ..models.schemas import ChunkRequest, QuizRequest, ProcessingStatus, VideoC
 from ..services import chunking, quiz
 import logging
 import time
+import os
+import json
+from pathlib import Path
 from typing import List, Dict, Any
+from datetime import datetime
 
 router = APIRouter(prefix="/api/course")
 logger = logging.getLogger(__name__)
@@ -111,3 +115,59 @@ async def get_course_status(task_id: str):
     if task_id not in task_status:
         raise HTTPException(status_code=404, detail="Task not found")
     return task_status[task_id]
+
+
+@router.get("/history")
+async def get_course_history():
+    """
+    Get list of previously generated courses from temp directory
+    """
+    try:
+        # Get temp directory
+        temp_dir = Path(__file__).parent.parent.parent / "temp"
+        chunks_dir = temp_dir / "chunks"
+        
+        if not chunks_dir.exists():
+            return []
+        
+        history = []
+        
+        # Scan chunks directory for course files
+        for chunk_file in chunks_dir.glob("*_chunks.json"):
+            try:
+                # Parse filename: videoId_level_chunks.json
+                filename = chunk_file.stem  # Remove .json
+                parts = filename.rsplit('_', 2)  # Split from right, max 2 splits
+                
+                if len(parts) >= 2:
+                    video_id = parts[0]
+                    level = parts[1]
+                    
+                    # Read the chunk file to get video info
+                    with open(chunk_file, 'r', encoding='utf-8') as f:
+                        chunks_data = json.load(f)
+                    
+                    # Get file modification time
+                    modified_time = datetime.fromtimestamp(chunk_file.stat().st_mtime)
+                    
+                    # Create history entry
+                    history.append({
+                        "video_id": video_id,
+                        "video_url": f"https://www.youtube.com/watch?v={video_id}",
+                        "level": level,
+                        "num_chunks": len(chunks_data),
+                        "created_at": modified_time.isoformat(),
+                        "title": chunks_data[0].get("title", "Untitled") if chunks_data else "Untitled"
+                    })
+            except Exception as e:
+                logger.warning(f"Error processing {chunk_file}: {e}")
+                continue
+        
+        # Sort by creation date (newest first)
+        history.sort(key=lambda x: x["created_at"], reverse=True)
+        
+        return history
+        
+    except Exception as e:
+        logger.error(f"Error fetching course history: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

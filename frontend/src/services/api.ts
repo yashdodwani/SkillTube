@@ -40,6 +40,12 @@ export const courseAPI = {
     return response.data;
   },
 
+  // Get course history
+  getCourseHistory: async (): Promise<any[]> => {
+    const response = await api.get('/course/history');
+    return response.data;
+  },
+
   // Health check
   healthCheck: async (): Promise<{ status: string }> => {
     const response = await api.get('/health');
