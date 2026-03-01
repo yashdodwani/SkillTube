@@ -20,13 +20,34 @@ export const isValidYouTubeUrl = (url: string): boolean => {
 };
 
 export const formatTime = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = Math.floor(seconds % 60);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
-export const getYouTubeEmbedUrl = (videoId: string): string => {
-  return `https://www.youtube.com/embed/${videoId}`;
+export const getYouTubeEmbedUrl = (videoId: string, startTime?: number, endTime?: number): string => {
+  const baseUrl = `https://www.youtube.com/embed/${videoId}`;
+  const params = new URLSearchParams();
+
+  if (startTime !== undefined) {
+    params.append('start', Math.floor(startTime).toString());
+  }
+
+  if (endTime !== undefined) {
+    params.append('end', Math.floor(endTime).toString());
+  }
+
+  // Enable JS API and disable related videos at the end
+  params.append('enablejsapi', '1');
+  params.append('rel', '0');
+
+  const queryString = params.toString();
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 };
 
 export const getYouTubeThumbnail = (videoId: string): string => {

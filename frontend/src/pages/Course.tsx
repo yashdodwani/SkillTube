@@ -235,7 +235,12 @@ export default function Course() {
             <div className="aspect-video">
               {videoId ? (
                 <iframe
-                  src={getYouTubeEmbedUrl(videoId)}
+                  key={`video-${currentChunkIndex}`}
+                  src={getYouTubeEmbedUrl(
+                    videoId,
+                    currentChunk?.chunk.start_time,
+                    currentChunk?.chunk.end_time
+                  )}
                   className="w-full h-full rounded-t-xl"
                   allowFullScreen
                   title="Course Video"
@@ -249,6 +254,12 @@ export default function Course() {
             
             {/* Current Chunk Info */}
             <div className="p-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-blue-800 flex items-center">
+                  <Clock className="h-4 w-4 mr-2" />
+                  <span>This video section plays from <strong className="mx-1">{formatTime(currentChunk?.chunk.start_time || 0)}</strong> to <strong className="mx-1">{formatTime(currentChunk?.chunk.end_time || 0)}</strong></span>
+                </p>
+              </div>
               <h2 className="text-xl font-bold mb-2">
                 {currentChunk?.chunk.title || `Section ${currentChunkIndex + 1}`}
               </h2>
@@ -257,7 +268,7 @@ export default function Course() {
               </p>
               <div className="flex items-center text-sm text-gray-500">
                 <Clock className="h-4 w-4 mr-1" />
-                {formatTime(currentChunk?.chunk.start_time || 0)} - {formatTime(currentChunk?.chunk.end_time || 0)}
+                Duration: {formatTime((currentChunk?.chunk.end_time || 0) - (currentChunk?.chunk.start_time || 0))}
               </div>
             </div>
           </Card>
