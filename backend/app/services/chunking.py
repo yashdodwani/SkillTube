@@ -3,10 +3,10 @@ import json
 import logging
 from pathlib import Path
 from typing import Dict, Any, List
-import asyncio
 import httpx
 from dotenv import load_dotenv
 from urllib.parse import urlparse, parse_qs
+import google.generativeai as genai
 from ..models.schemas import VideoChunk
 
 # Load environment variables with override to ensure .env values take precedence
@@ -35,14 +35,16 @@ except Exception as e:
     logger.info(f"Using fallback transcripts directory at: {TRANSCRIPTS_DIR}")
 
 # API configurations
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 TRANSCRIPT_API_KEY = os.getenv("TRANSCRIPT_KEY") or os.getenv("TRANSCRIPT_API_KEY")
 TRANSCRIPT_API_URL = "https://transcriptapi.com/api/v2/youtube/transcript"
 
-if not OPENROUTER_API_KEY:
-    logger.warning("OPENROUTER_API_KEY is not set. Chunk generation will fail until it is configured.")
+# Configure Google Gemini
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    logger.info("Google Gemini API configured successfully")
+else:
+    logger.warning("GOOGLE_API_KEY is not set. Chunk generation will fail until it is configured.")
 
 if not TRANSCRIPT_API_KEY:
     logger.warning("TRANSCRIPT_API_KEY is not set. Will fallback to youtube-transcript-api library.")
@@ -335,8 +337,8 @@ async def generate_chunks(transcript_data: Dict[str, Any], level: str) -> List[D
 
         logger.info(f"Generating chunks for video: {video_id} with level: {level}")
 
-        if not OPENROUTER_API_KEY:
-            raise ValueError("OPENROUTER_API_KEY is not set. Please configure it in your environment.")
+        if not GOOGLE_API_KEY:
+            raise ValueError("GOOGLE_API_KEY is not set. Please configure it in your environment.")
 
         # Extract full transcript
         full_transcript = transcript_data["text"]
@@ -369,82 +371,54 @@ RULES:
 
 Return ONLY the JSON array, no other text."""
 
-        # Call the OpenRouter API
-        logger.info("Sending request to OpenRouter for chunking")
-        
-        try:
-            headers = {
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://skillvid.app",  # Optional: helps with rate limiting
-                "X-Title": "SkillVid Course Generator"  # Optional: for tracking
-            }
+        # Call the Google Gemini API
+        logger.info("Sending request to Google Gemini for chunking")
 
-            # Try multiple models in order of preference (all free)
+        try:
+            # Try multiple Gemini models in order of preference
             models_to_try = [
-                "openai/gpt-oss-120b:free",
-                "meta-llama/llama-3.3-70b-instruct:free",
-                "google/gemma-3-27b-it:free"
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+                "gemini-pro"
             ]
             
             llm_response = None
             
-            for model in models_to_try:
+            for model_name in models_to_try:
                 try:
-                    payload = {
-                        "model": model,
-                        "messages": [
-                            {
-                                "role": "system", 
-                                "content": "You are an educational content expert. You analyze video transcripts and create logical learning segments. Always respond with valid JSON only, no additional text or explanations."
-                            },
-                            {
-                                "role": "user", 
-                                "content": prompt
-                            }
-                        ],
-                        "temperature": 0.2,
-                        "max_tokens": 2048,
-                        "top_p": 1
-                    }
-                    
-                    logger.info(f"Trying model: {model}")
-                    
-                    async with httpx.AsyncClient(timeout=60.0) as client:
-                        response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
-                        
-                        logger.info(f"Response status: {response.status_code}")
-                        
-                        if response.status_code == 200:
-                            response_data = response.json()
-                            
-                            if "choices" in response_data and response_data["choices"]:
-                                choice = response_data["choices"][0]
-                                if "message" in choice and "content" in choice["message"]:
-                                    content = choice["message"]["content"]
-                                    if content and content.strip():
-                                        llm_response = content
-                                        logger.info(f"Success with model: {model}")
-                                        break
-                                    else:
-                                        logger.warning(f"Empty content from model: {model}")
-                                else:
-                                    logger.warning(f"Invalid response structure from model: {model}")
-                            else:
-                                logger.warning(f"No choices in response from model: {model}")
-                        else:
-                            error_text = response.text[:500]  # First 500 chars of error
-                            logger.error(f"HTTP error {response.status_code} from model {model}: {error_text}")
-                            
+                    logger.info(f"Trying Gemini model: {model_name}")
+
+                    model = genai.GenerativeModel(
+                        model_name=model_name,
+                        generation_config={
+                            "temperature": 0.2,
+                            "top_p": 1,
+                            "max_output_tokens": 2048,
+                        }
+                    )
+
+                    full_prompt = f"""You are an educational content expert. You analyze video transcripts and create logical learning segments. Always respond with valid JSON only, no additional text or explanations.
+
+{prompt}"""
+
+                    response = model.generate_content(full_prompt)
+
+                    if response and response.text:
+                        llm_response = response.text
+                        logger.info(f"Success with Gemini model: {model_name}")
+                        break
+                    else:
+                        logger.warning(f"Empty response from Gemini model: {model_name}")
+
                 except Exception as e:
-                    logger.error(f"Exception with model {model}: {type(e).__name__}: {str(e)}")
+                    logger.error(f"Exception with Gemini model {model_name}: {type(e).__name__}: {str(e)}")
                     continue
             
             if not llm_response:
-                logger.error("All models failed. Falling back to automatic chunking.")
+                logger.error("All Gemini models failed. Falling back to automatic chunking.")
                 return create_fallback_chunks(segments, level)
             
-            logger.info("Received response from OpenRouter")
+            logger.info("Received response from Google Gemini")
             logger.info(f"LLM Response Length: {len(llm_response)}")
             logger.info(f"LLM Response Preview: {llm_response[:200]}...")
             

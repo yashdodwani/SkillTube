@@ -2,10 +2,9 @@ import os
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, List
-import asyncio
-import httpx
+from typing import List
 from dotenv import load_dotenv
+import google.generativeai as genai
 from ..models.schemas import QuizQuestion, VideoChunk
 
 # Load environment variables with override to ensure .env values take precedence
@@ -28,8 +27,14 @@ except Exception as e:
     logger.info(f"Using fallback quizzes directory at: {QUIZZES_DIR}")
 
 # API configurations
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+# Configure Google Gemini
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    logger.info("Google Gemini API configured for quiz generation")
+else:
+    logger.warning("GOOGLE_API_KEY is not set. Quiz generation will use fallback questions.")
 
 
 def create_fallback_quiz(chunk: VideoChunk, level: str, num_questions: int) -> List[QuizQuestion]:
@@ -141,9 +146,9 @@ async def generate_questions(chunk: VideoChunk, level: str) -> List[QuizQuestion
         logger.info(f"Generating quiz questions for chunk with level: {level}")
 
         # Ensure API key is configured
-        if not OPENROUTER_API_KEY:
-            logger.error("OPENROUTER_API_KEY is not set")
-            raise ValueError("OPENROUTER_API_KEY is not set. Please configure it in your environment.")
+        if not GOOGLE_API_KEY:
+            logger.error("GOOGLE_API_KEY is not set")
+            raise ValueError("GOOGLE_API_KEY is not set. Please configure it in your environment.")
 
         # Determine number of questions based on level
         num_questions = 3
@@ -183,79 +188,54 @@ RULES:
 
 Return ONLY the JSON array, no other text."""
 
-        # Call the LLM API with multiple model fallbacks
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://skillvid.app",
-            "X-Title": "SkillVid Quiz Generator"
-        }
+        # Call the Google Gemini API with multiple model fallbacks
+        logger.info("Sending request to Google Gemini for quiz generation")
 
-        # Try multiple models in order of preference (all free)
+        # Try multiple Gemini models in order of preference
         models_to_try = [
-            "openai/gpt-oss-120b:free",
-            "meta-llama/llama-3.3-70b-instruct:free",
-            "google/gemma-3-27b-it:free"
+            "gemini-1.5-flash",
+            "gemini-1.5-pro",
+            "gemini-pro"
         ]
         
         llm_response = None
         
-        for model in models_to_try:
+        for model_name in models_to_try:
             try:
-                payload = {
-                    "model": model,
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": "You are an educational quiz creator. Generate multiple-choice questions in valid JSON format only, no additional text."
-                        },
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ],
-                    "temperature": 0.3,
-                    "max_tokens": 2048,
-                    "top_p": 1
-                }
-                
-                logger.info(f"Trying model: {model} for quiz generation")
-                
-                async with httpx.AsyncClient(timeout=60.0) as client:
-                    response = await client.post(OPENROUTER_URL, json=payload, headers=headers)
-                    
-                    logger.info(f"Quiz API response status: {response.status_code}")
-                    
-                    if response.status_code == 200:
-                        response_data = response.json()
-                        
-                        if "choices" in response_data and response_data["choices"]:
-                            choice = response_data["choices"][0]
-                            if "message" in choice and "content" in choice["message"]:
-                                content = choice["message"]["content"]
-                                if content and content.strip():
-                                    llm_response = content
-                                    logger.info(f"Quiz generation success with model: {model}")
-                                    break
-                                else:
-                                    logger.warning(f"Empty content from quiz model: {model}")
-                            else:
-                                logger.warning(f"Invalid response structure from quiz model: {model}")
-                        else:
-                            logger.warning(f"No choices in quiz response from model: {model}")
-                    else:
-                        error_text = response.text[:500]  # First 500 chars of error
-                        logger.error(f"HTTP error {response.status_code} from quiz model {model}: {error_text}")
-                        
+                logger.info(f"Trying Gemini model: {model_name} for quiz generation")
+
+                model = genai.GenerativeModel(
+                    model_name=model_name,
+                    generation_config={
+                        "temperature": 0.3,
+                        "top_p": 1,
+                        "max_output_tokens": 2048,
+                    }
+                )
+
+                full_prompt = f"""You are an educational quiz creator. Generate multiple-choice questions in valid JSON format only, no additional text.
+
+{prompt}"""
+
+                response = model.generate_content(full_prompt)
+
+                if response and response.text:
+                    llm_response = response.text
+                    logger.info(f"Quiz generation success with Gemini model: {model_name}")
+                    break
+                else:
+                    logger.warning(f"Empty response from Gemini quiz model: {model_name}")
+
             except Exception as e:
-                logger.error(f"Exception with quiz model {model}: {type(e).__name__}: {str(e)}")
+                logger.error(f"Exception with Gemini quiz model {model_name}: {type(e).__name__}: {str(e)}")
                 continue
         
+
         if not llm_response:
-            logger.error("All quiz models failed, creating fallback questions")
+            logger.error("All Gemini quiz models failed, creating fallback questions")
             return create_fallback_quiz(chunk, level, num_questions)
 
-        logger.info("Received quiz response from OpenRouter")
+        logger.info("Received quiz response from Google Gemini")
         logger.info(f"Quiz Response Length: {len(llm_response)}")
         logger.info(f"Quiz Response Preview: {llm_response[:200]}...")
 
