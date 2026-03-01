@@ -98,7 +98,7 @@ async def catch_all(full_path: str):
 if __name__ == "__main__":
     import uvicorn
     host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", 8000))
+    port = int(os.getenv("PORT", 8001))
     
     # Check if frontend is available
     index_path = index_html_path
