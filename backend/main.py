@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from contextlib import asynccontextmanager
 from app.routers import course
+from app.db.database import init_db
 import logging
 from pathlib import Path
 import time
@@ -15,36 +17,22 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create necessary directories in the backend folder
-TEMP_DIR = Path(__file__).parent / "temp"
-try:
-    # Create temp directory
-    TEMP_DIR.mkdir(exist_ok=True)
-    logger.info(f"Created temp directory at: {TEMP_DIR}")
-    
-    # Create subdirectories
-    for subdir in ["chunks", "quizzes"]:
-        subdir_path = TEMP_DIR / subdir
-        subdir_path.mkdir(exist_ok=True)
-        logger.info(f"Created {subdir} directory at: {subdir_path}")
-        
-except Exception as e:
-    logger.error(f"Error creating directories: {e}")
-    # Fallback: try to create in current working directory
-    TEMP_DIR = Path.cwd() / "temp"
-    TEMP_DIR.mkdir(exist_ok=True)
-    for subdir in ["chunks", "quizzes"]:
-        (TEMP_DIR / subdir).mkdir(exist_ok=True)
-    logger.info(f"Created fallback temp directory at: {TEMP_DIR}")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup: create DB tables. Shutdown: nothing to do."""
+    logger.info("Initialising database…")
+    await init_db()
+    logger.info("Database ready.")
+    yield
 
-app = FastAPI(title="Course Generator API", version="1.0.0")
+app = FastAPI(title="Course Generator API", version="1.0.0", lifespan=lifespan)
 
 # Configure CORS from environment
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
-if allowed_origins_env.strip() == "*":
-    allowed_origins = ["*"]
-else:
-    allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+allowed_origins = (
+    ["*"] if allowed_origins_env.strip() == "*"
+    else [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -85,7 +73,7 @@ async def health_check():
 async def catch_all(full_path: str):
     """Handle client-side routing for the SPA"""
     # Skip API routes
-    if full_path.startswith("api/") or full_path.startswith("health"):
+    if full_path.startswith("api/") or full_path == "health":
         raise HTTPException(status_code=404, detail="Not found")
     
     # Serve index.html for all other routes (SPA routing)
@@ -99,15 +87,4 @@ if __name__ == "__main__":
     import uvicorn
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", 8001))
-    
-    # Check if frontend is available
-    index_path = index_html_path
-    if index_path.exists():
-        logger.info(f"🎉 Frontend found! Open http://{host}:{port} in your browser")
-        logger.info(f"📁 Frontend file: {index_path}")
-    else:
-        logger.warning(f"⚠️  Frontend not found at: {index_path}")
-        logger.info(f"🔧 API only mode. Frontend endpoints will return JSON responses")
-    
-    logger.info(f"🚀 Starting SkillVId server on http://{host}:{port}")
-    uvicorn.run(app, host=host, port=port)
+    uvicorn.run("main:app", host=host, port=port, reload=True)
