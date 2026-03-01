@@ -162,46 +162,54 @@ async def get_transcript_from_library(video_id: str) -> Dict[str, Any]:
     try:
         # Import here to avoid issues if library is not installed
         from youtube_transcript_api import YouTubeTranscriptApi
-        
-        # Try the standard method first
-        try:
-            transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
-        except Exception as e:
-            logger.warning(f"Standard method failed: {e}")
-            # Try with language specification
-            try:
-                transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-            except Exception as e2:
-                logger.warning(f"Language-specific method failed: {e2}")
-                # Try list transcripts method
-                try:
-                    transcripts = YouTubeTranscriptApi.list_transcripts(video_id)
-                    transcript = transcripts.find_transcript(['en'])
-                    transcript_list = transcript.fetch()
-                except Exception as e3:
-                    logger.error(f"All fallback methods failed: {e3}")
-                    raise ValueError(f"Could not fetch transcript using any method: {e3}")
-    
-    except ImportError:
-        logger.error("youtube-transcript-api library not installed")
+
+    except ImportError as e:
+        logger.error(f"youtube-transcript-api library not installed: {e}")
         raise ValueError("Fallback transcript library not available. Please install youtube-transcript-api or configure TRANSCRIPT_API_KEY")
-    except Exception as e:
-        logger.error(f"Unexpected error in fallback method: {e}")
-        raise ValueError(f"Could not fetch transcript for video {video_id}: {e}")
+
+    transcript_list = None
+    last_error = None
+
+    # Create API instance
+    api = YouTubeTranscriptApi()
+
+    # Try different methods to fetch transcript
+    methods_to_try = [
+        ("Standard fetch", lambda: api.fetch(video_id)),
+        ("English only", lambda: api.fetch(video_id, languages=['en'])),
+        ("English/Hindi", lambda: api.fetch(video_id, languages=['en', 'hi'])),
+        ("Auto-generated", lambda: api.fetch(video_id, languages=['en'], preserve_formatting=True)),
+    ]
+
+    for method_name, method_func in methods_to_try:
+        try:
+            logger.info(f"Trying method: {method_name}")
+            transcript_list = method_func()
+            logger.info(f"✅ Success with method: {method_name}")
+            break
+        except Exception as e:
+            last_error = e
+            logger.warning(f"Method '{method_name}' error: {type(e).__name__}: {e}")
+            continue
+
+    if not transcript_list:
+        error_msg = f"Could not fetch transcript using any method. Last error: {last_error}"
+        logger.error(error_msg)
+        raise ValueError(error_msg)
 
     # Format the transcript with timestamps
     transcript_data = {
         "video_id": video_id,
         "youtube_url": f"https://www.youtube.com/watch?v={video_id}",
-        "text": " ".join([item["text"] for item in transcript_list]),
+        "text": " ".join([item.text for item in transcript_list]),
         "segments": []
     }
 
     for segment in transcript_list:
         transcript_data["segments"].append({
-            "start": segment["start"],
-            "end": segment["start"] + segment["duration"],
-            "text": segment["text"]
+            "start": segment.start,
+            "end": segment.start + segment.duration,
+            "text": segment.text
         })
 
     logger.info(f"Successfully fetched transcript via library: {len(transcript_data['segments'])} segments")
