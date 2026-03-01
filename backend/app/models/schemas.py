@@ -1,5 +1,6 @@
-from pydantic import BaseModel, HttpUrl, field_validator
+from pydantic import BaseModel, HttpUrl, field_validator, EmailStr
 from typing import List, Literal, Optional, Dict, Any
+from datetime import datetime
 import re
 
 class ChunkRequest(BaseModel):
@@ -43,6 +44,7 @@ class ProcessingStatus(BaseModel):
     task_id: Optional[str] = None
     video_url: Optional[str] = None
     video_id: Optional[str] = None
+    course_id: Optional[int] = None
 
 class ChunkData(BaseModel):
     title: str
@@ -50,3 +52,70 @@ class ChunkData(BaseModel):
     start_time: float
     end_time: float
     transcript: str
+
+
+# ──────────────────────────────────────────────
+# Auth schemas
+# ──────────────────────────────────────────────
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserOut(BaseModel):
+    id: int
+    email: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+
+# ──────────────────────────────────────────────
+# UserCourse / progress schemas
+# ──────────────────────────────────────────────
+
+class SaveCourseRequest(BaseModel):
+    course_id: int
+
+
+class ProgressUpdate(BaseModel):
+    chunks_completed: Optional[List[int]] = None
+    quizzes_completed: Optional[List[int]] = None
+
+
+class CourseOut(BaseModel):
+    id: int
+    title: Optional[str]
+    video_id: str
+    difficulty_level: str
+    status: str
+
+    model_config = {"from_attributes": True}
+
+
+class UserCourseOut(BaseModel):
+    id: int
+    course_id: int
+    saved_at: datetime
+    chunks_completed: List[int]
+    quizzes_completed: List[int]
+    total_chunks: int
+    course: CourseOut
+
+    model_config = {"from_attributes": True}
+

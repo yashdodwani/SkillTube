@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Course, Chunk, Quiz, Question
+from app.db.models import Course, Chunk, Quiz, Question, User, UserCourse
 
 
 # ──────────────────────────────────────────────
@@ -117,4 +117,82 @@ async def create_quiz_with_questions(
         db.add(question)
 
     return quiz
+
+
+# ──────────────────────────────────────────────
+# User
+# ──────────────────────────────────────────────
+
+async def create_user(db: AsyncSession, *, email: str, hashed_password: str) -> User:
+    user = User(email=email, hashed_password=hashed_password)
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
+async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
+    result = await db.execute(select(User).where(User.email == email))
+    return result.scalar_one_or_none()
+
+
+async def get_user_by_id(db: AsyncSession, user_id: int) -> Optional[User]:
+    result = await db.execute(select(User).where(User.id == user_id))
+    return result.scalar_one_or_none()
+
+
+# ──────────────────────────────────────────────
+# UserCourse (saved courses + progress)
+# ──────────────────────────────────────────────
+
+async def get_user_courses(db: AsyncSession, user_id: int) -> List[UserCourse]:
+    result = await db.execute(
+        select(UserCourse)
+        .where(UserCourse.user_id == user_id)
+        .options(
+            selectinload(UserCourse.course).selectinload(Course.chunks)
+        )
+        .order_by(UserCourse.saved_at.desc())
+    )
+    return list(result.scalars().all())
+
+
+async def get_user_course(db: AsyncSession, user_id: int, course_id: int) -> Optional[UserCourse]:
+    result = await db.execute(
+        select(UserCourse)
+        .where(UserCourse.user_id == user_id, UserCourse.course_id == course_id)
+        .options(selectinload(UserCourse.course).selectinload(Course.chunks))
+    )
+    return result.scalar_one_or_none()
+
+
+async def save_user_course(db: AsyncSession, *, user_id: int, course_id: int) -> UserCourse:
+    existing = await get_user_course(db, user_id=user_id, course_id=course_id)
+    if existing:
+        return existing
+    uc = UserCourse(user_id=user_id, course_id=course_id, chunks_completed=[], quizzes_completed=[])
+    db.add(uc)
+    await db.commit()
+    await db.refresh(uc)
+    return uc
+
+
+async def update_course_progress(
+    db: AsyncSession,
+    *,
+    user_id: int,
+    course_id: int,
+    chunks_completed: Optional[List[int]] = None,
+    quizzes_completed: Optional[List[int]] = None,
+) -> Optional[UserCourse]:
+    uc = await get_user_course(db, user_id=user_id, course_id=course_id)
+    if not uc:
+        return None
+    if chunks_completed is not None:
+        uc.chunks_completed = chunks_completed
+    if quizzes_completed is not None:
+        uc.quizzes_completed = quizzes_completed
+    await db.commit()
+    await db.refresh(uc)
+    return uc
 

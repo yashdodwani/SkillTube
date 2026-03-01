@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 from sqlalchemy import (
     Integer, String, Float, Text, DateTime,
-    ForeignKey, JSON,
+    ForeignKey, JSON, UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
@@ -71,4 +71,33 @@ class Question(Base):
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
 
     quiz: Mapped["Quiz"] = relationship("Quiz", back_populates="questions")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String(256), unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(256), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+    saved_courses: Mapped[List["UserCourse"]] = relationship(
+        "UserCourse", back_populates="user", cascade="all, delete-orphan"
+    )
+
+
+class UserCourse(Base):
+    __tablename__ = "user_courses"
+    __table_args__ = (UniqueConstraint("user_id", "course_id", name="uq_user_course"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    course_id: Mapped[int] = mapped_column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
+    saved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    chunks_completed: Mapped[list] = mapped_column(JSON, nullable=False, default=list)   # list of chunk IDs
+    quizzes_completed: Mapped[list] = mapped_column(JSON, nullable=False, default=list)  # list of chunk IDs
+
+    user: Mapped["User"] = relationship("User", back_populates="saved_courses")
+    course: Mapped["Course"] = relationship("Course")
+
 

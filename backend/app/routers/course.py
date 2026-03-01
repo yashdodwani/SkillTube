@@ -121,6 +121,7 @@ async def _process_complete_course(task_id: str, request: ChunkRequest) -> None:
         task_status[task_id].result = all_results
         task_status[task_id].video_url = youtube_url
         task_status[task_id].video_id = video_id
+        task_status[task_id].course_id = course.id
 
         logger.info(f"[{task_id}] Course saved to DB (video_id={video_id})")
 
