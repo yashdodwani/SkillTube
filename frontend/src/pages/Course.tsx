@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, CheckCircle, Clock, BookOpen, Brain, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Play, CheckCircle, Clock, Brain, RefreshCw } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import Progress from '../components/ui/Progress';
 import { courseAPI } from '../services/api';
-import { ProcessingStatus, CourseData, QuizQuestion } from '../types/api';
+import { ProcessingStatus, CourseData } from '../types/api';
 import { useToast } from '../components/ui/Toaster';
-import { formatTime, getYouTubeEmbedUrl, extractVideoId } from '../utils/youtube';
+import { formatTime, extractVideoId } from '../utils/youtube';
 
 export default function Course() {
   const { taskId } = useParams<{ taskId: string }>();
@@ -23,6 +23,95 @@ export default function Course() {
   const [completedChunks, setCompletedChunks] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [videoId, setVideoId] = useState<string>('');
+  const [videoEnded, setVideoEnded] = useState(false);
+
+  const playerRef = useRef<any>(null);
+  const playerContainerRef = useRef<HTMLDivElement>(null);
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Enforce section time boundaries using YouTube IFrame API
+  const startPolling = useCallback((player: any, endTime: number) => {
+    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    setVideoEnded(false);
+    pollIntervalRef.current = setInterval(() => {
+      try {
+        const currentTime = player.getCurrentTime();
+        if (currentTime >= endTime) {
+          player.pauseVideo();
+          player.seekTo(endTime, true);
+          player.pauseVideo();
+          setVideoEnded(true);
+          clearInterval(pollIntervalRef.current!);
+        }
+      } catch (_) {}
+    }, 500);
+  }, []);
+
+  // Load or reinitialise the YouTube player whenever the chunk/videoId changes
+  useEffect(() => {
+    const chunk = courseData[currentChunkIndex];
+    if (!videoId || !chunk) return;
+
+    const startTime = Math.floor(chunk.chunk.start_time);
+    const endTime = Math.floor(chunk.chunk.end_time);
+    const containerId = 'yt-player-container';
+
+    const initPlayer = () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+
+      // Destroy existing player if any
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch (_) {}
+        playerRef.current = null;
+      }
+
+      // Ensure the div exists
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      playerRef.current = new (window as any).YT.Player(containerId, {
+        videoId,
+        playerVars: {
+          start: startTime,
+          end: endTime,
+          autoplay: 0,
+          rel: 0,
+          modestbranding: 1,
+        },
+        events: {
+          onReady: (e: any) => {
+            e.target.seekTo(startTime, true);
+            e.target.pauseVideo();
+          },
+          onStateChange: (e: any) => {
+            const YT = (window as any).YT.PlayerState;
+            if (e.data === YT.PLAYING) {
+              startPolling(e.target, endTime);
+            } else if (e.data === YT.PAUSED || e.data === YT.ENDED) {
+              if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+            }
+          },
+        },
+      });
+    };
+
+    if ((window as any).YT && (window as any).YT.Player) {
+      initPlayer();
+    } else {
+      // Inject the IFrame API script once
+      if (!document.getElementById('yt-iframe-api')) {
+        const tag = document.createElement('script');
+        tag.id = 'yt-iframe-api';
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+      }
+      (window as any).onYouTubeIframeAPIReady = initPlayer;
+    }
+
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
+  }, [videoId, currentChunkIndex, courseData, startPolling]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load completed chunks from localStorage
   useEffect(() => {
@@ -152,6 +241,7 @@ export default function Course() {
       setCurrentChunkIndex(prev => prev + 1);
       setCurrentQuestionIndex(0);
       setShowResults(false);
+      setVideoEnded(false);
     } else {
       addToast({
         type: 'success',
@@ -232,19 +322,22 @@ export default function Course() {
         {/* Video Player */}
         <div className="lg:col-span-2">
           <Card padding={false}>
-            <div className="aspect-video">
+            <div className="aspect-video relative">
               {videoId ? (
-                <iframe
-                  key={`video-${currentChunkIndex}`}
-                  src={getYouTubeEmbedUrl(
-                    videoId,
-                    currentChunk?.chunk.start_time,
-                    currentChunk?.chunk.end_time
+                <>
+                  <div
+                    ref={playerContainerRef}
+                    id="yt-player-container"
+                    className="w-full h-full rounded-t-xl"
+                  />
+                  {videoEnded && (
+                    <div className="absolute inset-0 bg-black/70 rounded-t-xl flex flex-col items-center justify-center text-white">
+                      <CheckCircle className="h-12 w-12 text-green-400 mb-3" />
+                      <p className="text-lg font-semibold">Section video complete!</p>
+                      <p className="text-sm text-gray-300 mt-1">Scroll down to take the quiz.</p>
+                    </div>
                   )}
-                  className="w-full h-full rounded-t-xl"
-                  allowFullScreen
-                  title="Course Video"
-                />
+                </>
               ) : (
                 <div className="w-full h-full bg-gray-100 rounded-t-xl flex items-center justify-center">
                   <Play className="h-16 w-16 text-gray-400" />
@@ -309,6 +402,7 @@ export default function Course() {
                         setCurrentChunkIndex(index);
                         setCurrentQuestionIndex(0);
                         setShowResults(false);
+                        setVideoEnded(false);
                       }
                     }}
                     disabled={index > 0 && !completedChunks.has(index - 1) && !completedChunks.has(index)}
