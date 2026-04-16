@@ -1,0 +1,2447 @@
+{
+  "video_id": "qQ8vS2btsxI",
+  "youtube_url": "https://www.youtube.com/watch?v=qQ8vS2btsxI",
+  "text": "the topic is Robin hobb algorithm it's a pattern matching algorithm or string matching algorithm the problem is if a text is given and a pattern is given then we have to find out whether this pattern is present in this string or not or text or not there are various algorithms for string matching or pattern matching this is one of the pattern matching algorithm let us see how it works first I will discuss the basic idea of robin cop algorithm and what is the worst case of rabbinic algorithm then how to improve the worst case and finally finally we will see the actual algorithm let us start see this is a text given and this is the pattern we have to find out so you can see that a a B is here existing here inside the text and how do you check we know the basic algorithm in which we will start comparing the alphabets here we don't want to compare each and every alphabet so if you take a pattern there are three alphabets so instead of checking each and every alphabet can't we make it as a single value how we can make it as a single value so we can convert this into some numeric value let us see how it is possible see if the letter is if I take ABC alphabets then for the alphabets there are ASCII codes like small a lowercase a is 97 so we can use that number okay we will use that number but if I use that number and explain you that the numbers will be bigger so to take small numbers just to understand algorithm instead of 97 I'll give my own course a let it be 1 and B as two and C as 3 D s 4 and so on so I have given course for all the alphabets from A to G 10 alphabets I have taken if you want you can take ASCII codes also but this will be simple for discussing the topic now here is a pattern now using those codes we will try to find out a single value for this pattern so I will use those values this is 1 and is also one and this is true I will add these values this is for even if you want you can multiply also that is your wish I have added these values so now whatever the value I got this I will call it as hash code and the procedure of getting that value that is the function we will call it as hash function of this pattern P let us say P is a pattern so we call this as a hash function we are using hash function and finding value of a hash function now this hash function we use it for finding this pattern inside the C text how to do that C as the size of this one is a 3 so let us say m is size is 3 and the size of this one is n and this is 6 now how to check this so I will take 3 letters that is depending on the size of this pattern 3 letters and what are the two roots 1 plus 1 plus 1 and this is 3 but see this is hash function value is 4 and there it is 3 it means they are not matching I don't have to check the characters just I have used a function function means it will take constant time so using constant time I found out the value and it is 3 and this is 4 they are not matching so this pattern is not there then slide to the next set of 3 alphabets so I will remove this and I will extend this 1 plus this is also 1 so this is 3 now again this is not matching so take out this slide next now this is again 3 & 3 is not matching with this one means these three letters are not forming this pattern no slight next see this sliding is called as a holding hash function from the present value I am getting the next value so that is called as a rolling hash function we will see it further and include this one so the code for this what is a 2 so this is 4 they are matching once you get a match confirm really this pattern is there or not so now check the alphabets these are a a and these are also a these are B yes they are same so pattern is found from index 4 to index 6 in the main string that is text so this is the basic idea of rabbin cap algorithm I will take one more example and show you quickly I have taken one more example let us quickly look at this example here we will understand what does it mean by a rolling hash function let us see this vertex given here and this is a pattern first find out the hash value for this one so the codes are B is 2 B is 2 and C is 3 so it's 3 plus 3 and E is 5 5 this is 10 C remember I am showing you just the basic idea I'm not showing you the actual algorithm remember this one now we have to find out whether this is present here or not so just take first 3 alpha because this size is a 3 so first three alphabets this is 1 plus 2 Plus 3 this is 6 and this is not matching with this one then just slide it and get the code hash code for next 3 letters so for that from 6 this is 6 right so from 6 subtract this 1 1 so we get 5 so subtract this and plus what is the code for this for add 4 so this is 9 so in this way the letter that we are skipping we can subtract its code and the letter that you are adding we can add this code so in this way we can get the hash function or hash code for the next set of characters easily in constant time now for so total is how much this is 9 and 9 is not matching with this one so okay take out this alphabet and take this alphabet so this is 1 now how much this is 8 it is not matching with this one so this is not a pattern then take out this and add two now this is seven and seven is not matching with the ten so take out the CD and include C so the code for C is three this is again six six is not matching with ten so subtract one from this and and this is five so this is 10 and 10 is matching with this so it means there is a pattern there is a possibility of pattern so verify it BB they are matching CC they are matching and EE they are matching so yes there is a pattern available in a string so this is a basic idea I have given you now I will show you the drawback of this method and then afterwards I will show you actual alcott see in the previous two examples we are going through the main string only once and at only one time we have checked for the pattern so we have gone through entire string only one scan through the whole string and we have checked for the pattern only once so the time we say it was and minus M plus 1 this is the average time of robin cop algorithm now let us see the worst case for this one so I have a taken an example here and let us look at worst case I have taken a string of size length is lemon and the pattern of length is 3 now let us find out the hash code for this one by same method just take the ports 4 plus B is a 2 plus a is 1 from there I am writing so this is 7 so the hash code simple thing I have taken that is 7 now let us understand the drawback first you ate three litters from here C is 3 and C is a 3 plus E is 1 this is 7 7 7 matching compare the alphabets D no this is not same and this is not same so means though we got a match in hash code values but the string is not matching okay go to the next take next 3 so this is 3 plus a is 1 then this is 3 again seven there is a match so it means this pattern would be there here possibility of pattern there so compare this C and D no they are not matching so no it's not a pattern then take next three is one C is 3 and C is 3 again 7 again it is matching but this is not a pattern after comparison we'll know that it's not a pattern see we have got three matching so far right 3 matchings but those are not patterns so in this way we are comparing this pattern every time in our example jovi are checking only one alphabet but in some cases will be checking most of the alphabets and it is not matching at the end so let us continue see here I will take this is 3 and this is 1 plus 1 this is 5 and this is 7 they are not matching okay next this is 5 they are matching again and compare this series to this this is 7 7 this is 7 but check whether the pattern is there no pattern is not there so we are getting every time hash code that is matching with the hash code of this one this is the drawback so if you take such a simple hash function then there is a possibility of collision with the other patter other sub strings which are having the same code though they are not the patterns so the drawback here is that there are many hash codes that are matching but those are not the patterns so actually these are called as spurious hits so these are called as spurious hits means the matching is there with the code but those are not pattern so these are waste hits this is the drawback and in such a situation the maximum time taken by this algorithm may be MN theta of M and this could be the maximum time but we expect the algorithm to take n minus M plus 1 time this will happen if there are no spurious hits so how to avoid spurious so this is because of the hash function we selected us a very simple hash function because of which this hits are happening to avoid this spurious hits we have to take a strong hash function so what is the idea of hash function given by a robin cop so now this we will be completing the algorithm now so I will show you the actual hash function that is give a suggestion by a rabid cop now throw an example only the same example I will show you see here the colds are this is code for and this is coded to and this is one so let it let us take it like this full into ten square plus 2 into 10 power 1 plus this is 1 into 10 power 0 Y power 2 power 1 power 0 because there are 3 letters only in the pattern so start from 0 1 2 so if there are 5 letters in the pattern then 0 1 2 3 4 so highest power we can get 4 so if there are n letters in the pattern then each letter of a pattern P 1 into 10 to the power of M minus 1 plus P 2 into 10 to the power of M minus 2 plus P 3 into 10 to the power of M minus 3 it goes on so that same thing we have done three so first one is 3 minus 1 then 3 minus 2 then 3 minus 3 that is 0 this is how we will multiply these codes with this powers then what is this 10 this is the base value how many LS orbits I am using 10 alphabets I am using so I have taken that as a base value you can use any value you like this is just the idea given merab in cup hash function means if you know about hashing you can define your own function depending on the patterns or the text that you are using but for the alphabets like for a string they have suggested this method so if I consider all the alphabets then for 26 alphabets I should take it as 26 power to 26 power 126 power 0 if I say lowercase uppercase all special characters everything then total ASCII codes are 127 so this should be 127 power to 127 power 1 and 0 so to make our example simple I have taken only 10 alphabets that's the reason I am writing 10 here now let us find out its value this is 400 plus 20 plus 1 this is 421 so the hash code for this one is 421 now using this code we'll try to find out a match see just now for the same example this was a drawback I we found out that is the worst case we found out because of the hash function now I modified the hash function that is I have taken the one suggested by ravine car and there is one more thing that I have to include it at the end I will show you now let us find out how much this is this is 3 into 10 to the power of 2 Plus this is also 3 into 10 to the power of 1 plus this is 1 into 10 to the power of 0 so this will be 300 plus 30 plus 1 so 331 this is 331 is it a match no it is not matching the code that we got is 421 I'll write it down here right it's not matching see this is not a spurious hit because we have changed the hash function so now it is not matching now I have told you about the rolling hash function C so many powers and everything we are taking I have to calculate the next one so what to do so from 331 C I will just remove this now I have to find out the hash code for next 3 alphabets ds3 these three means what this should be 3 into 10 square it should be then this should be 1 into 10 not power 0 power 1 so it means I should multiply these 2 into so what I can do is I will take this as it is I'll take this as it is and multiply it button outside then I have to remove this one and also I should include C so overall how to do this let me show you how to do this this entire thing was 3 into 10 square plus 3 into 10 or 1 plus 1 into 10 squared so this actually is 331 so from this subtract this 3 into 10 square so 3 into 10 square is subtracted so this term will be gone if I subtract it this will be gone so this portion will be remaining so this entire thing multiplied by 10 so these numbers will be raised by 10 right so this becomes 10 square and this becomes 10 power 1 now I have to include this C also so plus C code is what 3 into 10 power 0 so how we do this see actually this is 331 so what we do is from 331 we subtract this first term and multiply the result by 10 and get the next term added so you can just observe this carefully how this is happening so this is the result as it is this should be subtracted ok subtracted then these two should be multiplied by 10 so the result is multiplied by 10 and this term should be added C should be added so C term is on it so I'll directly do that right now I am having the hash code for these 3 alphabets that is 331 now I have to get this for these three elements so subtract this 1 minus 3 into 10 squared so this is how much 331 minus 300 so this is 31 then to that 31 this portion I got that is 31 that 31 I should multiply it by 10 so this 31 multiplied by 10 so I get 310 so this is gone now for this C I should add 3 into 10 to the power of 0 it went just three so then this + 3 so this is 3 1 3 this is the method of getting the hash code for the next set of characters using rolling hash function so once you got one function then from there only subtract multiply and then add you get the hash code for next set of characters so this is 3 13 is it matching with 4 2 1 no this is not a match so there is no spurious there is no spurious hit let me continue for some more time so that if I calculate more you can get the idea this is a 313 I have to subtract this 1 I have to remove this so subtract this 3 into 10 squared so that will be 300 is subtracted okay this is gone then these two terms I should multiply by 10 so result is how much 13 13 should be multiplied by 10 so I get the result for this 10 square and system for 1 now I should include this one more alphabet so its value I should add so this is 3 so 3 into 10 to the power of 0 so in this I should add 3 plus 3 so how much this is how much this is this is 130 plus 3 it is 133 now this is not matching with for 8 or for 21 so this is the hash code for these 3 alphabets I'll contain the hash code for these 3 alphabet is 1 3 3 not have to remove this one so this first term should be subtracted so this is 1 into 10 square so this is 100 hundred is subtracted so this is 33 so I got this remaining part right the meaning part no I should raise it to square and raise it to 10 power 1 so multiplied by 10 so we get 330 now I should include one more alphabet that is a so this is plus 1 into 10 to the power of 0 so that is 1 only so this is 331 is it matching no this is not matching now let us calculate for next 3 so for that I should remove this first alphabet so 3 into 10 square 300 I should subtract from here so from 331 I should subtract 300 so this is subtracted so I get 31 now 31 should be multiplied by 10 so this becomes square and this becomes 1 I should include one more alphabet so this is 1 into 10 to the power of 0 so this is 1 so this becomes how much 3 10 plus 1 so this is 3 11 this is not matching so in this way you can continue at one point d/b/a for these three we get the same on so that is 4 21 and that time when there is a match then compare confirm that is the same thing or not that's it this is the method so you may have to observe this little carefully so that you should be able to do these calculations by yourself so I have given it a basic idea then I have shown it a drawback the reason of drawback of was bad function so I have introduced a better function that is actually given Moorabbin cough so this function is a rolling hash function as well as they have given this that base powers we should take so this is called as Robin fingerprint function so now there are no spurious hits so the time taken by this algorithm as theta of and minus n plus 1 in average case but still though you have defined such a hash function still there may be a possibility that there is a spurious hit so there's still the worst case time of this algorithm is MN though by using this hash function we are reducing the chances of worst case nothing else now one last thing that I have to tell about this one see when we are taking the powers of this vemma gating we may be getting a very large value now if you are getting a very large value and when you have written a program for this one then it depends on the size of the data type like if you take integer 4 bytes it may be exceeding the capacity of 4 bytes so if it is exceeding the number will overflow if you want to avoid overflow then you can mod these large values you can perform mod upon these large values so this entire function we can perform mod but what value we should perform it depends what is the maximum size of your data type if it is a 32-bit the data type then you can mod it by 2 power 31 like if it is 32-bit then one bit is sign but 31 we take so I am taking it as 31 if you say no it is only positive then you take 32 it depends on the language you are selecting it depends on the data type you are selecting so for getting the result of this hash function if you believe that that may be exceeding the capacity of the variable that's data type then you can mod it with that one so that you may show that you get the values in between those two only so in the ruling function also you can use mod so that you get the values within that range only but once you apply mod then there is a chance of spurious hits again then again the algorithm may be going towards worst case time of MN so it depends on you how you want to use it see if you know about hashing if you know about hashing you can define any hash function if you have the study on the data that you are using in hash function or hash table so here also if you have the study about the characters that you are using in the strings then you can define your home hash function also so the basic idea of reven carapace what use a hash code to avoid checking the pattern in the string if the code is matching then check it that is the basic idea that's all about I have been",
+  "segments": [
+    {
+      "start": 0.06,
+      "end": 7.0489999999999995,
+      "text": "the topic is Robin hobb algorithm it's a"
+    },
+    {
+      "start": 4.77,
+      "end": 10.5,
+      "text": "pattern matching algorithm or string"
+    },
+    {
+      "start": 7.049,
+      "end": 13.620000000000001,
+      "text": "matching algorithm the problem is if a"
+    },
+    {
+      "start": 10.5,
+      "end": 15.839,
+      "text": "text is given and a pattern is given"
+    },
+    {
+      "start": 13.62,
+      "end": 19.47,
+      "text": "then we have to find out whether this"
+    },
+    {
+      "start": 15.839,
+      "end": 22.08,
+      "text": "pattern is present in this string or not"
+    },
+    {
+      "start": 19.47,
+      "end": 23.759999999999998,
+      "text": "or text or not there are various"
+    },
+    {
+      "start": 22.08,
+      "end": 26.698999999999998,
+      "text": "algorithms for string matching or"
+    },
+    {
+      "start": 23.76,
+      "end": 28.769000000000002,
+      "text": "pattern matching this is one of the"
+    },
+    {
+      "start": 26.699,
+      "end": 31.23,
+      "text": "pattern matching algorithm let us see"
+    },
+    {
+      "start": 28.769,
+      "end": 33.42,
+      "text": "how it works first I will discuss the"
+    },
+    {
+      "start": 31.23,
+      "end": 35.46,
+      "text": "basic idea of robin cop algorithm and"
+    },
+    {
+      "start": 33.42,
+      "end": 38.010000000000005,
+      "text": "what is the worst case of"
+    },
+    {
+      "start": 35.46,
+      "end": 40.17,
+      "text": "rabbinic algorithm then how to improve"
+    },
+    {
+      "start": 38.01,
+      "end": 42.718999999999994,
+      "text": "the worst case and finally finally we"
+    },
+    {
+      "start": 40.17,
+      "end": 45.899,
+      "text": "will see the actual algorithm let us"
+    },
+    {
+      "start": 42.719,
+      "end": 47.579,
+      "text": "start see this is a text given and this"
+    },
+    {
+      "start": 45.899,
+      "end": 50.43,
+      "text": "is the pattern we have to find out so"
+    },
+    {
+      "start": 47.579,
+      "end": 52.8,
+      "text": "you can see that a a B is here existing"
+    },
+    {
+      "start": 50.43,
+      "end": 55.379,
+      "text": "here inside the text and how do you"
+    },
+    {
+      "start": 52.8,
+      "end": 56.76,
+      "text": "check we know the basic algorithm in"
+    },
+    {
+      "start": 55.379,
+      "end": 59.129,
+      "text": "which we will start comparing the"
+    },
+    {
+      "start": 56.76,
+      "end": 61.68,
+      "text": "alphabets here we don't want to compare"
+    },
+    {
+      "start": 59.129,
+      "end": 63.989,
+      "text": "each and every alphabet so if you take a"
+    },
+    {
+      "start": 61.68,
+      "end": 65.43,
+      "text": "pattern there are three alphabets so"
+    },
+    {
+      "start": 63.989,
+      "end": 66.0,
+      "text": "instead of checking each and every"
+    },
+    {
+      "start": 65.43,
+      "end": 69.45,
+      "text": "alphabet"
+    },
+    {
+      "start": 66.0,
+      "end": 72.03,
+      "text": "can't we make it as a single value how"
+    },
+    {
+      "start": 69.45,
+      "end": 74.13,
+      "text": "we can make it as a single value so we"
+    },
+    {
+      "start": 72.03,
+      "end": 77.34,
+      "text": "can convert this into some numeric value"
+    },
+    {
+      "start": 74.13,
+      "end": 81.619,
+      "text": "let us see how it is possible see if the"
+    },
+    {
+      "start": 77.34,
+      "end": 83.52000000000001,
+      "text": "letter is if I take ABC alphabets then"
+    },
+    {
+      "start": 81.619,
+      "end": 86.28,
+      "text": "for the alphabets"
+    },
+    {
+      "start": 83.52,
+      "end": 89.67,
+      "text": "there are ASCII codes like small a"
+    },
+    {
+      "start": 86.28,
+      "end": 92.909,
+      "text": "lowercase a is 97 so we can use that"
+    },
+    {
+      "start": 89.67,
+      "end": 95.4,
+      "text": "number okay we will use that number but"
+    },
+    {
+      "start": 92.909,
+      "end": 98.34,
+      "text": "if I use that number and explain you"
+    },
+    {
+      "start": 95.4,
+      "end": 100.47,
+      "text": "that the numbers will be bigger so to"
+    },
+    {
+      "start": 98.34,
+      "end": 103.56,
+      "text": "take small numbers just to understand"
+    },
+    {
+      "start": 100.47,
+      "end": 107.46,
+      "text": "algorithm instead of 97 I'll give my own"
+    },
+    {
+      "start": 103.56,
+      "end": 111.509,
+      "text": "course a let it be 1 and B as two and C"
+    },
+    {
+      "start": 107.46,
+      "end": 114.6,
+      "text": "as 3 D s 4 and so on so I have given"
+    },
+    {
+      "start": 111.509,
+      "end": 117.57,
+      "text": "course for all the alphabets from A to G"
+    },
+    {
+      "start": 114.6,
+      "end": 119.219,
+      "text": "10 alphabets I have taken if you want"
+    },
+    {
+      "start": 117.57,
+      "end": 121.25,
+      "text": "you can take ASCII codes also but this"
+    },
+    {
+      "start": 119.219,
+      "end": 124.40899999999999,
+      "text": "will be simple for discussing the topic"
+    },
+    {
+      "start": 121.25,
+      "end": 126.81,
+      "text": "now here is a pattern now using those"
+    },
+    {
+      "start": 124.409,
+      "end": 129.45000000000002,
+      "text": "codes we will try to find out a single"
+    },
+    {
+      "start": 126.81,
+      "end": 131.17000000000002,
+      "text": "value for this pattern so I will use"
+    },
+    {
+      "start": 129.45,
+      "end": 134.58999999999997,
+      "text": "those values this is 1"
+    },
+    {
+      "start": 131.17,
+      "end": 138.849,
+      "text": "and is also one and this is true I will"
+    },
+    {
+      "start": 134.59,
+      "end": 140.41,
+      "text": "add these values this is for even if you"
+    },
+    {
+      "start": 138.849,
+      "end": 143.10999999999999,
+      "text": "want you can multiply also that is your"
+    },
+    {
+      "start": 140.41,
+      "end": 145.03,
+      "text": "wish I have added these values so now"
+    },
+    {
+      "start": 143.11,
+      "end": 150.16000000000003,
+      "text": "whatever the value I got this I will"
+    },
+    {
+      "start": 145.03,
+      "end": 152.02,
+      "text": "call it as hash code and the procedure"
+    },
+    {
+      "start": 150.16,
+      "end": 154.63,
+      "text": "of getting that value that is the"
+    },
+    {
+      "start": 152.02,
+      "end": 157.81,
+      "text": "function we will call it as hash"
+    },
+    {
+      "start": 154.63,
+      "end": 161.85999999999999,
+      "text": "function of this pattern P let us say P"
+    },
+    {
+      "start": 157.81,
+      "end": 164.29,
+      "text": "is a pattern so we call this as a hash"
+    },
+    {
+      "start": 161.86,
+      "end": 168.37,
+      "text": "function we are using hash function and"
+    },
+    {
+      "start": 164.29,
+      "end": 171.069,
+      "text": "finding value of a hash function now"
+    },
+    {
+      "start": 168.37,
+      "end": 175.18,
+      "text": "this hash function we use it for finding"
+    },
+    {
+      "start": 171.069,
+      "end": 179.709,
+      "text": "this pattern inside the C text how to do"
+    },
+    {
+      "start": 175.18,
+      "end": 183.37,
+      "text": "that C as the size of this one is a 3 so"
+    },
+    {
+      "start": 179.709,
+      "end": 189.04,
+      "text": "let us say m is size is 3 and the size"
+    },
+    {
+      "start": 183.37,
+      "end": 191.799,
+      "text": "of this one is n and this is 6 now how"
+    },
+    {
+      "start": 189.04,
+      "end": 194.019,
+      "text": "to check this so I will take 3 letters"
+    },
+    {
+      "start": 191.799,
+      "end": 197.14000000000001,
+      "text": "that is depending on the size of this"
+    },
+    {
+      "start": 194.019,
+      "end": 202.299,
+      "text": "pattern 3 letters and what are the two"
+    },
+    {
+      "start": 197.14,
+      "end": 205.89999999999998,
+      "text": "roots 1 plus 1 plus 1 and this is 3 but"
+    },
+    {
+      "start": 202.299,
+      "end": 208.299,
+      "text": "see this is hash function value is 4 and"
+    },
+    {
+      "start": 205.9,
+      "end": 210.37,
+      "text": "there it is 3 it means they are not"
+    },
+    {
+      "start": 208.299,
+      "end": 212.59,
+      "text": "matching I don't have to check the"
+    },
+    {
+      "start": 210.37,
+      "end": 214.03,
+      "text": "characters just I have used a function"
+    },
+    {
+      "start": 212.59,
+      "end": 216.79,
+      "text": "function means it will take constant"
+    },
+    {
+      "start": 214.03,
+      "end": 219.13,
+      "text": "time so using constant time I found out"
+    },
+    {
+      "start": 216.79,
+      "end": 220.87,
+      "text": "the value and it is 3 and this is 4 they"
+    },
+    {
+      "start": 219.13,
+      "end": 224.68,
+      "text": "are not matching so this pattern is not"
+    },
+    {
+      "start": 220.87,
+      "end": 227.47,
+      "text": "there then slide to the next set of 3"
+    },
+    {
+      "start": 224.68,
+      "end": 230.44,
+      "text": "alphabets so I will remove this and I"
+    },
+    {
+      "start": 227.47,
+      "end": 232.69,
+      "text": "will extend this 1 plus this is also 1"
+    },
+    {
+      "start": 230.44,
+      "end": 239.35,
+      "text": "so this is 3 now again this is not"
+    },
+    {
+      "start": 232.69,
+      "end": 242.53,
+      "text": "matching so take out this slide next now"
+    },
+    {
+      "start": 239.35,
+      "end": 244.03,
+      "text": "this is again 3 & 3 is not matching with"
+    },
+    {
+      "start": 242.53,
+      "end": 247.18,
+      "text": "this one means these three letters are"
+    },
+    {
+      "start": 244.03,
+      "end": 250.06,
+      "text": "not forming this pattern no slight next"
+    },
+    {
+      "start": 247.18,
+      "end": 253.6,
+      "text": "see this sliding is called as a holding"
+    },
+    {
+      "start": 250.06,
+      "end": 255.28,
+      "text": "hash function from the present value I"
+    },
+    {
+      "start": 253.6,
+      "end": 256.75,
+      "text": "am getting the next value so that is"
+    },
+    {
+      "start": 255.28,
+      "end": 259.33,
+      "text": "called as a rolling hash function we"
+    },
+    {
+      "start": 256.75,
+      "end": 262.27,
+      "text": "will see it further and include this one"
+    },
+    {
+      "start": 259.33,
+      "end": 264.7,
+      "text": "so the code for this what is a 2 so this"
+    },
+    {
+      "start": 262.27,
+      "end": 268.18,
+      "text": "is 4 they are matching"
+    },
+    {
+      "start": 264.7,
+      "end": 270.55,
+      "text": "once you get a match confirm really this"
+    },
+    {
+      "start": 268.18,
+      "end": 273.49,
+      "text": "pattern is there or not so now check the"
+    },
+    {
+      "start": 270.55,
+      "end": 277.09000000000003,
+      "text": "alphabets these are a a and these are"
+    },
+    {
+      "start": 273.49,
+      "end": 280.84000000000003,
+      "text": "also a these are B yes they are same so"
+    },
+    {
+      "start": 277.09,
+      "end": 285.21999999999997,
+      "text": "pattern is found from index 4 to index 6"
+    },
+    {
+      "start": 280.84,
+      "end": 287.78999999999996,
+      "text": "in the main string that is text so this"
+    },
+    {
+      "start": 285.22,
+      "end": 290.29,
+      "text": "is the basic idea of rabbin cap"
+    },
+    {
+      "start": 287.79,
+      "end": 292.18,
+      "text": "algorithm I will take one more example"
+    },
+    {
+      "start": 290.29,
+      "end": 293.98,
+      "text": "and show you quickly I have taken one"
+    },
+    {
+      "start": 292.18,
+      "end": 295.84000000000003,
+      "text": "more example let us quickly look at this"
+    },
+    {
+      "start": 293.98,
+      "end": 298.21000000000004,
+      "text": "example here we will understand what"
+    },
+    {
+      "start": 295.84,
+      "end": 300.96999999999997,
+      "text": "does it mean by a rolling hash function"
+    },
+    {
+      "start": 298.21,
+      "end": 302.71,
+      "text": "let us see this vertex given here and"
+    },
+    {
+      "start": 300.97,
+      "end": 305.05,
+      "text": "this is a pattern first find out the"
+    },
+    {
+      "start": 302.71,
+      "end": 310.9,
+      "text": "hash value for this one so the codes are"
+    },
+    {
+      "start": 305.05,
+      "end": 317.71000000000004,
+      "text": "B is 2 B is 2 and C is 3 so it's 3 plus"
+    },
+    {
+      "start": 310.9,
+      "end": 320.02,
+      "text": "3 and E is 5 5 this is 10 C remember I"
+    },
+    {
+      "start": 317.71,
+      "end": 321.78999999999996,
+      "text": "am showing you just the basic idea I'm"
+    },
+    {
+      "start": 320.02,
+      "end": 324.64,
+      "text": "not showing you the actual algorithm"
+    },
+    {
+      "start": 321.79,
+      "end": 326.17,
+      "text": "remember this one now we have to find"
+    },
+    {
+      "start": 324.64,
+      "end": 328.33,
+      "text": "out whether this is present here or not"
+    },
+    {
+      "start": 326.17,
+      "end": 330.67,
+      "text": "so just take first 3 alpha because this"
+    },
+    {
+      "start": 328.33,
+      "end": 334.21,
+      "text": "size is a 3 so first three alphabets"
+    },
+    {
+      "start": 330.67,
+      "end": 337.35,
+      "text": "this is 1 plus 2 Plus 3 this is 6 and"
+    },
+    {
+      "start": 334.21,
+      "end": 341.44,
+      "text": "this is not matching with this one then"
+    },
+    {
+      "start": 337.35,
+      "end": 344.95000000000005,
+      "text": "just slide it and get the code hash code"
+    },
+    {
+      "start": 341.44,
+      "end": 349.18,
+      "text": "for next 3 letters so for that from 6"
+    },
+    {
+      "start": 344.95,
+      "end": 354.47999999999996,
+      "text": "this is 6 right so from 6 subtract this"
+    },
+    {
+      "start": 349.18,
+      "end": 359.38,
+      "text": "1 1 so we get 5 so subtract this and"
+    },
+    {
+      "start": 354.48,
+      "end": 362.95000000000005,
+      "text": "plus what is the code for this for add 4"
+    },
+    {
+      "start": 359.38,
+      "end": 365.14,
+      "text": "so this is 9 so in this way the letter"
+    },
+    {
+      "start": 362.95,
+      "end": 367.33,
+      "text": "that we are skipping we can subtract its"
+    },
+    {
+      "start": 365.14,
+      "end": 369.96999999999997,
+      "text": "code and the letter that you are adding"
+    },
+    {
+      "start": 367.33,
+      "end": 372.72999999999996,
+      "text": "we can add this code so in this way we"
+    },
+    {
+      "start": 369.97,
+      "end": 375.82000000000005,
+      "text": "can get the hash function or hash code"
+    },
+    {
+      "start": 372.73,
+      "end": 380.83000000000004,
+      "text": "for the next set of characters easily in"
+    },
+    {
+      "start": 375.82,
+      "end": 383.71,
+      "text": "constant time now for so total is how"
+    },
+    {
+      "start": 380.83,
+      "end": 386.02,
+      "text": "much this is 9 and 9 is not matching"
+    },
+    {
+      "start": 383.71,
+      "end": 389.44,
+      "text": "with this one so okay take out this"
+    },
+    {
+      "start": 386.02,
+      "end": 393.58,
+      "text": "alphabet and take this alphabet so this"
+    },
+    {
+      "start": 389.44,
+      "end": 396.13,
+      "text": "is 1 now how much this is 8 it is not"
+    },
+    {
+      "start": 393.58,
+      "end": 397.279,
+      "text": "matching with this one so this is not a"
+    },
+    {
+      "start": 396.13,
+      "end": 401.86899999999997,
+      "text": "pattern"
+    },
+    {
+      "start": 397.279,
+      "end": 404.86899999999997,
+      "text": "then take out this and add two now this"
+    },
+    {
+      "start": 401.869,
+      "end": 408.949,
+      "text": "is seven and seven is not matching with"
+    },
+    {
+      "start": 404.869,
+      "end": 412.27900000000005,
+      "text": "the ten so take out the CD and include C"
+    },
+    {
+      "start": 408.949,
+      "end": 414.829,
+      "text": "so the code for C is three this is again"
+    },
+    {
+      "start": 412.279,
+      "end": 418.209,
+      "text": "six six is not matching with ten so"
+    },
+    {
+      "start": 414.829,
+      "end": 422.419,
+      "text": "subtract one from this and and this is"
+    },
+    {
+      "start": 418.209,
+      "end": 424.669,
+      "text": "five so this is 10 and 10 is matching"
+    },
+    {
+      "start": 422.419,
+      "end": 427.30899999999997,
+      "text": "with this so it means there is a pattern"
+    },
+    {
+      "start": 424.669,
+      "end": 428.019,
+      "text": "there is a possibility of pattern so"
+    },
+    {
+      "start": 427.309,
+      "end": 430.639,
+      "text": "verify it"
+    },
+    {
+      "start": 428.019,
+      "end": 433.129,
+      "text": "BB they are matching CC they are"
+    },
+    {
+      "start": 430.639,
+      "end": 435.67900000000003,
+      "text": "matching and EE they are matching so yes"
+    },
+    {
+      "start": 433.129,
+      "end": 438.34900000000005,
+      "text": "there is a pattern available in a string"
+    },
+    {
+      "start": 435.679,
+      "end": 440.989,
+      "text": "so this is a basic idea I have given you"
+    },
+    {
+      "start": 438.349,
+      "end": 443.269,
+      "text": "now I will show you the drawback of this"
+    },
+    {
+      "start": 440.989,
+      "end": 445.669,
+      "text": "method and then afterwards I will show"
+    },
+    {
+      "start": 443.269,
+      "end": 447.469,
+      "text": "you actual alcott see in the previous"
+    },
+    {
+      "start": 445.669,
+      "end": 451.159,
+      "text": "two examples we are going through the"
+    },
+    {
+      "start": 447.469,
+      "end": 453.469,
+      "text": "main string only once and at only one"
+    },
+    {
+      "start": 451.159,
+      "end": 455.629,
+      "text": "time we have checked for the pattern so"
+    },
+    {
+      "start": 453.469,
+      "end": 457.939,
+      "text": "we have gone through entire string only"
+    },
+    {
+      "start": 455.629,
+      "end": 459.34900000000005,
+      "text": "one scan through the whole string and we"
+    },
+    {
+      "start": 457.939,
+      "end": 464.629,
+      "text": "have checked for the pattern only once"
+    },
+    {
+      "start": 459.349,
+      "end": 468.079,
+      "text": "so the time we say it was and minus M"
+    },
+    {
+      "start": 464.629,
+      "end": 470.59900000000005,
+      "text": "plus 1 this is the average time of robin"
+    },
+    {
+      "start": 468.079,
+      "end": 472.519,
+      "text": "cop algorithm now let us see the worst"
+    },
+    {
+      "start": 470.599,
+      "end": 474.739,
+      "text": "case for this one so I have a taken an"
+    },
+    {
+      "start": 472.519,
+      "end": 476.92900000000003,
+      "text": "example here and let us look at worst"
+    },
+    {
+      "start": 474.739,
+      "end": 479.839,
+      "text": "case I have taken a string of size"
+    },
+    {
+      "start": 476.929,
+      "end": 482.149,
+      "text": "length is lemon and the pattern of"
+    },
+    {
+      "start": 479.839,
+      "end": 484.009,
+      "text": "length is 3 now let us find out the hash"
+    },
+    {
+      "start": 482.149,
+      "end": 487.309,
+      "text": "code for this one by same method just"
+    },
+    {
+      "start": 484.009,
+      "end": 490.719,
+      "text": "take the ports 4 plus B is a 2 plus a is"
+    },
+    {
+      "start": 487.309,
+      "end": 493.069,
+      "text": "1 from there I am writing so this is 7"
+    },
+    {
+      "start": 490.719,
+      "end": 494.989,
+      "text": "so the hash code simple thing I have"
+    },
+    {
+      "start": 493.069,
+      "end": 498.439,
+      "text": "taken that is 7 now let us understand"
+    },
+    {
+      "start": 494.989,
+      "end": 502.789,
+      "text": "the drawback first you ate three litters"
+    },
+    {
+      "start": 498.439,
+      "end": 508.09900000000005,
+      "text": "from here C is 3 and C is a 3 plus E is"
+    },
+    {
+      "start": 502.789,
+      "end": 511.87899999999996,
+      "text": "1 this is 7 7 7 matching compare the"
+    },
+    {
+      "start": 508.099,
+      "end": 514.61,
+      "text": "alphabets D no this is not same and this"
+    },
+    {
+      "start": 511.879,
+      "end": 518.029,
+      "text": "is not same so means though we got a"
+    },
+    {
+      "start": 514.61,
+      "end": 524.149,
+      "text": "match in hash code values but the string"
+    },
+    {
+      "start": 518.029,
+      "end": 528.29,
+      "text": "is not matching okay go to the next take"
+    },
+    {
+      "start": 524.149,
+      "end": 529.63,
+      "text": "next 3 so this is 3 plus a is 1 then"
+    },
+    {
+      "start": 528.29,
+      "end": 533.7099999999999,
+      "text": "this is 3 again"
+    },
+    {
+      "start": 529.63,
+      "end": 536.8,
+      "text": "seven there is a match so it means this"
+    },
+    {
+      "start": 533.71,
+      "end": 539.47,
+      "text": "pattern would be there here possibility"
+    },
+    {
+      "start": 536.8,
+      "end": 542.02,
+      "text": "of pattern there so compare this C and D"
+    },
+    {
+      "start": 539.47,
+      "end": 547.72,
+      "text": "no they are not matching so no it's not"
+    },
+    {
+      "start": 542.02,
+      "end": 550.96,
+      "text": "a pattern then take next three is one C"
+    },
+    {
+      "start": 547.72,
+      "end": 553.3000000000001,
+      "text": "is 3 and C is 3 again 7 again it is"
+    },
+    {
+      "start": 550.96,
+      "end": 555.01,
+      "text": "matching but this is not a pattern after"
+    },
+    {
+      "start": 553.3,
+      "end": 558.25,
+      "text": "comparison we'll know that it's not a"
+    },
+    {
+      "start": 555.01,
+      "end": 562.6,
+      "text": "pattern see we have got three matching"
+    },
+    {
+      "start": 558.25,
+      "end": 565.06,
+      "text": "so far right 3 matchings but those are"
+    },
+    {
+      "start": 562.6,
+      "end": 568.45,
+      "text": "not patterns so in this way we are"
+    },
+    {
+      "start": 565.06,
+      "end": 570.2199999999999,
+      "text": "comparing this pattern every time in our"
+    },
+    {
+      "start": 568.45,
+      "end": 572.0200000000001,
+      "text": "example jovi are checking only one"
+    },
+    {
+      "start": 570.22,
+      "end": 574.4200000000001,
+      "text": "alphabet but in some cases will be"
+    },
+    {
+      "start": 572.02,
+      "end": 576.6999999999999,
+      "text": "checking most of the alphabets and it is"
+    },
+    {
+      "start": 574.42,
+      "end": 579.8199999999999,
+      "text": "not matching at the end so let us"
+    },
+    {
+      "start": 576.7,
+      "end": 583.6,
+      "text": "continue see here I will take this is 3"
+    },
+    {
+      "start": 579.82,
+      "end": 586.12,
+      "text": "and this is 1 plus 1 this is 5 and this"
+    },
+    {
+      "start": 583.6,
+      "end": 589.3000000000001,
+      "text": "is 7 they are not matching okay next"
+    },
+    {
+      "start": 586.12,
+      "end": 591.82,
+      "text": "this is 5 they are matching again and"
+    },
+    {
+      "start": 589.3,
+      "end": 592.63,
+      "text": "compare this series to this this is 7 7"
+    },
+    {
+      "start": 591.82,
+      "end": 594.34,
+      "text": "this is 7"
+    },
+    {
+      "start": 592.63,
+      "end": 596.47,
+      "text": "but check whether the pattern is there"
+    },
+    {
+      "start": 594.34,
+      "end": 598.4200000000001,
+      "text": "no pattern is not there so we are"
+    },
+    {
+      "start": 596.47,
+      "end": 599.9200000000001,
+      "text": "getting every time hash code that is"
+    },
+    {
+      "start": 598.42,
+      "end": 602.62,
+      "text": "matching with the hash code of this one"
+    },
+    {
+      "start": 599.92,
+      "end": 604.99,
+      "text": "this is the drawback so if you take such"
+    },
+    {
+      "start": 602.62,
+      "end": 607.54,
+      "text": "a simple hash function then there is a"
+    },
+    {
+      "start": 604.99,
+      "end": 610.15,
+      "text": "possibility of collision with the other"
+    },
+    {
+      "start": 607.54,
+      "end": 612.64,
+      "text": "patter other sub strings which are"
+    },
+    {
+      "start": 610.15,
+      "end": 615.0699999999999,
+      "text": "having the same code though they are not"
+    },
+    {
+      "start": 612.64,
+      "end": 617.92,
+      "text": "the patterns so the drawback here is"
+    },
+    {
+      "start": 615.07,
+      "end": 620.5,
+      "text": "that there are many hash codes that are"
+    },
+    {
+      "start": 617.92,
+      "end": 623.05,
+      "text": "matching but those are not the patterns"
+    },
+    {
+      "start": 620.5,
+      "end": 630.43,
+      "text": "so actually these are called as spurious"
+    },
+    {
+      "start": 623.05,
+      "end": 633.55,
+      "text": "hits so these are called as spurious"
+    },
+    {
+      "start": 630.43,
+      "end": 636.01,
+      "text": "hits means the matching is there with"
+    },
+    {
+      "start": 633.55,
+      "end": 638.68,
+      "text": "the code but those are not pattern so"
+    },
+    {
+      "start": 636.01,
+      "end": 641.74,
+      "text": "these are waste hits this is the"
+    },
+    {
+      "start": 638.68,
+      "end": 644.8299999999999,
+      "text": "drawback and in such a situation the"
+    },
+    {
+      "start": 641.74,
+      "end": 651.13,
+      "text": "maximum time taken by this algorithm may"
+    },
+    {
+      "start": 644.83,
+      "end": 653.6500000000001,
+      "text": "be MN theta of M and this could be the"
+    },
+    {
+      "start": 651.13,
+      "end": 657.76,
+      "text": "maximum time but we expect the algorithm"
+    },
+    {
+      "start": 653.65,
+      "end": 661.75,
+      "text": "to take n minus M plus 1 time this will"
+    },
+    {
+      "start": 657.76,
+      "end": 663.85,
+      "text": "happen if there are no spurious hits so"
+    },
+    {
+      "start": 661.75,
+      "end": 666.43,
+      "text": "how to avoid spurious"
+    },
+    {
+      "start": 663.85,
+      "end": 670.149,
+      "text": "so this is because of the hash function"
+    },
+    {
+      "start": 666.43,
+      "end": 672.2199999999999,
+      "text": "we selected us a very simple hash"
+    },
+    {
+      "start": 670.149,
+      "end": 675.759,
+      "text": "function because of which this hits are"
+    },
+    {
+      "start": 672.22,
+      "end": 679.089,
+      "text": "happening to avoid this spurious hits we"
+    },
+    {
+      "start": 675.759,
+      "end": 682.269,
+      "text": "have to take a strong hash function so"
+    },
+    {
+      "start": 679.089,
+      "end": 685.509,
+      "text": "what is the idea of hash function given"
+    },
+    {
+      "start": 682.269,
+      "end": 687.55,
+      "text": "by a robin cop so now this we will be"
+    },
+    {
+      "start": 685.509,
+      "end": 689.8000000000001,
+      "text": "completing the algorithm now so I will"
+    },
+    {
+      "start": 687.55,
+      "end": 692.769,
+      "text": "show you the actual hash function that"
+    },
+    {
+      "start": 689.8,
+      "end": 695.079,
+      "text": "is give a suggestion by a rabid cop now"
+    },
+    {
+      "start": 692.769,
+      "end": 697.3,
+      "text": "throw an example only the same example I"
+    },
+    {
+      "start": 695.079,
+      "end": 700.3889999999999,
+      "text": "will show you see here the colds are"
+    },
+    {
+      "start": 697.3,
+      "end": 704.3499999999999,
+      "text": "this is code for and this is coded to"
+    },
+    {
+      "start": 700.389,
+      "end": 711.189,
+      "text": "and this is one so let it let us take it"
+    },
+    {
+      "start": 704.35,
+      "end": 716.0790000000001,
+      "text": "like this full into ten square plus 2"
+    },
+    {
+      "start": 711.189,
+      "end": 720.8499999999999,
+      "text": "into 10 power 1 plus this is 1 into 10"
+    },
+    {
+      "start": 716.079,
+      "end": 723.2489999999999,
+      "text": "power 0 Y power 2 power 1 power 0"
+    },
+    {
+      "start": 720.85,
+      "end": 727.509,
+      "text": "because there are 3 letters only in the"
+    },
+    {
+      "start": 723.249,
+      "end": 730.629,
+      "text": "pattern so start from 0 1 2 so if there"
+    },
+    {
+      "start": 727.509,
+      "end": 733.9300000000001,
+      "text": "are 5 letters in the pattern then 0 1 2"
+    },
+    {
+      "start": 730.629,
+      "end": 736.36,
+      "text": "3 4 so highest power we can get 4 so if"
+    },
+    {
+      "start": 733.93,
+      "end": 740.5889999999999,
+      "text": "there are n letters in the pattern then"
+    },
+    {
+      "start": 736.36,
+      "end": 744.279,
+      "text": "each letter of a pattern P 1 into 10 to"
+    },
+    {
+      "start": 740.589,
+      "end": 749.4590000000001,
+      "text": "the power of M minus 1 plus P 2 into 10"
+    },
+    {
+      "start": 744.279,
+      "end": 753.509,
+      "text": "to the power of M minus 2 plus P 3 into"
+    },
+    {
+      "start": 749.459,
+      "end": 756.189,
+      "text": "10 to the power of M minus 3 it goes on"
+    },
+    {
+      "start": 753.509,
+      "end": 758.139,
+      "text": "so that same thing we have done three so"
+    },
+    {
+      "start": 756.189,
+      "end": 760.959,
+      "text": "first one is 3 minus 1 then 3 minus 2"
+    },
+    {
+      "start": 758.139,
+      "end": 764.559,
+      "text": "then 3 minus 3 that is 0 this is how we"
+    },
+    {
+      "start": 760.959,
+      "end": 769.7199999999999,
+      "text": "will multiply these codes with this"
+    },
+    {
+      "start": 764.559,
+      "end": 772.36,
+      "text": "powers then what is this 10 this is the"
+    },
+    {
+      "start": 769.72,
+      "end": 774.5500000000001,
+      "text": "base value how many LS orbits I am using"
+    },
+    {
+      "start": 772.36,
+      "end": 776.98,
+      "text": "10 alphabets I am using so I have taken"
+    },
+    {
+      "start": 774.55,
+      "end": 779.139,
+      "text": "that as a base value you can use any"
+    },
+    {
+      "start": 776.98,
+      "end": 781.48,
+      "text": "value you like this is just the idea"
+    },
+    {
+      "start": 779.139,
+      "end": 783.73,
+      "text": "given merab in cup hash function means"
+    },
+    {
+      "start": 781.48,
+      "end": 785.86,
+      "text": "if you know about hashing you can define"
+    },
+    {
+      "start": 783.73,
+      "end": 788.129,
+      "text": "your own function depending on the"
+    },
+    {
+      "start": 785.86,
+      "end": 791.589,
+      "text": "patterns or the text that you are using"
+    },
+    {
+      "start": 788.129,
+      "end": 794.7090000000001,
+      "text": "but for the alphabets like for a string"
+    },
+    {
+      "start": 791.589,
+      "end": 795.7600000000001,
+      "text": "they have suggested this method so if I"
+    },
+    {
+      "start": 794.709,
+      "end": 800.38,
+      "text": "consider all the"
+    },
+    {
+      "start": 795.76,
+      "end": 803.74,
+      "text": "alphabets then for 26 alphabets I should"
+    },
+    {
+      "start": 800.38,
+      "end": 807.9399999999999,
+      "text": "take it as 26 power to 26 power 126"
+    },
+    {
+      "start": 803.74,
+      "end": 810.73,
+      "text": "power 0 if I say lowercase uppercase all"
+    },
+    {
+      "start": 807.94,
+      "end": 813.0100000000001,
+      "text": "special characters everything then total"
+    },
+    {
+      "start": 810.73,
+      "end": 817.6,
+      "text": "ASCII codes are 127 so this should be"
+    },
+    {
+      "start": 813.01,
+      "end": 819.79,
+      "text": "127 power to 127 power 1 and 0 so to"
+    },
+    {
+      "start": 817.6,
+      "end": 821.86,
+      "text": "make our example simple I have taken"
+    },
+    {
+      "start": 819.79,
+      "end": 825.64,
+      "text": "only 10 alphabets that's the reason I am"
+    },
+    {
+      "start": 821.86,
+      "end": 831.09,
+      "text": "writing 10 here now let us find out its"
+    },
+    {
+      "start": 825.64,
+      "end": 835.35,
+      "text": "value this is 400 plus 20 plus 1 this is"
+    },
+    {
+      "start": 831.09,
+      "end": 838.0,
+      "text": "421 so the hash code for this one is 421"
+    },
+    {
+      "start": 835.35,
+      "end": 839.74,
+      "text": "now using this code we'll try to find"
+    },
+    {
+      "start": 838.0,
+      "end": 842.05,
+      "text": "out a match see just now for the same"
+    },
+    {
+      "start": 839.74,
+      "end": 844.15,
+      "text": "example this was a drawback I we found"
+    },
+    {
+      "start": 842.05,
+      "end": 845.9799999999999,
+      "text": "out that is the worst case we found out"
+    },
+    {
+      "start": 844.15,
+      "end": 847.78,
+      "text": "because of the hash function now I"
+    },
+    {
+      "start": 845.98,
+      "end": 850.0,
+      "text": "modified the hash function that is I"
+    },
+    {
+      "start": 847.78,
+      "end": 851.7099999999999,
+      "text": "have taken the one suggested by ravine"
+    },
+    {
+      "start": 850.0,
+      "end": 853.3,
+      "text": "car and there is one more thing that I"
+    },
+    {
+      "start": 851.71,
+      "end": 855.85,
+      "text": "have to include it at the end I will"
+    },
+    {
+      "start": 853.3,
+      "end": 859.75,
+      "text": "show you now let us find out how much"
+    },
+    {
+      "start": 855.85,
+      "end": 862.78,
+      "text": "this is this is 3 into 10 to the power"
+    },
+    {
+      "start": 859.75,
+      "end": 866.41,
+      "text": "of 2 Plus this is also 3 into 10 to the"
+    },
+    {
+      "start": 862.78,
+      "end": 871.36,
+      "text": "power of 1 plus this is 1 into 10 to the"
+    },
+    {
+      "start": 866.41,
+      "end": 874.81,
+      "text": "power of 0 so this will be 300 plus 30"
+    },
+    {
+      "start": 871.36,
+      "end": 879.49,
+      "text": "plus 1 so 331"
+    },
+    {
+      "start": 874.81,
+      "end": 882.13,
+      "text": "this is 331 is it a match no it is not"
+    },
+    {
+      "start": 879.49,
+      "end": 884.35,
+      "text": "matching the code that we got is 421"
+    },
+    {
+      "start": 882.13,
+      "end": 887.2,
+      "text": "I'll write it down here right it's not"
+    },
+    {
+      "start": 884.35,
+      "end": 889.4200000000001,
+      "text": "matching see this is not a spurious hit"
+    },
+    {
+      "start": 887.2,
+      "end": 893.08,
+      "text": "because we have changed the hash"
+    },
+    {
+      "start": 889.42,
+      "end": 896.0799999999999,
+      "text": "function so now it is not matching now I"
+    },
+    {
+      "start": 893.08,
+      "end": 898.57,
+      "text": "have told you about the rolling hash"
+    },
+    {
+      "start": 896.08,
+      "end": 900.37,
+      "text": "function C so many powers and everything"
+    },
+    {
+      "start": 898.57,
+      "end": 904.69,
+      "text": "we are taking I have to calculate the"
+    },
+    {
+      "start": 900.37,
+      "end": 907.12,
+      "text": "next one so what to do so from 331 C I"
+    },
+    {
+      "start": 904.69,
+      "end": 910.74,
+      "text": "will just remove this now I have to find"
+    },
+    {
+      "start": 907.12,
+      "end": 913.63,
+      "text": "out the hash code for next 3 alphabets"
+    },
+    {
+      "start": 910.74,
+      "end": 917.83,
+      "text": "ds3 these three means what this should"
+    },
+    {
+      "start": 913.63,
+      "end": 921.16,
+      "text": "be 3 into 10 square it should be then"
+    },
+    {
+      "start": 917.83,
+      "end": 923.38,
+      "text": "this should be 1 into 10 not power 0"
+    },
+    {
+      "start": 921.16,
+      "end": 925.49,
+      "text": "power 1 so it means I should multiply"
+    },
+    {
+      "start": 923.38,
+      "end": 927.62,
+      "text": "these 2 into"
+    },
+    {
+      "start": 925.49,
+      "end": 930.28,
+      "text": "so what I can do is I will take this as"
+    },
+    {
+      "start": 927.62,
+      "end": 934.58,
+      "text": "it is I'll take this as it is and"
+    },
+    {
+      "start": 930.28,
+      "end": 937.4599999999999,
+      "text": "multiply it button outside then I have"
+    },
+    {
+      "start": 934.58,
+      "end": 941.21,
+      "text": "to remove this one and also I should"
+    },
+    {
+      "start": 937.46,
+      "end": 943.2800000000001,
+      "text": "include C so overall how to do this let"
+    },
+    {
+      "start": 941.21,
+      "end": 946.61,
+      "text": "me show you how to do this this entire"
+    },
+    {
+      "start": 943.28,
+      "end": 951.68,
+      "text": "thing was 3 into 10 square plus 3 into"
+    },
+    {
+      "start": 946.61,
+      "end": 953.39,
+      "text": "10 or 1 plus 1 into 10 squared so this"
+    },
+    {
+      "start": 951.68,
+      "end": 957.02,
+      "text": "actually is 331"
+    },
+    {
+      "start": 953.39,
+      "end": 962.15,
+      "text": "so from this subtract this 3 into 10"
+    },
+    {
+      "start": 957.02,
+      "end": 964.97,
+      "text": "square so 3 into 10 square is subtracted"
+    },
+    {
+      "start": 962.15,
+      "end": 966.9499999999999,
+      "text": "so this term will be gone if I subtract"
+    },
+    {
+      "start": 964.97,
+      "end": 969.22,
+      "text": "it this will be gone so this portion"
+    },
+    {
+      "start": 966.95,
+      "end": 973.37,
+      "text": "will be remaining so this entire thing"
+    },
+    {
+      "start": 969.22,
+      "end": 975.89,
+      "text": "multiplied by 10 so these numbers will"
+    },
+    {
+      "start": 973.37,
+      "end": 978.47,
+      "text": "be raised by 10 right so this becomes 10"
+    },
+    {
+      "start": 975.89,
+      "end": 982.85,
+      "text": "square and this becomes 10 power 1 now I"
+    },
+    {
+      "start": 978.47,
+      "end": 987.0500000000001,
+      "text": "have to include this C also so plus C"
+    },
+    {
+      "start": 982.85,
+      "end": 990.71,
+      "text": "code is what 3 into 10 power 0 so how we"
+    },
+    {
+      "start": 987.05,
+      "end": 993.3199999999999,
+      "text": "do this see actually this is 331 so what"
+    },
+    {
+      "start": 990.71,
+      "end": 996.14,
+      "text": "we do is from 331 we subtract this first"
+    },
+    {
+      "start": 993.32,
+      "end": 1001.1800000000001,
+      "text": "term and multiply the result by 10 and"
+    },
+    {
+      "start": 996.14,
+      "end": 1004.27,
+      "text": "get the next term added so you can just"
+    },
+    {
+      "start": 1001.18,
+      "end": 1006.55,
+      "text": "observe this carefully how this is"
+    },
+    {
+      "start": 1004.27,
+      "end": 1009.1,
+      "text": "happening so this is the result as it is"
+    },
+    {
+      "start": 1006.55,
+      "end": 1011.05,
+      "text": "this should be subtracted ok subtracted"
+    },
+    {
+      "start": 1009.1,
+      "end": 1013.87,
+      "text": "then these two should be multiplied by"
+    },
+    {
+      "start": 1011.05,
+      "end": 1016.3,
+      "text": "10 so the result is multiplied by 10 and"
+    },
+    {
+      "start": 1013.87,
+      "end": 1019.45,
+      "text": "this term should be added C should be"
+    },
+    {
+      "start": 1016.3,
+      "end": 1021.43,
+      "text": "added so C term is on it so I'll"
+    },
+    {
+      "start": 1019.45,
+      "end": 1024.52,
+      "text": "directly do that right now I am having"
+    },
+    {
+      "start": 1021.43,
+      "end": 1029.23,
+      "text": "the hash code for these 3 alphabets that"
+    },
+    {
+      "start": 1024.52,
+      "end": 1031.78,
+      "text": "is 331 now I have to get this for these"
+    },
+    {
+      "start": 1029.23,
+      "end": 1036.15,
+      "text": "three elements so subtract this 1 minus"
+    },
+    {
+      "start": 1031.78,
+      "end": 1043.81,
+      "text": "3 into 10 squared so this is how much"
+    },
+    {
+      "start": 1036.15,
+      "end": 1047.5,
+      "text": "331 minus 300 so this is 31 then to that"
+    },
+    {
+      "start": 1043.81,
+      "end": 1050.11,
+      "text": "31 this portion I got that is 31 that 31"
+    },
+    {
+      "start": 1047.5,
+      "end": 1055.24,
+      "text": "I should multiply it by 10 so this 31"
+    },
+    {
+      "start": 1050.11,
+      "end": 1058.4499999999998,
+      "text": "multiplied by 10 so I get 310 so this is"
+    },
+    {
+      "start": 1055.24,
+      "end": 1061.0,
+      "text": "gone now for this C I should add"
+    },
+    {
+      "start": 1058.45,
+      "end": 1065.519,
+      "text": "3 into 10 to the power of 0 it went just"
+    },
+    {
+      "start": 1061.0,
+      "end": 1068.71,
+      "text": "three so then this + 3 so this is 3 1 3"
+    },
+    {
+      "start": 1065.519,
+      "end": 1071.25,
+      "text": "this is the method of getting the hash"
+    },
+    {
+      "start": 1068.71,
+      "end": 1074.8600000000001,
+      "text": "code for the next set of characters"
+    },
+    {
+      "start": 1071.25,
+      "end": 1076.63,
+      "text": "using rolling hash function so once you"
+    },
+    {
+      "start": 1074.86,
+      "end": 1079.4799999999998,
+      "text": "got one function then from there only"
+    },
+    {
+      "start": 1076.63,
+      "end": 1081.97,
+      "text": "subtract multiply and then add you get"
+    },
+    {
+      "start": 1079.48,
+      "end": 1085.57,
+      "text": "the hash code for next set of characters"
+    },
+    {
+      "start": 1081.97,
+      "end": 1086.019,
+      "text": "so this is 3 13 is it matching with 4 2"
+    },
+    {
+      "start": 1085.57,
+      "end": 1088.51,
+      "text": "1"
+    },
+    {
+      "start": 1086.019,
+      "end": 1093.909,
+      "text": "no this is not a match so there is no"
+    },
+    {
+      "start": 1088.51,
+      "end": 1095.95,
+      "text": "spurious there is no spurious hit let me"
+    },
+    {
+      "start": 1093.909,
+      "end": 1098.2890000000002,
+      "text": "continue for some more time so that if I"
+    },
+    {
+      "start": 1095.95,
+      "end": 1101.8890000000001,
+      "text": "calculate more you can get the idea this"
+    },
+    {
+      "start": 1098.289,
+      "end": 1104.08,
+      "text": "is a 313 I have to subtract this 1 I"
+    },
+    {
+      "start": 1101.889,
+      "end": 1106.9289999999999,
+      "text": "have to remove this so subtract this 3"
+    },
+    {
+      "start": 1104.08,
+      "end": 1109.5,
+      "text": "into 10 squared so that will be 300 is"
+    },
+    {
+      "start": 1106.929,
+      "end": 1111.94,
+      "text": "subtracted okay this is gone"
+    },
+    {
+      "start": 1109.5,
+      "end": 1115.899,
+      "text": "then these two terms I should multiply"
+    },
+    {
+      "start": 1111.94,
+      "end": 1118.3300000000002,
+      "text": "by 10 so result is how much 13 13 should"
+    },
+    {
+      "start": 1115.899,
+      "end": 1121.33,
+      "text": "be multiplied by 10 so I get the result"
+    },
+    {
+      "start": 1118.33,
+      "end": 1123.1899999999998,
+      "text": "for this 10 square and system for 1 now"
+    },
+    {
+      "start": 1121.33,
+      "end": 1125.769,
+      "text": "I should include this one more alphabet"
+    },
+    {
+      "start": 1123.19,
+      "end": 1128.799,
+      "text": "so its value I should add so this is 3"
+    },
+    {
+      "start": 1125.769,
+      "end": 1133.1200000000001,
+      "text": "so 3 into 10 to the power of 0 so in"
+    },
+    {
+      "start": 1128.799,
+      "end": 1136.69,
+      "text": "this I should add 3 plus 3 so how much"
+    },
+    {
+      "start": 1133.12,
+      "end": 1141.61,
+      "text": "this is how much this is this is 130"
+    },
+    {
+      "start": 1136.69,
+      "end": 1144.3700000000001,
+      "text": "plus 3 it is 133 now this is not"
+    },
+    {
+      "start": 1141.61,
+      "end": 1148.84,
+      "text": "matching with for 8 or for 21 so this is"
+    },
+    {
+      "start": 1144.37,
+      "end": 1151.029,
+      "text": "the hash code for these 3 alphabets I'll"
+    },
+    {
+      "start": 1148.84,
+      "end": 1154.99,
+      "text": "contain the hash code for these 3"
+    },
+    {
+      "start": 1151.029,
+      "end": 1157.72,
+      "text": "alphabet is 1 3 3 not have to remove"
+    },
+    {
+      "start": 1154.99,
+      "end": 1160.1200000000001,
+      "text": "this one so this first term should be"
+    },
+    {
+      "start": 1157.72,
+      "end": 1162.7,
+      "text": "subtracted so this is 1 into 10 square"
+    },
+    {
+      "start": 1160.12,
+      "end": 1165.4899999999998,
+      "text": "so this is 100 hundred is subtracted so"
+    },
+    {
+      "start": 1162.7,
+      "end": 1168.49,
+      "text": "this is 33 so I got this remaining part"
+    },
+    {
+      "start": 1165.49,
+      "end": 1171.279,
+      "text": "right the meaning part no I should raise"
+    },
+    {
+      "start": 1168.49,
+      "end": 1175.48,
+      "text": "it to square and raise it to 10 power 1"
+    },
+    {
+      "start": 1171.279,
+      "end": 1177.61,
+      "text": "so multiplied by 10 so we get 330 now I"
+    },
+    {
+      "start": 1175.48,
+      "end": 1180.19,
+      "text": "should include one more alphabet that is"
+    },
+    {
+      "start": 1177.61,
+      "end": 1185.049,
+      "text": "a so this is plus 1 into 10 to the power"
+    },
+    {
+      "start": 1180.19,
+      "end": 1187.48,
+      "text": "of 0 so that is 1 only so this is 331 is"
+    },
+    {
+      "start": 1185.049,
+      "end": 1189.9089999999999,
+      "text": "it matching no this is not matching now"
+    },
+    {
+      "start": 1187.48,
+      "end": 1191.23,
+      "text": "let us calculate for next 3 so for that"
+    },
+    {
+      "start": 1189.909,
+      "end": 1194.47,
+      "text": "I should remove this"
+    },
+    {
+      "start": 1191.23,
+      "end": 1195.88,
+      "text": "first alphabet so 3 into 10 square 300 I"
+    },
+    {
+      "start": 1194.47,
+      "end": 1200.6200000000001,
+      "text": "should subtract from here"
+    },
+    {
+      "start": 1195.88,
+      "end": 1204.5490000000002,
+      "text": "so from 331 I should subtract 300 so"
+    },
+    {
+      "start": 1200.62,
+      "end": 1206.4399999999998,
+      "text": "this is subtracted so I get 31 now 31"
+    },
+    {
+      "start": 1204.549,
+      "end": 1208.809,
+      "text": "should be multiplied by 10 so this"
+    },
+    {
+      "start": 1206.44,
+      "end": 1210.73,
+      "text": "becomes square and this becomes 1"
+    },
+    {
+      "start": 1208.809,
+      "end": 1213.6399999999999,
+      "text": "I should include one more alphabet so"
+    },
+    {
+      "start": 1210.73,
+      "end": 1217.51,
+      "text": "this is 1 into 10 to the power of 0 so"
+    },
+    {
+      "start": 1213.64,
+      "end": 1220.5400000000002,
+      "text": "this is 1 so this becomes how much 3 10"
+    },
+    {
+      "start": 1217.51,
+      "end": 1222.85,
+      "text": "plus 1 so this is 3 11 this is not"
+    },
+    {
+      "start": 1220.54,
+      "end": 1226.21,
+      "text": "matching so in this way you can continue"
+    },
+    {
+      "start": 1222.85,
+      "end": 1228.61,
+      "text": "at one point d/b/a for these three we"
+    },
+    {
+      "start": 1226.21,
+      "end": 1230.41,
+      "text": "get the same on so that is 4 21 and that"
+    },
+    {
+      "start": 1228.61,
+      "end": 1233.1899999999998,
+      "text": "time when there is a match then compare"
+    },
+    {
+      "start": 1230.41,
+      "end": 1235.99,
+      "text": "confirm that is the same thing or not"
+    },
+    {
+      "start": 1233.19,
+      "end": 1237.88,
+      "text": "that's it this is the method so you may"
+    },
+    {
+      "start": 1235.99,
+      "end": 1239.6200000000001,
+      "text": "have to observe this little carefully so"
+    },
+    {
+      "start": 1237.88,
+      "end": 1243.7600000000002,
+      "text": "that you should be able to do these"
+    },
+    {
+      "start": 1239.62,
+      "end": 1245.4699999999998,
+      "text": "calculations by yourself so I have given"
+    },
+    {
+      "start": 1243.76,
+      "end": 1247.96,
+      "text": "it a basic idea then I have shown it a"
+    },
+    {
+      "start": 1245.47,
+      "end": 1250.809,
+      "text": "drawback the reason of drawback of was"
+    },
+    {
+      "start": 1247.96,
+      "end": 1252.73,
+      "text": "bad function so I have introduced a"
+    },
+    {
+      "start": 1250.809,
+      "end": 1255.72,
+      "text": "better function that is actually given"
+    },
+    {
+      "start": 1252.73,
+      "end": 1258.88,
+      "text": "Moorabbin cough so this function is a"
+    },
+    {
+      "start": 1255.72,
+      "end": 1261.22,
+      "text": "rolling hash function as well as they"
+    },
+    {
+      "start": 1258.88,
+      "end": 1264.48,
+      "text": "have given this that base powers we"
+    },
+    {
+      "start": 1261.22,
+      "end": 1267.7,
+      "text": "should take so this is called as Robin"
+    },
+    {
+      "start": 1264.48,
+      "end": 1270.63,
+      "text": "fingerprint function so now there are no"
+    },
+    {
+      "start": 1267.7,
+      "end": 1275.65,
+      "text": "spurious hits so the time taken by this"
+    },
+    {
+      "start": 1270.63,
+      "end": 1278.44,
+      "text": "algorithm as theta of and minus n plus 1"
+    },
+    {
+      "start": 1275.65,
+      "end": 1281.71,
+      "text": "in average case but still though you"
+    },
+    {
+      "start": 1278.44,
+      "end": 1283.8700000000001,
+      "text": "have defined such a hash function still"
+    },
+    {
+      "start": 1281.71,
+      "end": 1286.0,
+      "text": "there may be a possibility that there is"
+    },
+    {
+      "start": 1283.87,
+      "end": 1289.5,
+      "text": "a spurious hit so there's still the"
+    },
+    {
+      "start": 1286.0,
+      "end": 1292.69,
+      "text": "worst case time of this algorithm is MN"
+    },
+    {
+      "start": 1289.5,
+      "end": 1294.96,
+      "text": "though by using this hash function we"
+    },
+    {
+      "start": 1292.69,
+      "end": 1298.8700000000001,
+      "text": "are reducing the chances of worst case"
+    },
+    {
+      "start": 1294.96,
+      "end": 1301.24,
+      "text": "nothing else now one last thing that I"
+    },
+    {
+      "start": 1298.87,
+      "end": 1303.2199999999998,
+      "text": "have to tell about this one see when we"
+    },
+    {
+      "start": 1301.24,
+      "end": 1305.29,
+      "text": "are taking the powers of this vemma"
+    },
+    {
+      "start": 1303.22,
+      "end": 1307.99,
+      "text": "gating we may be getting a very large"
+    },
+    {
+      "start": 1305.29,
+      "end": 1309.76,
+      "text": "value now if you are getting a very"
+    },
+    {
+      "start": 1307.99,
+      "end": 1313.299,
+      "text": "large value and when you have written a"
+    },
+    {
+      "start": 1309.76,
+      "end": 1315.22,
+      "text": "program for this one then it depends on"
+    },
+    {
+      "start": 1313.299,
+      "end": 1316.57,
+      "text": "the size of the data type like if you"
+    },
+    {
+      "start": 1315.22,
+      "end": 1318.58,
+      "text": "take integer 4 bytes"
+    },
+    {
+      "start": 1316.57,
+      "end": 1320.74,
+      "text": "it may be exceeding the capacity of 4"
+    },
+    {
+      "start": 1318.58,
+      "end": 1321.9189999999999,
+      "text": "bytes so if it is exceeding the number"
+    },
+    {
+      "start": 1320.74,
+      "end": 1324.59,
+      "text": "will overflow"
+    },
+    {
+      "start": 1321.919,
+      "end": 1327.529,
+      "text": "if you want to avoid overflow then you"
+    },
+    {
+      "start": 1324.59,
+      "end": 1331.1899999999998,
+      "text": "can mod these large values you can"
+    },
+    {
+      "start": 1327.529,
+      "end": 1334.58,
+      "text": "perform mod upon these large values so"
+    },
+    {
+      "start": 1331.19,
+      "end": 1336.919,
+      "text": "this entire function we can perform mod"
+    },
+    {
+      "start": 1334.58,
+      "end": 1339.559,
+      "text": "but what value we should perform it"
+    },
+    {
+      "start": 1336.919,
+      "end": 1342.0800000000002,
+      "text": "depends what is the maximum size of your"
+    },
+    {
+      "start": 1339.559,
+      "end": 1345.23,
+      "text": "data type if it is a 32-bit the data"
+    },
+    {
+      "start": 1342.08,
+      "end": 1348.35,
+      "text": "type then you can mod it by 2 power 31"
+    },
+    {
+      "start": 1345.23,
+      "end": 1351.289,
+      "text": "like if it is 32-bit then one bit is"
+    },
+    {
+      "start": 1348.35,
+      "end": 1353.269,
+      "text": "sign but 31 we take so I am taking it as"
+    },
+    {
+      "start": 1351.289,
+      "end": 1356.809,
+      "text": "31 if you say no it is only positive"
+    },
+    {
+      "start": 1353.269,
+      "end": 1359.059,
+      "text": "then you take 32 it depends on the"
+    },
+    {
+      "start": 1356.809,
+      "end": 1361.58,
+      "text": "language you are selecting it depends on"
+    },
+    {
+      "start": 1359.059,
+      "end": 1362.899,
+      "text": "the data type you are selecting so for"
+    },
+    {
+      "start": 1361.58,
+      "end": 1364.9399999999998,
+      "text": "getting the result of this hash function"
+    },
+    {
+      "start": 1362.899,
+      "end": 1367.549,
+      "text": "if you believe that that may be"
+    },
+    {
+      "start": 1364.94,
+      "end": 1369.95,
+      "text": "exceeding the capacity of the variable"
+    },
+    {
+      "start": 1367.549,
+      "end": 1372.649,
+      "text": "that's data type then you can mod it"
+    },
+    {
+      "start": 1369.95,
+      "end": 1374.3600000000001,
+      "text": "with that one so that you may show that"
+    },
+    {
+      "start": 1372.649,
+      "end": 1376.4289999999999,
+      "text": "you get the values in between those two"
+    },
+    {
+      "start": 1374.36,
+      "end": 1379.519,
+      "text": "only so in the ruling function also you"
+    },
+    {
+      "start": 1376.429,
+      "end": 1382.3400000000001,
+      "text": "can use mod so that you get the values"
+    },
+    {
+      "start": 1379.519,
+      "end": 1384.95,
+      "text": "within that range only but once you"
+    },
+    {
+      "start": 1382.34,
+      "end": 1388.4289999999999,
+      "text": "apply mod then there is a chance of"
+    },
+    {
+      "start": 1384.95,
+      "end": 1391.039,
+      "text": "spurious hits again then again the"
+    },
+    {
+      "start": 1388.429,
+      "end": 1395.63,
+      "text": "algorithm may be going towards worst"
+    },
+    {
+      "start": 1391.039,
+      "end": 1397.789,
+      "text": "case time of MN so it depends on you how"
+    },
+    {
+      "start": 1395.63,
+      "end": 1400.49,
+      "text": "you want to use it see if you know about"
+    },
+    {
+      "start": 1397.789,
+      "end": 1403.1589999999999,
+      "text": "hashing if you know about hashing you"
+    },
+    {
+      "start": 1400.49,
+      "end": 1405.95,
+      "text": "can define any hash function if you have"
+    },
+    {
+      "start": 1403.159,
+      "end": 1408.8300000000002,
+      "text": "the study on the data that you are using"
+    },
+    {
+      "start": 1405.95,
+      "end": 1410.919,
+      "text": "in hash function or hash table so here"
+    },
+    {
+      "start": 1408.83,
+      "end": 1412.85,
+      "text": "also if you have the study about the"
+    },
+    {
+      "start": 1410.919,
+      "end": 1415.3090000000002,
+      "text": "characters that you are using in the"
+    },
+    {
+      "start": 1412.85,
+      "end": 1417.59,
+      "text": "strings then you can define your home"
+    },
+    {
+      "start": 1415.309,
+      "end": 1420.889,
+      "text": "hash function also so the basic idea of"
+    },
+    {
+      "start": 1417.59,
+      "end": 1423.559,
+      "text": "reven carapace what use a hash code to"
+    },
+    {
+      "start": 1420.889,
+      "end": 1426.08,
+      "text": "avoid checking the pattern in the string"
+    },
+    {
+      "start": 1423.559,
+      "end": 1429.35,
+      "text": "if the code is matching then check it"
+    },
+    {
+      "start": 1426.08,
+      "end": 1431.74,
+      "text": "that is the basic idea that's all about"
+    },
+    {
+      "start": 1429.35,
+      "end": 1431.74,
+      "text": "I have been"
+    }
+  ]
+}

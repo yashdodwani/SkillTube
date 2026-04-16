@@ -1,19 +1,21 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, CheckCircle, Clock, Brain, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Play, CheckCircle, Clock, Brain, RefreshCw, Bookmark, BookmarkCheck } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import Progress from '../components/ui/Progress';
-import { courseAPI } from '../services/api';
+import { courseAPI, userAPI } from '../services/api';
 import { ProcessingStatus, CourseData } from '../types/api';
 import { useToast } from '../components/ui/Toaster';
+import { useAuth } from '../contexts/AuthContext';
 import { formatTime, extractVideoId } from '../utils/youtube';
 
 export default function Course() {
   const { taskId } = useParams<{ taskId: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
-  
+  const { token } = useAuth();
+
   const [status, setStatus] = useState<ProcessingStatus | null>(null);
   const [courseData, setCourseData] = useState<CourseData[]>([]);
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
@@ -24,9 +26,11 @@ export default function Course() {
   const [isLoading, setIsLoading] = useState(true);
   const [videoId, setVideoId] = useState<string>('');
   const [videoEnded, setVideoEnded] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const playerRef = useRef<any>(null);
-  const playerContainerRef = useRef<HTMLDivElement>(null);
+  const playerWrapperRef = useRef<HTMLDivElement>(null);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Enforce section time boundaries using YouTube IFrame API
@@ -65,9 +69,16 @@ export default function Course() {
         playerRef.current = null;
       }
 
-      // Ensure the div exists
-      const container = document.getElementById(containerId);
-      if (!container) return;
+      // YT.Player replaces the target div with an iframe, so we must
+      // recreate the div inside our stable wrapper before each init.
+      const wrapper = playerWrapperRef.current;
+      if (!wrapper) return;
+      wrapper.innerHTML = '';
+      const playerDiv = document.createElement('div');
+      playerDiv.id = containerId;
+      playerDiv.style.width = '100%';
+      playerDiv.style.height = '100%';
+      wrapper.appendChild(playerDiv);
 
       playerRef.current = new (window as any).YT.Player(containerId, {
         videoId,
@@ -80,8 +91,11 @@ export default function Course() {
         },
         events: {
           onReady: (e: any) => {
-            e.target.seekTo(startTime, true);
-            e.target.pauseVideo();
+            e.target.cueVideoById({
+              videoId,
+              startSeconds: startTime,
+              endSeconds: endTime,
+            });
           },
           onStateChange: (e: any) => {
             const YT = (window as any).YT.PlayerState;
@@ -251,6 +265,25 @@ export default function Course() {
     }
   };
 
+  const handleSaveCourse = async () => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    if (!status?.course_id) return;
+    setIsSaving(true);
+    try {
+      await userAPI.saveCourse(status.course_id);
+      setIsSaved(true);
+      addToast({ type: 'success', title: 'Saved!', description: 'Course added to your dashboard.' });
+    } catch (err: any) {
+      const detail = err.response?.data?.detail || 'Failed to save course.';
+      addToast({ type: 'error', title: 'Error', description: detail });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const getQuestionResult = (questionIndex: number) => {
     const questionKey = `${currentChunkIndex}-${questionIndex}`;
     const selectedAnswer = selectedAnswers[questionKey];
@@ -315,7 +348,18 @@ export default function Course() {
             Section {currentChunkIndex + 1} of {courseData.length}
           </p>
         </div>
-        <div className="w-24" /> {/* Spacer */}
+        <Button
+          variant="outline"
+          onClick={handleSaveCourse}
+          disabled={isSaved || isSaving || !status?.course_id}
+          className={isSaved ? 'border-green-400 text-green-600' : ''}
+        >
+          {isSaved ? (
+            <><BookmarkCheck className="mr-2 h-4 w-4" /> Saved</>
+          ) : (
+            <><Bookmark className="mr-2 h-4 w-4" /> {isSaving ? 'Saving…' : 'Save to Dashboard'}</>
+          )}
+        </Button>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -326,8 +370,7 @@ export default function Course() {
               {videoId ? (
                 <>
                   <div
-                    ref={playerContainerRef}
-                    id="yt-player-container"
+                    ref={playerWrapperRef}
                     className="w-full h-full rounded-t-xl"
                   />
                   {videoEnded && (
