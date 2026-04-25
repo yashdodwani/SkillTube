@@ -27,7 +27,7 @@ except Exception as e:
     logger.info(f"Using fallback quizzes directory at: {QUIZZES_DIR}")
 
 # API configurations
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_API_KEY=AIzaSyAtpcADZJqF7lnGLtPZ8dD5NGRz-PnwxcQ
 
 # Configure Google Gemini
 if GOOGLE_API_KEY:
