@@ -1,0 +1,6302 @@
+{
+  "video_id": "IIvORO248Zs",
+  "youtube_url": "https://www.youtube.com/watch?v=IIvORO248Zs",
+  "text": "This video is a complete crash course on LLM fine-tuning where we will start with some theory on what is fine-tuning. We'll cover some popular methods such as Laura, QLoRA, etc. And then we will write code in Unsloth to perform fine-tuning on a sample data set. Let's understand LLM fine-tuning in a very simple language. When I moved to US from India, >> [music] >> one of my friends took me to play baseball. And I was actually comfortable playing baseball. Why? Because in India I have already played cricket. Now in both of these games, you have bat, ball, you have to track the ball, and move your bat, run. So whatever raw skills I had from cricket, [music] I deployed that while playing baseball. Essentially, I'm transferring the skills from one game to another. So in AI there is a term called transfer learning where you take the model and then you retrain it or you fine-tune it on new data set, task, and format. So that is what LLM fine-tuning is. When you look at LLM such as GPT-5, Llama, etc., they are trained on a vast amount of internet data. But let's say you are an AI engineer working in a private company. Let's say you are working for Johnson & Johnson or Reliance Jio and >> [music] >> you are given a task to build a chatbot for your customers that has knowledge of the internal data of that organization. Also, it should respond in a specific format, tone, etc. At this time, you will use LLM fine-tuning. So LLM fine-tuning is a process of retraining the pre-trained model such as Llama on a specific task, data set, tone, and format. Let's take an example of an imaginary company called Loki Phones uh to understand this thing better. You're building a chatbot for this company using models such as GPT and Llama. And when your customer asks a question, \"My Loki Phone 12 screen is cracked. What are my options?\" The base LLM will give some general answer, right? But the right answer in this case is you should use this Loki Care Plus plan if you already have it. Now let's say this data is not available on internet. In that case, plain LLM will not be able to answer this. There might be other questions, okay, how long battery last, whatever. And assume this is the kind of data which is private to organization and LLM has not seen it. So using plain LLM, it won't be able to answer. So what you do is you use a simple technique called retrieval augmented generation. In this technique, you point your LLM to external source of knowledge, right? It can be a database, PDF files, whatever. This is private data. It's not available on internet. But when you're building a chatbot internally, you can point it and it will be able to answer it, okay? Now the benefit of RAG is that you are not retraining the model, right? So LLM is nothing but there is a neural network here, right? There is a neural network uh which you're training and the network looks something like this. It's a huge network. Let's say it has 70 billion parameter. Now what do I mean by parameter? Each of these edges have weight. Let's say this has a weight of 0.8, 0.7. And how many edges are there? Maybe 40, 50? In actual LLM, there are 70 billion parameters that you have to update. So the benefit of RAG is that you're not updating everything and it is very cost-effective, okay? But there are disadvantages. RAG may not be able to produce the best possible answer in your company's brand tone and the format that you expect. For example, for this question, RAG may produce this answer, but ideally you want this answer. Similarly, this is a second question. RAG may produce this and I but fine-tuned model will produce this. And you will notice that here there is more empathy. See? And let's say empathy is one of the values of your company that you want your chatbot to follow as well. So overall fine-tuning gives this benefit that it can handle emotion slang. It can answer with brand tone and overall it can produce more precise answers, whereas RAG has its own set of benefit, which is it is low cost, okay? So if I have to fully summarize pros and cons, then these are the pros and cons, okay? You can go over it. Overall, RAG is cheap, fine-tuning is expensive, but fine-tuning produces better answer compared to RAG. So what people do in the industry is they combine both RAG and fine-tuning, okay? I'm [snorts] giving you an example of a base LLM called Llama 3.2. And by the way, you can go to Hugging Face and find both of these models. So Llama 3.2 1B is a base LLM, whereas 3.2 1B instruct is a fine-tuned model. So this model is fine-tuned on this particular base LLM. And the base the foundation model is just an autocomplete. You all know, right? Like how how large language model works. The way it works is you're giving a sentence and it is just doing autocomplete of that sentence. So when I say, \"The capital of India is\", it will autocomplete Delhi. Okay, and then it will autocomplete next sentence, next next word, next word. And that's how it produces a big paragraph as an answer. But when you look at the instruct model, that is more similar to the response you get in ChatGPT. You have question-answer pair, okay? So summarize this article. Then it will summarize. Translate this sentence to Hindi. It will summarize, right? So this is So this fine-tuned model is more like ChatGPT, more consumable. There are two types of fine-tuning. One is full fine-tuning where you will retrain the entire network and it's going to be costly, right? You're updating 70 billion, 100 billion, whatever is the parameters of your LLM, you're updating all of them. Second one is parameter efficient fine-tuning. And there are two popular methods, LoRA and QLoRA. Here you are not updating all the layers actually. You keep these layers frozen and you add some new layers on top of it. If you know about transfer learning, in deep learning there is a technique called transfer learning where you keep certain layers frozen. You don't update them. And you update only some other layers. So PEFT is similar to that and these are the two popular methods. We are going to discuss LoRA, which is low-rank adaptation technique. It is one of the popular fine-tuning techniques for LLM. We have to first think about the transformer architecture. In transformer architecture, we had all these V, K, Q parameters. If you remember, query parameter, key value parameter, and so on. And when you're training this model, you are essentially training the trainable parameters, which is represented by these matrices. So if you remember from our deep learning module, we already discussed these metrics, WQ, WV. And these are again trainable parameters. These are the matrices which gets trained when you are training this particular transformer model. And I'm representing one slide here. We looked at this slide previously where we had this WQ, which was, you know, matrix that will tell you how to encode query of a token for attention computation. And we had couple of such matrices in attention layer. We had WQ, WKV, WO will be the output one. And then in the feed-forward layer, we had two matrices. If we represent all these matrices as W, let's assume we call it W in a generic way, then what we do in LoRA is we keep this W frozen. So let's say if you are using Llama model or GPT model, okay? And you are fine-tuning it. Now that model will have all these matrices. You keep them frozen. You don't change anything into them. But you take your training data set on which you want to fine-tune your model. And when you're fine-tuning, while you keep W frozen, where you don't change any parameter here, you add a new uh set of parameters called delta W. So you add a new matrix, delta W. And during the training, you change parameter only here. So this one is frozen, okay? It's like a box. It's frozen. It doesn't change. But this delta W will change. This is called parameter efficient fine-tuning. Here the whole model is frozen, but a small set of trainable parameter is added to the model, okay? So this is PEFT. Now you might ask, \"How can this save computation time?\" Because we are saying, \"Oh, parameter efficient fine-tuning, right?\" Um we we could have fine-tuned the entire model where we just change W. But we don't want to change it because we want this process to be efficient. But then if you're adding the delta W, it's the same thing. It's in fact more computation. So the question is, \"How does this solve computation problem?\" Well, in LoRA technique, we do something really clever. Let's say you have this delta W, right? Which is a D by D matrix. Okay? And Delta W is this. The new uh trainable parameter that you have added, okay? So, let's say it's D by D matrix. You decompose that into two matrices, okay? A and B. And here we are using this R parameter, which is called rank, okay? So, in LoRA, low rank adaptation, okay? So, this R is this hyperparameter. So, if you multiply these two matrix, like 4 by 2 and 2 by 4, you will get this particular matrix, okay? So, let's assume that D parameter is 512. So, let's say if you're training with Delta W, you will be training these many parameters. The total number of parameter will be 262,000. But, when you decompose it into this A and B, so this is a dot product, by the way. So, A.B, you get Delta W, okay? So, when you do that, uh and let's say your rank is eight, okay? So, this R, once again, is a rank parameter. When you say low rank adaptation, R is a rank. And this is a hyperparameter. It can be 2 8 6. There are different values, okay? That you can take. I'm just using R eight as an example value here. So, what happens is when R is eight is the parameters in this one is 4096. Parameters in this one is 4096. So, total number of trainable parameter is 8192. So, when you're training a model, you know, when you do back propagation and when you update the weights, you're updating only 8192 parameters. Whereas, in this case, you're updating so many parameters. So, this is how you achieve efficiency. And this is the crux of low rank adaptation. The rank parameter can take any values. Uh these are just general guidelines. But, as you can see, R can be 4 8 16 32. You know, it can be any of these values. I have seen eight to be the common value, eight or 16 to be the common value. But, once again, it's a hyperparameter, okay? If you look at uh PEFT library from Hugging Face, which is used for this PEFT optimization, R is taken as a hyperparameter in a LoRA config, okay? So, here eight is a common value. But, based on your data set, based on your problem, you can play with it and just see which method works the best. If you're interested in reading the full paper, you can just Google LoRA paper and you will find a PDF. So, just in case you're curious, you can go through it. But, I hope you got the crux of it, which is adding Delta W parameter and then decomposing that into A and B individual matrix matrix such that A.B is equal to Delta W. And then, total number of parameters that you have to train through A and B will be much lesser compared to Delta W. And in this technique, once again, you keep your W, which is your original set of parameters, frozen. You don't change them, okay? So, computationally, this method is very efficient. In order to understand the QLoRA technique, you need to first understand quantization. You might know about this concept from the deep learning module. But, let's uh refresh our memories. Let's say you have LLaMA 7B model. 7B means it has 7 billion parameter. And these parameters are nothing but the weights in neural network. Let's say each parameter takes 4 bytes or float 32 or 32 bits. These are all are same things. In that case, this model needs 28 GB of RAM. Like, when you're loading that model in your computer, it needs 28 GB of RAM. If you're talking about 70 billion model, it needs 280 GB of RAM, which is too much memory, okay? You can't run it on your local computer. But, what if we reduce the size for storing each parameter. Let's say from 4 byte you go to 8 bits or just 1 byte, okay? So, 8 bits is 1 byte. 1 byte is equal to int eight, okay? Int eight is a data type. In that case, it will take only 7 GB of memory. Here, I'm showing you a table where we have this different sizes for bits, okay? So, if Q is 32, which means 4 byte, it will take 28 GB, this scenario. But, if it is eight, it takes 7 GB. If it is NF4, int four, which is half bit, you know, 4 bits, it takes only 3.5 GB and you can run that model locally on your computer. If you have 70 billion model, you might need multiple GPUs with float 32. But, if you have int eight, you might need only one GPU. You know, you can run it with one GPU or two GPUs very easily. And this process of reducing the bytes, you know, that it takes to store one parameter is called quantization. It's a process of converting high precision numbers into low precision formats to reduce memory and computation requirements by machine learning models. Now, you'll be like, when you go from high precision to low precision, of course, you're losing accuracy. Well, that is true. But, it has been shown through the experiments that, practically speaking, you still get a pretty good accuracy, okay? For your given use case. And quantization helps especially with edge devices. Let's say you have a drone, which is flying over your field and you're using deep learning to uh do some kind of uh computer vision type of use case, then quantization really helps because you can have quantized model loaded into your drone. You know, drone will not have that much memory. So, it will work the best uh during the inference time. So, quantization is popular when it comes to edge devices. It is popular in other use cases as well, where you need efficiency when it comes to your computation and memory requirements. So, let's see how quantization works. Let's say you have a couple of weights which are float 32. Okay? And usually, these weights uh are minus one to one. So, the values of these weights will be .91 .78, okay? Negative. And then, .87 .28 and so on. So, I'm just showing you some sample weights from a neural network. And the scale here is minus one to one. When you quantize this to int two, int two will take how many What will be the range for int two? Just just tell me. You need to have this computer science fundamentals clear. Int two means two bits. And in two bits, we can store four number. Minus two to positive one. So, the way you can quantize this is you can divide your float 32 range into four equal bins, okay? Four equal bins and just map them to these four bits. So, these values n- .91 .78 will become negative two. .39 will become negative one. Any values that comes into this bin will become negative one. Okay? So, it is sort of like scaling, but scaling with surrounding and some other difference, okay? So, the values you had for weights, minus .91 -.78 and so on, after quantization will become this, okay? So, it's a pretty simple concept. What will happen if you are quantizing to int eight? Well, once again, what is the range for int eight? Int eight means eight bits. And eight bits can store values from minus 128 to positive 127. So, you divide, once again, this range into total 255 bins and you just map them. And let's say you call your original values X and you call your quantized values Q, okay? So, there is a mathematical formula to perform quantization. The first thing you need to do is find out the scale. Again, this is like you have learned scaling in machine learning, right? This is similar to that. You're scaling values from one range to another range. So, you first find scale by saying Xmax minus Xmin Qmax minus Qmin. So, Xmax is one. Xmin is minus one. Qmax is 127. Qmin is minus 128. So, you put all those values here and you get a scale of .0078. Now, to get quantized values, you use this formula, okay? This is a standard formula. So, you have your X values, minus zero point, which means what is the value where you want to center your points. In our case, let's say this is zero, okay? So, this zero point will be zero. X will be all these values and scale will be scale, okay? So, for one of the values, let's say for this negative .91 value, uh zero point is zero, then scale is this. When you round it, you will get negative 116. So, you map this value to negative 116. Once again, it's a concept similar to scaling with some differences, where you have a bunch of values, you're mapping it to limited range of integers. Okay? See, when we were doing scaling in machine learning module, the scaled value will still be a float. So, you are not saving any time anything in terms of memory. But here, the scale value is integer. So, you are mapping this float to integer through this formula, and that will give you this memory saving. So, I have this Jupiter notebook where I'm creating some hundred random values in range minus one to one, okay? So, let's say these values look something like this. Now, I'm using the same scale formula that we saw previously. Max X minus min X Q max minus Q min, and scale is going to be 0.0078, okay? Now, my zero point is zero underscore point is zero. And for quantization, I'm using that same formula. X minus zero point, okay? X minus zero point here, divide by scale, and you round it to an integer. And then you clip the values to Q min and Q max. You don't want to your values to go beyond minus 128 and plus 127. And when you apply this formula, you get Q values for your X values. So, for your X values which are these first 10 values, the first 10 Q values will be this. So, see? We map minus one to minus 128. Then um minus point 9797, whatever, to minus 125, and so on. And to do dequantization, which is from these values, let's say I want to get these values back, right? Because you have to do that. To do that, you will just use this formula. It's a reverse of quantization, okay? So, this formula should be pretty straightforward, folks. Scale into Q minus zero point, and you get these values back. So, this minus one value you got it back as minus 1.0039. So, there will be some loss of precision. You understand that, right? It's like when you zip your data, unzip it, there is some loss. Similarly, here there is some loss. So, minus 0.979, you got it back as minus 0.98. But it's not too bad, right? See, minus 0.818, you got minus 01.815. So, it's not too bad. You save a lot of memory, and you get similar accuracy. There'll be some drop in the accuracy, but for your practical use case, it will mostly works, okay? And this is how you plot it on the chart. Let's now look at normal float NF4 quantization. We previously saw that when you have in the two, possible values are four, okay? Minus two, minus one, zero, one. Total possible four values. So, you create four bins, and you map it, okay? What happens if instead of in two, you have int four? In int four, how many possible values are there? Folks, use your computer science fundamentals. Pause this video and tell me how many possible values are there. Well, total possible values will be 16, minus eight to positive seven. See, minus eight will be this, okay? This is a bit representation where this bit is a sign. So, sign one one bit means negative, and zero zero zero. Uh then one and one one one is minus seven, and so on. So, you create 16 bins and map them, okay? This is a linear mapping. You create 16 equal bins and map it. But this will create problems when we use quantization for our neural network, especially for LLM, because our weights, you know, all these weights, let's say you take that neural network, and you take all the weights, and if you plot a distribution, it will be a normal distribution. So, if it's a normal distribution, majority of the values are centered around zero. And when you are using regular in four, you are creating equal bins, correct? Equal equally spaced bins, and due to this, what will happen is majority of these values will be mapped to one value, right? Like like these values, let's say this is this value is, let's say, 30% of total values. Okay, I I don't know the exact number, but let's assume. Let's say this is 30%. And let's say this is 20% of the total values, and this is 20%. So, then all these values are being mapped to single value. Let's say this is minus two, this is minus one, zero. I think zero, one, two, three, four, five, six, seven, okay? So, majority of the values are being mapped to minus one and one. And when you do dequantization, you will lose a lot of precision. So, this is not a good approach, right? For a normal distribution, creating equal bins will not work. So, folks, please pause this video and tell me an idea which will work the best for this scenario. I'm telling you, it's a common sense. Okay, you have to just apply common sense. Pause this video and tell me how do you change this so that there is an equal mapping. All right, I hope you found the correct answer. The answer is you will not create equal bins. You will create bins based on the percentage of data points in your histogram. So, this total number of data points you have is 100%, right? And if you divide that by 16, you get 6.25%. So, you want 6.25% in each bin, and you will design that bin accordingly, okay? So, here, since in this histogram there are more number of data points, the width of the bin is lower, okay? So, if this is zero value, this might be zero to let's say 0.005. Let's assume that this is zero, this is one, and this is minus one. So, then this bin will be zero to 0.00 let's say one. Then 0.001 to 0.005, and so on. So, you create these bins in such a way that the data points, let's say these data points, right? Like so So, if you look at this particular area, this should be 6.25%. If you look at this particular area, this should be 6.25%. Okay? Let's look at the coding so that you get an idea. And this is called normal float four, right? Like normal normal for normal distribution. So, this is NF4 quantization. Let's look at the code now. So, in the code, what we're doing here is X is we are just creating 100 data points, okay? 100 random data points between minus one to one range. Let's say these are your weights of your neural network, and these NF4 values are 16 values. Okay? So, these values are minus 0.01 to minus 0.05. So, the distance between these two is 0.04. And then from here to here, the distance is 0.05. See, distance will increase. You see in this chart, this distance, okay? This distance right here is how much? 0.04. Okay? So, 0.04. But the distance between the dis- the width for the second bin, okay? Second bin, is what is this? If you add 0.05 into this, you get 0.1. So, this distance is 0.05. So, it will increase. Then the distance or the width for the third bin will be you even higher. So, 0.1 to 0.2 is 0.1, see? 0.1. So, you realize like when you increase that width, you can accommodate more data points. Because of this normal distribution, we need to do that. And these values are kind of fixed, okay? If you use some ready-made Python library like bits and bytes, you will get a better values, but this is a rough approximation. So, now let's quantize it. So, what you're doing essentially is uh once again, very simple. You are mapping all these data points to nearby value. So, what is a nearby value for minus one? This. So, you'll map it to this. What is more nearby to minus 0.97? Is it minus one or point 75? Well, it's minus one. So, you will map this value to here, okay? And what is most nearby to this? Is it minus 0.75 or minus one? Just not this. 0.87. Again, minus one. But if you look at minus 0.85, it is more near to this. So, these three values will be mapped to minus 0.75. These four values will be mapped to minus 1.0. You are just mapping it to nearby value. Very simple logic, and we have this Python function. And when you quantize it, see? You'll get this. See, all these values are mapped to minus one. Last three values are mapped to point minus 0.75 because it's it's more closer to it, okay? And this is how the distribution looks like. Q LoRA is essentially the quantized version of LoRA technique. Let's understand how this works. Say you are fine-tuning an LLM with with 65 billion parameter. Now, if this is using float 32, it will take 260 GB of memory to load the model. You will first quantize this using let's say NF4 quantization. And the quantized model will have a size of 32.5 GB because for each parameter is it it is taking half a byte. So, for 65 it will be 32.5. And then you apply LoRA fine-tuning using your domain-specific data set. This is what QLoRA is. It has few other elements as well, but just to go over definition of QLoRA, it's a memory-efficient fine-tuning method that combines 4-bit quantization with low-rank adaptation. Now, other than NF4 quantization, it uses a concept of double quantization and also page optimizers. If you look at their research paper, in the abstract itself, they talk about all these three points, which is 4-bit normal float quantization, double quantization, and page optimizer. So, we already looked at NF4 quantization. Let's look at what is double quantization. This is like zipping a file once again. So, you zip a file, you get a smaller version, then you again zip it, you get even a smaller version. So, same thing we do here. So, let's say you have 7 billion parameter model. To quantize it usually, you don't take all the parameters and quantize it in one shot. You will create a block of 64 parameters. So, you have all these 7 billion parameters, okay? You create a group of 64 billion parameters. And you will get n number of blocks, I think 109 million blocks in this case. And then you apply quantization, okay? NF4 quantization. So, each of these blocks will have less size and they will have their own individual scale values. If you remember quantization formula, there was scale and there was zero point, okay? So, for doing block-wise quantization, each block will have different scale. So, the scale one will be different than scale two and so on. It will also have a different zero point. Now, the people who wrote QLoRA paper thought that, okay, we got some optimization here, but the scales are still float 32, right? The scale is floating-point number. In our case, it was 0.0078 something. It is still a floating-point number. And you have so many such numbers. In this case, 7 billion parameters, you will have 109 million blocks, I think. And for each block you have one scale. So, 109 million float 32 numbers. So, what if you take all these scales and you quantize them again, okay? So, that way you also get some reduction in terms of size for the scale values and zero point values, okay? So, it's a simple concept just like zipping a file which is already zipped, okay? So, quantization you're doing and then you're doing a quantization again on the scale, etc. The third element of QLoRA is page optimizers. So, what happens is when you are fine-tuning this model, usually you'll use GPU. So, on GPU, let's say fine-tuning is going on. Sometimes it may run out of memory. So, you will use this paging concept similar to you know how paging works in terms of operating system. There is a page of memory which will be swapped in, swapped out of CPU memory back to disk and disk to CPU memory or RAM. We use similar concept here. So, when GPU is going out of memory, some of the pages that it has will be swapped out to CPU memory or RAM and then they will be swapped back in whenever needed. So, these are the three key elements of QLoRA technique. And I have the research paper open here. As you can see, you can fine-tune 65 billion parameter model on a single 48 GB GPU. So, you realize it says if 65 billion parameter with float 32, that multiplied by four, so 280 GB, whatever, it will be that huge number. So, I have a QLoRA paper open here. And here it says that a 65 billion parameter model can be trained on a single 48 GB GPU. This is humongous because 65 billion parameter model is around 100 260 GB. And if you can fine-tune that heavy model on a single GPU with 48 GB RAM, then that's really amazing, okay? I'm going to link this research paper. You can read it if you want to go into the details. We will use this Unsloth library, which is very popular when it comes to LLM fine-tuning. And they have this nice documentation which you can use to get help on API, etc. To install it, you will use pip install Unsloth on your computer. Now, to fine-tune, you need GPU on your computer. So, if your computer has GPU, you can do it locally, but I prefer doing this in cloud because in cloud you can get access to GPU as well as some of the dependency errors that I was getting while I was running locally, I did not get on cloud. So, I will start with Colab, okay? So, colab.research.google.com. Create a new notebook and then connect it with a GPU instance. So, by default this is connected to CPU. You can just say change runtime type. T4. So, this is giving you an access of Tesla T4 GPU, which is not very powerful, but good enough for our practical demonstration. If you have a paid account and if you can get access to higher-end GPU, then that's even better. I will demonstrate this entire thing through a pre-built notebook because running this code takes a lot of time, okay? So, I have already executed this notebook and I'll walk over it. So, in a Colab notebook, you first need to install Unsloth library, okay? Uh because when you connect with the Colab environment, it starts fresh. So, you can't just install it and save it. You have to install it, okay? So, in your cell, just run this after you have connected with that GPU instance. And then you will import fast language model class from Unsloth, okay? You'll also import PyTorch, which is torch. And here you are defining a bunch of parameters. And at this point, you are getting a pre-trained model. So, here we are fine-tuning Llama model, Llama 3.2 3B instruct. This is the model we are fine-tuning. So, you specify that. Then max sequence length is your context window length, okay? How much longer sequence you want to support in your fine-tuned model. Dtype none means let GPU figure out what kind of dtype will be the best. And by the way, I have provided help on all these parameters. See, it specifies the data type of model weights and computation. If you have something like Nvidia A100 GPU, then it will use this torch.bfloat16, okay? So, when you say dtype none, it will figure out the correct uh type for the storage. And load in four bit is used for 4-bit quantization, okay? So, we are going to use 4-bit quantization here. And when you run it, it will download a bunch of stuff because it is downloading this model. Uh and it is loading that model into this model parameter. You also get this tokenizer variable. If you look at this index, this looks similar to the Hugging Face Transformer library syntax where you say library class.from_pretrained, you load the model. Okay, so now I have Llama model here in this model variable. And I will fine-tune that, okay? You also need this tokenizer, okay? So, as a next step, what you do is you get the parameter efficient fine-tuned model, get PEFT model. So, here you are defining your parameters for LoRA. So, what do you need? Rank, okay? Rank I'm specifying as 16. You can also try eight, 32, etc. It's a hyperparameter, folks. So, I'm starting with 16, but you can start with eight, 32, play with it. Then for target modules, Q_proj, K_proj, V_proj, and O_proj refers to those uh remember those matrices? You remember these in a attention layer, you will have these four matrices. In feed-forward layer, you will have two matrices, W1, W2. And and and you will have few more in the output layer as well. So, that's what it is. Q_proj is for that uh WQ uh matrix, then WK, VV K, etc. Now, let's say if you don't specify this parameter, then it will not add that extra adapter, that extra delta W after that a particular matrix, okay? Now, since I have all these matrices uh defined, what it will do is see, you will have WQ and plus it will add delta W, right? Like delta W to this. Then since I have W K approach defined, it will have WK plus delta WK, something like that. Okay, so wherever you want to modify those matrices, you will add this parameter. So let's say if I don't add K approach, okay? If I don't add that, it will use WK original as a frozen layer. It will not add that adapter. I hope you're getting this point. This is coming from our LoRA lecture that we already discussed before, okay? And these are the matrices from the fully connected layer. Then we have LoRA alpha. So this LoRA alpha is this particular alpha. See, your equation is W0, which is original weight matrix, plus delta W. So A.B is your delta W. But you don't just do delta W, you add some scaling parameter. So that is alpha divided by rank, okay? And that alpha is this LoRA alpha parameter that you're specifying. This will tell you how much that adapter contributes to your weight update. Because this WW W0 is same as W that we have discussed before. This W is not changing, it's a frozen layer. What is changing is this A.B, which is delta W, correct? But how much delta W contributes to the final weights, you can configure that through this scaling parameter, okay? So that's what this LoRA alpha is. Then you have dropout. Dropout is for regularization. So while you're doing training, if you remember from our neural network lecture, if you want to drop certain neurons to kind of address overfitting, then you can specify that. In In our case, we are not going to have any dropout, we'll just say zero. Then this bias, okay? So I've given the information on all these parameters here, okay? Random state, all of that. So here, you are defining your LoRA model, your parameter efficient fine-tune model. So you loaded Llama 3 model, then you defined all these parameters for your LoRA, okay? Like R and LoRA alpha and so on. And now you got this new model, which is having all those LoRA parameters. As a next step, you will download the dataset on which you want to fine-tune your model. So here we are using ServiceNow R1 Distill SFT dataset. And this dataset library, by the way, it is a Hugging Face library. It allows you to access so many different datasets. I'm on Hugging Face website right now and I have this ServiceNow R1 Distill SFT dataset, as you can see. It has 172,000 rows and each row is sort of like you have a problem and you have solution. So see, this is a problem. It's like a puzzle. For Halloween, Sarah receives 66 pieces, whatever. This is like a puzzle and this is the solution. So you want to fine-tune your model on all these puzzles and you want to fine-tune it in a way that it will do reasoning similar to your DeepSeek model, okay? And for that, see, these are the two main columns in your dataset, right? Problem and this is a solution. And in solution, Sarah ate nine pieces of candy, see? The solution is this descriptive answer, but the actual number that you're looking at is nine, okay? And other than these two columns, you have third column, which is re-annotated assistant content. And this is a reasoning. This is like a think, you know, that think prompt that you get in DeepSeek. So if you want to solve this problem, this is how you will do reasoning step by step. You will say, first I need to determine total number of pieces candy, whatever. Next I will do this. This is sort of like how humans think, right? Like when you're given a puzzle, first you will do this first step, second step, third step and so on. And that's what this column is and at the end, there is this final answer. Now, in case you're wondering what is this {slash} boxed nine {slash} {slash} etc. Well, this is the LaTeX LaTeX markup language, okay? So let me just show you the It called LaTeX, but LaTeX is how you pronounce it. And this markup language, okay? What it does is people use it for in academia for scientific publications, etc. So let me just show you. Let's say you are having a research paper and you want to have all these mathematical equation, etc. For that, you will use this LaTeX package, okay? So it's like {slash} document {slash} use it. This is a markup language. Okay, folks, I hope you're getting what I mean by markup language. And see, LSD listing. So it has its own syntax. If you want to learn about it, you can go to YouTube. You'll find some LaTeX videos, but I don't think it's needed. It's just in in your brain, like you need to think that, okay, this is some kind of markup language used in this particular dataset, okay? So this is a dataset. Now, you load that dataset here through transformer dataset library, okay? So after the dataset is loaded, we'll look at the few records and see. It has a problem, it has a solution, it has an answer. See, problem. There were 27 boys, 35 girls. Remember in in high school days and college days, you used to get all these problems. There were fill in the blank children on the playground. So there's a problem. There's a solution. Solution is usually in that boxed parameter. Okay, so solution will be here somewhere and there is this reasoning pattern. Now, you take all those records. So there are 172,000 records in our dataset that we will use for fine-tuning. In this particular code, what we are doing is we take each of those records and you put it in this prompt. So you're saying you are a reflective assistant, blah blah blah, engaging iterative reasoning, mimicking human stream of your your your approach and present exploration start out, whatever. So you give this uh prompt, then here is a problem. So there are three brackets, right? So this is a problem, okay? So you you go through, see, you have a dataset, right? So you go through each record. When you say dot map, this dot map function will go through each record one by one. For each record, this function is called, okay? And and in every record, what do you have? Problem, solution and DeepSeek-like step-by-step thinking block, okay? For them, what you do is you take R1 prompt and R1 has these three parameters, right? So when you do format, it will in first block, it will first put problem, then in the second one, it will put thought, third, it will put solution. Okay? And it will return you the text. So for each of the records, just imagine you're getting this big prompt for each of the puzzle you have. After that, what happens is you're creating a trainer object. Now, trainer object is coming from transformer reinforcement learning library, which is once again Hugging Face, okay? So this is the library, folks. It's a Hugging Face library, transformer reinforcement learning library. And when you did pip install on sloth, it kind of install all these because these are the dependencies. So in that library, there is this SFT trainer, okay? Like supervised fine-tune training trainer, which you are importing and you are giving the base model, that LoRA model, okay? Then see, the the model is not trained yet, okay? You have just defined the configuration. So this model has that LoRA configuration that we gave here. See, this this particular configuration. So it knows what is the value of R, what is R LoRA alpha and so on. Then you will use the dataset and tokenizer. So when you run the training, see, later on I will say trainer.train. So when I do that, it will use this tokenizer for tokenizing. It will use this dataset to load the record and to train the model. Okay, so these are all the parameters, these are training arguments and these are some of these are familiar to you when you looked into the deep learning module. We had all this learning parameter, learning rate, weight decay, all of those, okay? Like optimizer. So Adam is your optimizer here and I have given information on all those parameters here, folks. Read through it. You don't need to remember the syntax here. You can get the syntax through ChatGPT or through the on sloth documentation. So don't stress too much, okay? Like right now you might be thinking, oh, this guy is just showing the code and he's not typing. Well, typing is not needed nowadays in the world of AI. It's like how you make use of those AI tools and make yourself productive while still learning the fundamentals. That is the entire uh goal that we need to have. Okay? So, you created this trainer object and then you will do trainer.train. It will take long time, folks. For me, I think it took like 20 minutes. And it is showing you the epochs and the training loss and you as you can see the loss is reducing, which is a good sign, which means my model is training in the right direction. And after 60 epochs, my loss is 0.48. So, I read somewhere in the documentation if it is less than 0.5, it's good enough. Uh I mean, it actually depends on your use case, but that's a general guideline. And then you will try some prompt. So, my model is trained, okay? After that that line, when you the trainer.train, model is trained. Which means model is fine-tuned. So, we took Llama 3 model. We trained it on the ServiceNow R1 dataset, okay? Which dataset? This dataset. 172,000 rows. And that Llama 3 model was not originally trained to think like this, to think like DeepSeek, you know, like step-by-step. But now that we fine-tuned it, the model will also start thinking like DeepSeek, okay? So, here I'm giving one sample uh question. How many Rs are present in strawberry? And folks, this might look like a simple problem. Actually, LLM gets confused with these problems, okay? So, it's kind of like a hard problem for LLM. So, I give this uh problem uh statement to my model, okay? And here you are doing tokenizer, whatever the basic setup, essentially. And then here is where you are doing inference. So, you'll say model.generate. Okay? Um whatever all these parameters, temperature, and so on. And whatever output you get, you will decode it into a response. So, here, if you look at the response, let me just show you the response. See? Now it is thinking step-by-step. Let me recap. See, let me recap. So, it is actually thinking step-by-step. It is saying that, \"Okay, um you know, it goes through the entire sentence letter by letter and it's saying, \"Okay, R is one. Here R is one.\" and so on. So, it it is is also doing double-check because in our uh prompt, we asked it to do human-like thinking. And then in the end, it will tell you total R R 2. Okay? Isn't this amazing, folks? We trained the model. We fine-tuned it on this ServiceNow R1 dataset. And Llama 3, which was not originally designed to produce output in this format, now it is able to do reasoning, okay? You can run this in Google Colab. It's going to take long time. Um the code is attached. So, folks, please read through the code. Once again, let me remind you. I know I'm saying this again and again. You don't need to remember syntax, folks. If you waste your mental energy in remembering syntax, you are not doing yourself any good. You can get all this help through ChatGPT AI and API documentation. Your goal is to remember fundamentals, okay? And connect those fundamentals on how do you solve a business problem. All right. So, that's about it. Uh the code is provided. Please run it in your Colab notebook and uh see how it goes.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 5.08,
+      "text": "This video is a complete crash course on"
+    },
+    {
+      "start": 2.52,
+      "end": 6.76,
+      "text": "LLM fine-tuning where we will start with"
+    },
+    {
+      "start": 5.08,
+      "end": 9.120000000000001,
+      "text": "some theory on what is fine-tuning."
+    },
+    {
+      "start": 6.76,
+      "end": 11.92,
+      "text": "We'll cover some popular methods such as"
+    },
+    {
+      "start": 9.12,
+      "end": 14.84,
+      "text": "Laura, QLoRA, etc. And then we will"
+    },
+    {
+      "start": 11.92,
+      "end": 19.0,
+      "text": "write code in Unsloth to perform"
+    },
+    {
+      "start": 14.84,
+      "end": 19.0,
+      "text": "fine-tuning on a sample data set."
+    },
+    {
+      "start": 22.0,
+      "end": 27.0,
+      "text": "Let's understand LLM fine-tuning in a"
+    },
+    {
+      "start": 24.32,
+      "end": 28.165,
+      "text": "very simple language. When I moved to US"
+    },
+    {
+      "start": 27.0,
+      "end": 28.2,
+      "text": "from India,"
+    },
+    {
+      "start": 28.165,
+      "end": 30.56,
+      "text": ">> [music]"
+    },
+    {
+      "start": 28.2,
+      "end": 32.96,
+      "text": ">> one of my friends took me to play"
+    },
+    {
+      "start": 30.56,
+      "end": 35.4,
+      "text": "baseball. And I was actually comfortable"
+    },
+    {
+      "start": 32.96,
+      "end": 37.2,
+      "text": "playing baseball. Why? Because in India"
+    },
+    {
+      "start": 35.4,
+      "end": 40.0,
+      "text": "I have already played cricket. Now in"
+    },
+    {
+      "start": 37.2,
+      "end": 41.92,
+      "text": "both of these games, you have bat, ball,"
+    },
+    {
+      "start": 40.0,
+      "end": 44.72,
+      "text": "you have to track the ball, and move"
+    },
+    {
+      "start": 41.92,
+      "end": 46.72,
+      "text": "your bat, run. So whatever raw skills I"
+    },
+    {
+      "start": 44.72,
+      "end": 48.44,
+      "text": "had from cricket, [music] I deployed"
+    },
+    {
+      "start": 46.72,
+      "end": 50.56,
+      "text": "that while playing baseball."
+    },
+    {
+      "start": 48.44,
+      "end": 53.72,
+      "text": "Essentially, I'm transferring the skills"
+    },
+    {
+      "start": 50.56,
+      "end": 55.64,
+      "text": "from one game to another. So in AI there"
+    },
+    {
+      "start": 53.72,
+      "end": 58.92,
+      "text": "is a term called transfer learning where"
+    },
+    {
+      "start": 55.64,
+      "end": 61.92,
+      "text": "you take the model and then you retrain"
+    },
+    {
+      "start": 58.92,
+      "end": 64.76,
+      "text": "it or you fine-tune it on new data set,"
+    },
+    {
+      "start": 61.92,
+      "end": 67.56,
+      "text": "task, and format. So that is what LLM"
+    },
+    {
+      "start": 64.76,
+      "end": 69.96000000000001,
+      "text": "fine-tuning is. When you look at LLM"
+    },
+    {
+      "start": 67.56,
+      "end": 71.92,
+      "text": "such as GPT-5, Llama, etc., they are"
+    },
+    {
+      "start": 69.96,
+      "end": 74.32,
+      "text": "trained on a vast amount of internet"
+    },
+    {
+      "start": 71.92,
+      "end": 76.72,
+      "text": "data. But let's say you are an AI"
+    },
+    {
+      "start": 74.32,
+      "end": 78.24,
+      "text": "engineer working in a private company."
+    },
+    {
+      "start": 76.72,
+      "end": 81.22,
+      "text": "Let's say you are working for Johnson &"
+    },
+    {
+      "start": 78.24,
+      "end": 81.24,
+      "text": "Johnson or Reliance Jio and"
+    },
+    {
+      "start": 81.22,
+      "end": 84.03999999999999,
+      "text": ">> [music]"
+    },
+    {
+      "start": 81.24,
+      "end": 86.67999999999999,
+      "text": ">> you are given a task to build a chatbot"
+    },
+    {
+      "start": 84.04,
+      "end": 89.52000000000001,
+      "text": "for your customers that has knowledge of"
+    },
+    {
+      "start": 86.68,
+      "end": 92.28,
+      "text": "the internal data of that organization."
+    },
+    {
+      "start": 89.52,
+      "end": 95.36,
+      "text": "Also, it should respond in a specific"
+    },
+    {
+      "start": 92.28,
+      "end": 98.52,
+      "text": "format, tone, etc. At this time, you"
+    },
+    {
+      "start": 95.36,
+      "end": 101.56,
+      "text": "will use LLM fine-tuning. So LLM"
+    },
+    {
+      "start": 98.52,
+      "end": 104.39999999999999,
+      "text": "fine-tuning is a process of retraining"
+    },
+    {
+      "start": 101.56,
+      "end": 107.16,
+      "text": "the pre-trained model such as Llama on a"
+    },
+    {
+      "start": 104.4,
+      "end": 109.80000000000001,
+      "text": "specific task, data set, tone, and"
+    },
+    {
+      "start": 107.16,
+      "end": 112.84,
+      "text": "format. Let's take an example of an"
+    },
+    {
+      "start": 109.8,
+      "end": 114.67999999999999,
+      "text": "imaginary company called Loki Phones uh"
+    },
+    {
+      "start": 112.84,
+      "end": 116.48,
+      "text": "to understand this thing better. You're"
+    },
+    {
+      "start": 114.68,
+      "end": 119.36000000000001,
+      "text": "building a chatbot for this company"
+    },
+    {
+      "start": 116.48,
+      "end": 121.64,
+      "text": "using models such as GPT and Llama. And"
+    },
+    {
+      "start": 119.36,
+      "end": 123.68,
+      "text": "when your customer asks a question, \"My"
+    },
+    {
+      "start": 121.64,
+      "end": 126.88,
+      "text": "Loki Phone 12 screen is cracked. What"
+    },
+    {
+      "start": 123.68,
+      "end": 128.64000000000001,
+      "text": "are my options?\" The base LLM will give"
+    },
+    {
+      "start": 126.88,
+      "end": 131.84,
+      "text": "some general answer, right? But the"
+    },
+    {
+      "start": 128.64,
+      "end": 135.11999999999998,
+      "text": "right answer in this case is"
+    },
+    {
+      "start": 131.84,
+      "end": 137.20000000000002,
+      "text": "you should use this Loki Care Plus plan"
+    },
+    {
+      "start": 135.12,
+      "end": 139.92000000000002,
+      "text": "if you already have it. Now let's say"
+    },
+    {
+      "start": 137.2,
+      "end": 142.95999999999998,
+      "text": "this data is not available on internet."
+    },
+    {
+      "start": 139.92,
+      "end": 144.6,
+      "text": "In that case, plain LLM will not be able"
+    },
+    {
+      "start": 142.96,
+      "end": 145.96,
+      "text": "to answer this."
+    },
+    {
+      "start": 144.6,
+      "end": 148.4,
+      "text": "There might be other questions, okay,"
+    },
+    {
+      "start": 145.96,
+      "end": 149.8,
+      "text": "how long battery last, whatever. And"
+    },
+    {
+      "start": 148.4,
+      "end": 151.44,
+      "text": "assume"
+    },
+    {
+      "start": 149.8,
+      "end": 153.84,
+      "text": "this is the kind of data which is"
+    },
+    {
+      "start": 151.44,
+      "end": 157.0,
+      "text": "private to organization and LLM has not"
+    },
+    {
+      "start": 153.84,
+      "end": 159.72,
+      "text": "seen it. So using plain LLM, it won't be"
+    },
+    {
+      "start": 157.0,
+      "end": 162.32,
+      "text": "able to answer. So what you do is you"
+    },
+    {
+      "start": 159.72,
+      "end": 164.8,
+      "text": "use a simple technique called"
+    },
+    {
+      "start": 162.32,
+      "end": 167.92,
+      "text": "retrieval augmented generation."
+    },
+    {
+      "start": 164.8,
+      "end": 171.20000000000002,
+      "text": "In this technique, you point your LLM to"
+    },
+    {
+      "start": 167.92,
+      "end": 174.2,
+      "text": "external source of knowledge, right? It"
+    },
+    {
+      "start": 171.2,
+      "end": 175.76,
+      "text": "can be a database, PDF files, whatever."
+    },
+    {
+      "start": 174.2,
+      "end": 177.04,
+      "text": "This is private data. It's not available"
+    },
+    {
+      "start": 175.76,
+      "end": 179.16,
+      "text": "on internet. But when you're building a"
+    },
+    {
+      "start": 177.04,
+      "end": 181.12,
+      "text": "chatbot internally, you can point it and"
+    },
+    {
+      "start": 179.16,
+      "end": 183.79999999999998,
+      "text": "it will be able to answer it, okay? Now"
+    },
+    {
+      "start": 181.12,
+      "end": 186.64000000000001,
+      "text": "the benefit of RAG is that you are not"
+    },
+    {
+      "start": 183.8,
+      "end": 188.52,
+      "text": "retraining the model, right? So LLM is"
+    },
+    {
+      "start": 186.64,
+      "end": 190.92,
+      "text": "nothing but there is a neural network"
+    },
+    {
+      "start": 188.52,
+      "end": 193.28,
+      "text": "here, right? There is a neural network"
+    },
+    {
+      "start": 190.92,
+      "end": 195.11999999999998,
+      "text": "uh which you're training and the network"
+    },
+    {
+      "start": 193.28,
+      "end": 197.32,
+      "text": "looks something like this. It's a huge"
+    },
+    {
+      "start": 195.12,
+      "end": 199.36,
+      "text": "network. Let's say it has 70 billion"
+    },
+    {
+      "start": 197.32,
+      "end": 201.79999999999998,
+      "text": "parameter. Now what do I mean by"
+    },
+    {
+      "start": 199.36,
+      "end": 203.48000000000002,
+      "text": "parameter? Each of these edges have"
+    },
+    {
+      "start": 201.8,
+      "end": 206.52,
+      "text": "weight. Let's say this has a weight of"
+    },
+    {
+      "start": 203.48,
+      "end": 208.51999999999998,
+      "text": "0.8, 0.7."
+    },
+    {
+      "start": 206.52,
+      "end": 212.20000000000002,
+      "text": "And how many edges are there? Maybe 40,"
+    },
+    {
+      "start": 208.52,
+      "end": 214.4,
+      "text": "50? In actual LLM, there are 70 billion"
+    },
+    {
+      "start": 212.2,
+      "end": 215.64,
+      "text": "parameters that you have to"
+    },
+    {
+      "start": 214.4,
+      "end": 218.28,
+      "text": "update."
+    },
+    {
+      "start": 215.64,
+      "end": 220.95999999999998,
+      "text": "So the benefit of RAG is that you're not"
+    },
+    {
+      "start": 218.28,
+      "end": 223.52,
+      "text": "updating everything and it is very"
+    },
+    {
+      "start": 220.96,
+      "end": 225.28,
+      "text": "cost-effective, okay? But there are"
+    },
+    {
+      "start": 223.52,
+      "end": 227.64000000000001,
+      "text": "disadvantages."
+    },
+    {
+      "start": 225.28,
+      "end": 231.6,
+      "text": "RAG may not be able to produce the best"
+    },
+    {
+      "start": 227.64,
+      "end": 233.76,
+      "text": "possible answer in your company's brand"
+    },
+    {
+      "start": 231.6,
+      "end": 236.12,
+      "text": "tone and the format that you expect. For"
+    },
+    {
+      "start": 233.76,
+      "end": 239.2,
+      "text": "example, for this question, RAG may"
+    },
+    {
+      "start": 236.12,
+      "end": 242.16,
+      "text": "produce this answer, but ideally you"
+    },
+    {
+      "start": 239.2,
+      "end": 243.56,
+      "text": "want this answer. Similarly,"
+    },
+    {
+      "start": 242.16,
+      "end": 246.52,
+      "text": "this is a second question. RAG may"
+    },
+    {
+      "start": 243.56,
+      "end": 248.12,
+      "text": "produce this and I but fine-tuned model"
+    },
+    {
+      "start": 246.52,
+      "end": 249.20000000000002,
+      "text": "will produce this. And you will notice"
+    },
+    {
+      "start": 248.12,
+      "end": 252.72,
+      "text": "that"
+    },
+    {
+      "start": 249.2,
+      "end": 254.11999999999998,
+      "text": "here there is more empathy. See?"
+    },
+    {
+      "start": 252.72,
+      "end": 256.2,
+      "text": "And let's say empathy is one of the"
+    },
+    {
+      "start": 254.12,
+      "end": 258.72,
+      "text": "values of your company"
+    },
+    {
+      "start": 256.2,
+      "end": 262.32,
+      "text": "that you want your chatbot to follow as"
+    },
+    {
+      "start": 258.72,
+      "end": 264.20000000000005,
+      "text": "well. So overall"
+    },
+    {
+      "start": 262.32,
+      "end": 266.88,
+      "text": "fine-tuning gives this benefit that it"
+    },
+    {
+      "start": 264.2,
+      "end": 268.88,
+      "text": "can handle emotion slang. It can answer"
+    },
+    {
+      "start": 266.88,
+      "end": 271.68,
+      "text": "with brand tone and overall it can"
+    },
+    {
+      "start": 268.88,
+      "end": 274.2,
+      "text": "produce more precise answers, whereas"
+    },
+    {
+      "start": 271.68,
+      "end": 276.04,
+      "text": "RAG has its own set of benefit, which is"
+    },
+    {
+      "start": 274.2,
+      "end": 279.56,
+      "text": "it is low cost, okay? So if I have to"
+    },
+    {
+      "start": 276.04,
+      "end": 281.40000000000003,
+      "text": "fully summarize pros and cons, then"
+    },
+    {
+      "start": 279.56,
+      "end": 284.56,
+      "text": "these are the pros and cons, okay? You"
+    },
+    {
+      "start": 281.4,
+      "end": 287.0,
+      "text": "can go over it. Overall, RAG is cheap,"
+    },
+    {
+      "start": 284.56,
+      "end": 289.44,
+      "text": "fine-tuning is expensive, but"
+    },
+    {
+      "start": 287.0,
+      "end": 292.96,
+      "text": "fine-tuning produces better answer"
+    },
+    {
+      "start": 289.44,
+      "end": 294.88,
+      "text": "compared to RAG. So what people do in"
+    },
+    {
+      "start": 292.96,
+      "end": 296.91999999999996,
+      "text": "the industry is they combine both RAG"
+    },
+    {
+      "start": 294.88,
+      "end": 299.56,
+      "text": "and fine-tuning, okay? I'm [snorts]"
+    },
+    {
+      "start": 296.92,
+      "end": 301.92,
+      "text": "giving you an example of a base LLM"
+    },
+    {
+      "start": 299.56,
+      "end": 304.6,
+      "text": "called Llama 3.2. And by the way, you"
+    },
+    {
+      "start": 301.92,
+      "end": 307.92,
+      "text": "can go to Hugging Face and find both of"
+    },
+    {
+      "start": 304.6,
+      "end": 309.0,
+      "text": "these models. So Llama 3.2 1B is a base"
+    },
+    {
+      "start": 307.92,
+      "end": 312.6,
+      "text": "LLM,"
+    },
+    {
+      "start": 309.0,
+      "end": 315.28,
+      "text": "whereas 3.2 1B instruct is a fine-tuned"
+    },
+    {
+      "start": 312.6,
+      "end": 318.40000000000003,
+      "text": "model. So this model is fine-tuned on"
+    },
+    {
+      "start": 315.28,
+      "end": 321.59999999999997,
+      "text": "this particular base LLM."
+    },
+    {
+      "start": 318.4,
+      "end": 323.56,
+      "text": "And the base the foundation model is"
+    },
+    {
+      "start": 321.6,
+      "end": 325.48,
+      "text": "just an autocomplete. You all know,"
+    },
+    {
+      "start": 323.56,
+      "end": 326.48,
+      "text": "right? Like how how large language model"
+    },
+    {
+      "start": 325.48,
+      "end": 328.56,
+      "text": "works."
+    },
+    {
+      "start": 326.48,
+      "end": 331.48,
+      "text": "The way it works is you're giving a"
+    },
+    {
+      "start": 328.56,
+      "end": 333.44,
+      "text": "sentence and it is just doing"
+    },
+    {
+      "start": 331.48,
+      "end": 337.28000000000003,
+      "text": "autocomplete of that sentence. So when I"
+    },
+    {
+      "start": 333.44,
+      "end": 339.16,
+      "text": "say, \"The capital of India is\", it will"
+    },
+    {
+      "start": 337.28,
+      "end": 340.76,
+      "text": "autocomplete Delhi."
+    },
+    {
+      "start": 339.16,
+      "end": 342.68,
+      "text": "Okay, and then it will autocomplete next"
+    },
+    {
+      "start": 340.76,
+      "end": 344.96,
+      "text": "sentence, next next word, next word. And"
+    },
+    {
+      "start": 342.68,
+      "end": 347.12,
+      "text": "that's how it produces a big paragraph"
+    },
+    {
+      "start": 344.96,
+      "end": 349.52,
+      "text": "as an answer. But when you look at the"
+    },
+    {
+      "start": 347.12,
+      "end": 352.04,
+      "text": "instruct model, that is more similar to"
+    },
+    {
+      "start": 349.52,
+      "end": 353.91999999999996,
+      "text": "the response you get in ChatGPT."
+    },
+    {
+      "start": 352.04,
+      "end": 356.0,
+      "text": "You have question-answer pair, okay? So"
+    },
+    {
+      "start": 353.92,
+      "end": 357.40000000000003,
+      "text": "summarize this article."
+    },
+    {
+      "start": 356.0,
+      "end": 358.96,
+      "text": "Then it will summarize. Translate this"
+    },
+    {
+      "start": 357.4,
+      "end": 360.79999999999995,
+      "text": "sentence to Hindi. It will summarize,"
+    },
+    {
+      "start": 358.96,
+      "end": 363.2,
+      "text": "right? So this is So this fine-tuned"
+    },
+    {
+      "start": 360.8,
+      "end": 365.2,
+      "text": "model is more like ChatGPT, more"
+    },
+    {
+      "start": 363.2,
+      "end": 367.32,
+      "text": "consumable. There are two types of"
+    },
+    {
+      "start": 365.2,
+      "end": 369.88,
+      "text": "fine-tuning. One is full fine-tuning"
+    },
+    {
+      "start": 367.32,
+      "end": 371.48,
+      "text": "where you will retrain the entire"
+    },
+    {
+      "start": 369.88,
+      "end": 373.8,
+      "text": "network and it's going to be costly,"
+    },
+    {
+      "start": 371.48,
+      "end": 375.20000000000005,
+      "text": "right? You're updating 70 billion, 100"
+    },
+    {
+      "start": 373.8,
+      "end": 377.2,
+      "text": "billion, whatever is the parameters of"
+    },
+    {
+      "start": 375.2,
+      "end": 379.2,
+      "text": "your LLM, you're updating all of them."
+    },
+    {
+      "start": 377.2,
+      "end": 380.8,
+      "text": "Second one is parameter efficient"
+    },
+    {
+      "start": 379.2,
+      "end": 383.08,
+      "text": "fine-tuning. And there are two popular"
+    },
+    {
+      "start": 380.8,
+      "end": 386.52000000000004,
+      "text": "methods, LoRA and QLoRA. Here you are"
+    },
+    {
+      "start": 383.08,
+      "end": 387.71999999999997,
+      "text": "not updating all the layers actually."
+    },
+    {
+      "start": 386.52,
+      "end": 391.15999999999997,
+      "text": "You keep"
+    },
+    {
+      "start": 387.72,
+      "end": 393.48,
+      "text": "these layers frozen and you add some new"
+    },
+    {
+      "start": 391.16,
+      "end": 395.28000000000003,
+      "text": "layers on top of it. If you know about"
+    },
+    {
+      "start": 393.48,
+      "end": 396.44,
+      "text": "transfer learning, in deep learning"
+    },
+    {
+      "start": 395.28,
+      "end": 398.91999999999996,
+      "text": "there is a technique called transfer"
+    },
+    {
+      "start": 396.44,
+      "end": 400.71999999999997,
+      "text": "learning where you keep certain layers"
+    },
+    {
+      "start": 398.92,
+      "end": 403.16,
+      "text": "frozen. You don't update them. And you"
+    },
+    {
+      "start": 400.72,
+      "end": 404.52000000000004,
+      "text": "update only some other"
+    },
+    {
+      "start": 403.16,
+      "end": 406.40000000000003,
+      "text": "layers. So"
+    },
+    {
+      "start": 404.52,
+      "end": 409.71999999999997,
+      "text": "PEFT is similar to that and these are"
+    },
+    {
+      "start": 406.4,
+      "end": 409.71999999999997,
+      "text": "the two popular methods."
+    },
+    {
+      "start": 412.6,
+      "end": 417.76000000000005,
+      "text": "We are going to discuss LoRA, which is"
+    },
+    {
+      "start": 414.92,
+      "end": 421.12,
+      "text": "low-rank adaptation technique. It is one"
+    },
+    {
+      "start": 417.76,
+      "end": 424.08,
+      "text": "of the popular fine-tuning techniques"
+    },
+    {
+      "start": 421.12,
+      "end": 425.88,
+      "text": "for LLM. We have to first think about"
+    },
+    {
+      "start": 424.08,
+      "end": 427.84,
+      "text": "the transformer architecture. In"
+    },
+    {
+      "start": 425.88,
+      "end": 432.48,
+      "text": "transformer architecture,"
+    },
+    {
+      "start": 427.84,
+      "end": 435.35999999999996,
+      "text": "we had all these V, K, Q parameters. If"
+    },
+    {
+      "start": 432.48,
+      "end": 437.20000000000005,
+      "text": "you remember, query parameter, key value"
+    },
+    {
+      "start": 435.36,
+      "end": 440.16,
+      "text": "parameter, and so on. And when you're"
+    },
+    {
+      "start": 437.2,
+      "end": 442.56,
+      "text": "training this model, you are essentially"
+    },
+    {
+      "start": 440.16,
+      "end": 445.68,
+      "text": "training the trainable parameters, which"
+    },
+    {
+      "start": 442.56,
+      "end": 447.36,
+      "text": "is represented by these matrices. So if"
+    },
+    {
+      "start": 445.68,
+      "end": 450.36,
+      "text": "you remember from our deep learning"
+    },
+    {
+      "start": 447.36,
+      "end": 453.0,
+      "text": "module, we already discussed these"
+    },
+    {
+      "start": 450.36,
+      "end": 455.04,
+      "text": "metrics, WQ,"
+    },
+    {
+      "start": 453.0,
+      "end": 457.12,
+      "text": "WV."
+    },
+    {
+      "start": 455.04,
+      "end": 459.24,
+      "text": "And these are again trainable"
+    },
+    {
+      "start": 457.12,
+      "end": 461.24,
+      "text": "parameters. These are the matrices which"
+    },
+    {
+      "start": 459.24,
+      "end": 464.0,
+      "text": "gets trained when you are training this"
+    },
+    {
+      "start": 461.24,
+      "end": 466.24,
+      "text": "particular transformer model. And I'm"
+    },
+    {
+      "start": 464.0,
+      "end": 469.16,
+      "text": "representing one slide here. We looked"
+    },
+    {
+      "start": 466.24,
+      "end": 472.64,
+      "text": "at this slide previously where we had"
+    },
+    {
+      "start": 469.16,
+      "end": 475.8,
+      "text": "this WQ, which was, you know, matrix"
+    },
+    {
+      "start": 472.64,
+      "end": 478.71999999999997,
+      "text": "that will tell you how to encode query"
+    },
+    {
+      "start": 475.8,
+      "end": 481.40000000000003,
+      "text": "of a token for attention computation."
+    },
+    {
+      "start": 478.72,
+      "end": 486.20000000000005,
+      "text": "And we had couple of such matrices in"
+    },
+    {
+      "start": 481.4,
+      "end": 488.47999999999996,
+      "text": "attention layer. We had WQ, WKV, WO will"
+    },
+    {
+      "start": 486.2,
+      "end": 491.32,
+      "text": "be the output one. And then in the"
+    },
+    {
+      "start": 488.48,
+      "end": 494.40000000000003,
+      "text": "feed-forward layer, we had two matrices."
+    },
+    {
+      "start": 491.32,
+      "end": 497.92,
+      "text": "If we represent all these matrices as W,"
+    },
+    {
+      "start": 494.4,
+      "end": 502.88,
+      "text": "let's assume we call it W in a generic"
+    },
+    {
+      "start": 497.92,
+      "end": 505.16,
+      "text": "way, then what we do in LoRA is we keep"
+    },
+    {
+      "start": 502.88,
+      "end": 507.56,
+      "text": "this W frozen. So let's say if you are"
+    },
+    {
+      "start": 505.16,
+      "end": 509.16,
+      "text": "using Llama model or GPT model, okay?"
+    },
+    {
+      "start": 507.56,
+      "end": 511.68,
+      "text": "And you are fine-tuning it. Now that"
+    },
+    {
+      "start": 509.16,
+      "end": 513.44,
+      "text": "model will have all these matrices. You"
+    },
+    {
+      "start": 511.68,
+      "end": 515.28,
+      "text": "keep them frozen. You don't change"
+    },
+    {
+      "start": 513.44,
+      "end": 518.1590000000001,
+      "text": "anything into them."
+    },
+    {
+      "start": 515.28,
+      "end": 520.56,
+      "text": "But you take your training data set on"
+    },
+    {
+      "start": 518.159,
+      "end": 523.159,
+      "text": "which you want to fine-tune your model."
+    },
+    {
+      "start": 520.56,
+      "end": 526.04,
+      "text": "And when you're fine-tuning, while you"
+    },
+    {
+      "start": 523.159,
+      "end": 527.88,
+      "text": "keep W frozen, where you don't change"
+    },
+    {
+      "start": 526.04,
+      "end": 531.5999999999999,
+      "text": "any parameter here,"
+    },
+    {
+      "start": 527.88,
+      "end": 535.16,
+      "text": "you add a new uh set of parameters"
+    },
+    {
+      "start": 531.6,
+      "end": 538.28,
+      "text": "called delta W. So you add a new matrix,"
+    },
+    {
+      "start": 535.16,
+      "end": 541.0799999999999,
+      "text": "delta W. And during the training, you"
+    },
+    {
+      "start": 538.28,
+      "end": 543.0,
+      "text": "change parameter only here. So this one"
+    },
+    {
+      "start": 541.08,
+      "end": 545.36,
+      "text": "is frozen, okay? It's like a box. It's"
+    },
+    {
+      "start": 543.0,
+      "end": 549.08,
+      "text": "frozen. It doesn't change. But this"
+    },
+    {
+      "start": 545.36,
+      "end": 553.0,
+      "text": "delta W will change. This is called"
+    },
+    {
+      "start": 549.08,
+      "end": 554.96,
+      "text": "parameter efficient fine-tuning."
+    },
+    {
+      "start": 553.0,
+      "end": 557.24,
+      "text": "Here the whole model is frozen, but a"
+    },
+    {
+      "start": 554.96,
+      "end": 560.2,
+      "text": "small set of trainable"
+    },
+    {
+      "start": 557.24,
+      "end": 563.6,
+      "text": "parameter is added to the model, okay?"
+    },
+    {
+      "start": 560.2,
+      "end": 566.5600000000001,
+      "text": "So this is PEFT. Now you might ask, \"How"
+    },
+    {
+      "start": 563.6,
+      "end": 568.88,
+      "text": "can this save computation time?\" Because"
+    },
+    {
+      "start": 566.56,
+      "end": 571.52,
+      "text": "we are saying, \"Oh, parameter efficient"
+    },
+    {
+      "start": 568.88,
+      "end": 573.28,
+      "text": "fine-tuning, right?\" Um"
+    },
+    {
+      "start": 571.52,
+      "end": 575.24,
+      "text": "we we could have fine-tuned the entire"
+    },
+    {
+      "start": 573.28,
+      "end": 576.92,
+      "text": "model where we just change W. But we"
+    },
+    {
+      "start": 575.24,
+      "end": 579.24,
+      "text": "don't want to change it because we want"
+    },
+    {
+      "start": 576.92,
+      "end": 581.36,
+      "text": "this process to be efficient. But then"
+    },
+    {
+      "start": 579.24,
+      "end": 583.28,
+      "text": "if you're adding the delta W, it's the"
+    },
+    {
+      "start": 581.36,
+      "end": 585.64,
+      "text": "same thing. It's in fact more"
+    },
+    {
+      "start": 583.28,
+      "end": 587.4,
+      "text": "computation. So the question is, \"How"
+    },
+    {
+      "start": 585.64,
+      "end": 590.84,
+      "text": "does this solve computation problem?\""
+    },
+    {
+      "start": 587.4,
+      "end": 595.04,
+      "text": "Well, in LoRA technique, we do something"
+    },
+    {
+      "start": 590.84,
+      "end": 598.0,
+      "text": "really clever. Let's say you have this"
+    },
+    {
+      "start": 595.04,
+      "end": 600.92,
+      "text": "delta W, right? Which is a D by D"
+    },
+    {
+      "start": 598.0,
+      "end": 603.6,
+      "text": "matrix. Okay? And Delta W is this."
+    },
+    {
+      "start": 600.92,
+      "end": 605.5999999999999,
+      "text": "The new uh trainable parameter that you"
+    },
+    {
+      "start": 603.6,
+      "end": 609.88,
+      "text": "have added, okay? So, let's say it's D"
+    },
+    {
+      "start": 605.6,
+      "end": 612.9200000000001,
+      "text": "by D matrix. You decompose that into two"
+    },
+    {
+      "start": 609.88,
+      "end": 615.24,
+      "text": "matrices, okay? A and B. And here we are"
+    },
+    {
+      "start": 612.92,
+      "end": 618.92,
+      "text": "using this R parameter, which is called"
+    },
+    {
+      "start": 615.24,
+      "end": 621.88,
+      "text": "rank, okay? So, in LoRA, low rank"
+    },
+    {
+      "start": 618.92,
+      "end": 624.3199999999999,
+      "text": "adaptation, okay? So, this R is this"
+    },
+    {
+      "start": 621.88,
+      "end": 627.2,
+      "text": "hyperparameter. So, if you multiply"
+    },
+    {
+      "start": 624.32,
+      "end": 630.0400000000001,
+      "text": "these two matrix, like 4 by 2 and 2 by"
+    },
+    {
+      "start": 627.2,
+      "end": 633.48,
+      "text": "4, you will get this particular matrix,"
+    },
+    {
+      "start": 630.04,
+      "end": 635.68,
+      "text": "okay? So, let's assume that D parameter"
+    },
+    {
+      "start": 633.48,
+      "end": 639.12,
+      "text": "is 512. So, let's say if you're training"
+    },
+    {
+      "start": 635.68,
+      "end": 640.5999999999999,
+      "text": "with Delta W, you will be training these"
+    },
+    {
+      "start": 639.12,
+      "end": 642.68,
+      "text": "many parameters."
+    },
+    {
+      "start": 640.6,
+      "end": 644.48,
+      "text": "The total number of parameter will be"
+    },
+    {
+      "start": 642.68,
+      "end": 647.4,
+      "text": "262,000."
+    },
+    {
+      "start": 644.48,
+      "end": 649.12,
+      "text": "But, when you decompose it into this A"
+    },
+    {
+      "start": 647.4,
+      "end": 652.52,
+      "text": "and B, so this is a dot product, by the"
+    },
+    {
+      "start": 649.12,
+      "end": 655.12,
+      "text": "way. So, A.B, you get Delta W, okay?"
+    },
+    {
+      "start": 652.52,
+      "end": 657.36,
+      "text": "So, when you do that, uh and let's say"
+    },
+    {
+      "start": 655.12,
+      "end": 659.12,
+      "text": "your rank is eight, okay? So, this R,"
+    },
+    {
+      "start": 657.36,
+      "end": 662.08,
+      "text": "once again, is a rank parameter. When"
+    },
+    {
+      "start": 659.12,
+      "end": 664.36,
+      "text": "you say low rank adaptation, R is a"
+    },
+    {
+      "start": 662.08,
+      "end": 667.64,
+      "text": "rank. And this is a hyperparameter. It"
+    },
+    {
+      "start": 664.36,
+      "end": 670.0,
+      "text": "can be 2 8 6. There are different"
+    },
+    {
+      "start": 667.64,
+      "end": 672.76,
+      "text": "values, okay? That you can take. I'm"
+    },
+    {
+      "start": 670.0,
+      "end": 673.72,
+      "text": "just using R eight as an example value"
+    },
+    {
+      "start": 672.76,
+      "end": 677.24,
+      "text": "here."
+    },
+    {
+      "start": 673.72,
+      "end": 680.64,
+      "text": "So, what happens is when R is eight is"
+    },
+    {
+      "start": 677.24,
+      "end": 683.04,
+      "text": "the parameters in this one is 4096."
+    },
+    {
+      "start": 680.64,
+      "end": 685.8,
+      "text": "Parameters in this one is 4096. So,"
+    },
+    {
+      "start": 683.04,
+      "end": 688.52,
+      "text": "total number of trainable parameter is"
+    },
+    {
+      "start": 685.8,
+      "end": 689.9599999999999,
+      "text": "8192. So, when you're training a model,"
+    },
+    {
+      "start": 688.52,
+      "end": 692.92,
+      "text": "you know, when you do back propagation"
+    },
+    {
+      "start": 689.96,
+      "end": 695.6800000000001,
+      "text": "and when you update the weights, you're"
+    },
+    {
+      "start": 692.92,
+      "end": 698.3199999999999,
+      "text": "updating only 8192 parameters. Whereas,"
+    },
+    {
+      "start": 695.68,
+      "end": 700.7199999999999,
+      "text": "in this case, you're updating so many"
+    },
+    {
+      "start": 698.32,
+      "end": 703.6,
+      "text": "parameters. So, this is how you achieve"
+    },
+    {
+      "start": 700.72,
+      "end": 706.32,
+      "text": "efficiency. And this is the crux of low"
+    },
+    {
+      "start": 703.6,
+      "end": 709.0,
+      "text": "rank adaptation. The rank parameter can"
+    },
+    {
+      "start": 706.32,
+      "end": 711.6800000000001,
+      "text": "take any values. Uh these are just"
+    },
+    {
+      "start": 709.0,
+      "end": 715.32,
+      "text": "general guidelines. But, as you can see,"
+    },
+    {
+      "start": 711.68,
+      "end": 717.4799999999999,
+      "text": "R can be 4 8 16 32. You know, it can be"
+    },
+    {
+      "start": 715.32,
+      "end": 719.5200000000001,
+      "text": "any of these values. I have seen eight"
+    },
+    {
+      "start": 717.48,
+      "end": 721.839,
+      "text": "to be the common value, eight or 16 to"
+    },
+    {
+      "start": 719.52,
+      "end": 724.12,
+      "text": "be the common value. But,"
+    },
+    {
+      "start": 721.839,
+      "end": 727.32,
+      "text": "once again, it's a hyperparameter, okay?"
+    },
+    {
+      "start": 724.12,
+      "end": 729.24,
+      "text": "If you look at uh PEFT library from"
+    },
+    {
+      "start": 727.32,
+      "end": 731.5200000000001,
+      "text": "Hugging Face, which is used for this"
+    },
+    {
+      "start": 729.24,
+      "end": 734.72,
+      "text": "PEFT optimization,"
+    },
+    {
+      "start": 731.52,
+      "end": 737.72,
+      "text": "R is taken as a hyperparameter in a LoRA"
+    },
+    {
+      "start": 734.72,
+      "end": 739.24,
+      "text": "config, okay? So, here eight is a common"
+    },
+    {
+      "start": 737.72,
+      "end": 741.24,
+      "text": "value. But, based on your data set,"
+    },
+    {
+      "start": 739.24,
+      "end": 744.12,
+      "text": "based on your problem, you can play with"
+    },
+    {
+      "start": 741.24,
+      "end": 745.8,
+      "text": "it and just see which method works the"
+    },
+    {
+      "start": 744.12,
+      "end": 748.16,
+      "text": "best. If you're interested in reading"
+    },
+    {
+      "start": 745.8,
+      "end": 752.28,
+      "text": "the full paper, you can just Google LoRA"
+    },
+    {
+      "start": 748.16,
+      "end": 754.12,
+      "text": "paper and you will find a PDF. So, just"
+    },
+    {
+      "start": 752.28,
+      "end": 756.68,
+      "text": "in case you're curious, you can go"
+    },
+    {
+      "start": 754.12,
+      "end": 758.08,
+      "text": "through it. But, I hope you got the crux"
+    },
+    {
+      "start": 756.68,
+      "end": 761.3199999999999,
+      "text": "of it, which is"
+    },
+    {
+      "start": 758.08,
+      "end": 764.9200000000001,
+      "text": "adding Delta W parameter"
+    },
+    {
+      "start": 761.32,
+      "end": 767.839,
+      "text": "and then decomposing that into A and B"
+    },
+    {
+      "start": 764.92,
+      "end": 769.68,
+      "text": "individual matrix matrix such that A.B"
+    },
+    {
+      "start": 767.839,
+      "end": 771.8800000000001,
+      "text": "is equal to Delta W."
+    },
+    {
+      "start": 769.68,
+      "end": 774.4,
+      "text": "And then, total number of parameters"
+    },
+    {
+      "start": 771.88,
+      "end": 778.28,
+      "text": "that you have to train through A and B"
+    },
+    {
+      "start": 774.4,
+      "end": 780.3199999999999,
+      "text": "will be much lesser compared to Delta W."
+    },
+    {
+      "start": 778.28,
+      "end": 782.56,
+      "text": "And in this technique, once again, you"
+    },
+    {
+      "start": 780.32,
+      "end": 784.88,
+      "text": "keep your W, which is your original set"
+    },
+    {
+      "start": 782.56,
+      "end": 787.4799999999999,
+      "text": "of parameters, frozen. You don't change"
+    },
+    {
+      "start": 784.88,
+      "end": 791.96,
+      "text": "them, okay? So, computationally,"
+    },
+    {
+      "start": 787.48,
+      "end": 791.96,
+      "text": "this method is very efficient."
+    },
+    {
+      "start": 794.839,
+      "end": 799.48,
+      "text": "In order to understand the QLoRA"
+    },
+    {
+      "start": 796.88,
+      "end": 801.68,
+      "text": "technique, you need to first understand"
+    },
+    {
+      "start": 799.48,
+      "end": 804.0,
+      "text": "quantization. You might know about this"
+    },
+    {
+      "start": 801.68,
+      "end": 806.12,
+      "text": "concept from the deep learning module."
+    },
+    {
+      "start": 804.0,
+      "end": 809.24,
+      "text": "But, let's uh refresh our memories."
+    },
+    {
+      "start": 806.12,
+      "end": 811.839,
+      "text": "Let's say you have LLaMA 7B model. 7B"
+    },
+    {
+      "start": 809.24,
+      "end": 813.24,
+      "text": "means it has 7 billion parameter. And"
+    },
+    {
+      "start": 811.839,
+      "end": 815.48,
+      "text": "these parameters are nothing but the"
+    },
+    {
+      "start": 813.24,
+      "end": 820.04,
+      "text": "weights in neural network. Let's say"
+    },
+    {
+      "start": 815.48,
+      "end": 822.5600000000001,
+      "text": "each parameter takes 4 bytes or float 32"
+    },
+    {
+      "start": 820.04,
+      "end": 823.48,
+      "text": "or 32 bits. These are all are same"
+    },
+    {
+      "start": 822.56,
+      "end": 827.68,
+      "text": "things."
+    },
+    {
+      "start": 823.48,
+      "end": 828.96,
+      "text": "In that case, this model needs 28 GB of"
+    },
+    {
+      "start": 827.68,
+      "end": 832.4399999999999,
+      "text": "RAM. Like, when you're loading that"
+    },
+    {
+      "start": 828.96,
+      "end": 834.52,
+      "text": "model in your computer, it needs 28 GB"
+    },
+    {
+      "start": 832.44,
+      "end": 837.8800000000001,
+      "text": "of RAM. If you're talking about 70"
+    },
+    {
+      "start": 834.52,
+      "end": 840.72,
+      "text": "billion model, it needs 280 GB of RAM,"
+    },
+    {
+      "start": 837.88,
+      "end": 842.48,
+      "text": "which is too much memory, okay? You"
+    },
+    {
+      "start": 840.72,
+      "end": 846.88,
+      "text": "can't run it on your local computer."
+    },
+    {
+      "start": 842.48,
+      "end": 848.9200000000001,
+      "text": "But, what if we reduce the size for"
+    },
+    {
+      "start": 846.88,
+      "end": 851.68,
+      "text": "storing each parameter. Let's say from 4"
+    },
+    {
+      "start": 848.92,
+      "end": 855.8,
+      "text": "byte you go to 8 bits or just 1 byte,"
+    },
+    {
+      "start": 851.68,
+      "end": 858.3199999999999,
+      "text": "okay? So, 8 bits is 1 byte. 1 byte is"
+    },
+    {
+      "start": 855.8,
+      "end": 860.76,
+      "text": "equal to int eight, okay? Int eight is a"
+    },
+    {
+      "start": 858.32,
+      "end": 864.48,
+      "text": "data type. In that case, it will take"
+    },
+    {
+      "start": 860.76,
+      "end": 867.64,
+      "text": "only 7 GB of memory. Here, I'm showing"
+    },
+    {
+      "start": 864.48,
+      "end": 871.839,
+      "text": "you a table where we have this different"
+    },
+    {
+      "start": 867.64,
+      "end": 874.48,
+      "text": "sizes for bits, okay? So, if Q is 32,"
+    },
+    {
+      "start": 871.839,
+      "end": 875.839,
+      "text": "which means 4 byte, it will take 28 GB,"
+    },
+    {
+      "start": 874.48,
+      "end": 879.64,
+      "text": "this scenario."
+    },
+    {
+      "start": 875.839,
+      "end": 882.24,
+      "text": "But, if it is eight, it takes 7 GB. If"
+    },
+    {
+      "start": 879.64,
+      "end": 885.68,
+      "text": "it is NF4, int four, which is half bit,"
+    },
+    {
+      "start": 882.24,
+      "end": 888.0790000000001,
+      "text": "you know, 4 bits, it takes only 3.5 GB"
+    },
+    {
+      "start": 885.68,
+      "end": 890.92,
+      "text": "and you can run that model locally on"
+    },
+    {
+      "start": 888.079,
+      "end": 895.04,
+      "text": "your computer. If you have 70 billion"
+    },
+    {
+      "start": 890.92,
+      "end": 898.28,
+      "text": "model, you might need multiple GPUs with"
+    },
+    {
+      "start": 895.04,
+      "end": 900.3199999999999,
+      "text": "float 32. But, if you have int eight,"
+    },
+    {
+      "start": 898.28,
+      "end": 903.3199999999999,
+      "text": "you might need only one GPU. You know,"
+    },
+    {
+      "start": 900.32,
+      "end": 906.32,
+      "text": "you can run it with one GPU or two GPUs"
+    },
+    {
+      "start": 903.32,
+      "end": 909.2800000000001,
+      "text": "very easily. And this process of"
+    },
+    {
+      "start": 906.32,
+      "end": 911.6400000000001,
+      "text": "reducing the bytes, you know, that it"
+    },
+    {
+      "start": 909.28,
+      "end": 913.16,
+      "text": "takes to store one parameter is called"
+    },
+    {
+      "start": 911.64,
+      "end": 916.28,
+      "text": "quantization. It's a process of"
+    },
+    {
+      "start": 913.16,
+      "end": 919.4,
+      "text": "converting high precision numbers into"
+    },
+    {
+      "start": 916.28,
+      "end": 921.88,
+      "text": "low precision formats to reduce memory"
+    },
+    {
+      "start": 919.4,
+      "end": 924.04,
+      "text": "and computation requirements by machine"
+    },
+    {
+      "start": 921.88,
+      "end": 925.959,
+      "text": "learning models. Now, you'll be like,"
+    },
+    {
+      "start": 924.04,
+      "end": 927.68,
+      "text": "when you go from high precision to low"
+    },
+    {
+      "start": 925.959,
+      "end": 931.0,
+      "text": "precision, of course, you're losing"
+    },
+    {
+      "start": 927.68,
+      "end": 933.04,
+      "text": "accuracy. Well, that is true. But, it"
+    },
+    {
+      "start": 931.0,
+      "end": 935.4,
+      "text": "has been shown through the experiments"
+    },
+    {
+      "start": 933.04,
+      "end": 937.88,
+      "text": "that, practically speaking, you still"
+    },
+    {
+      "start": 935.4,
+      "end": 940.56,
+      "text": "get a pretty good accuracy, okay? For"
+    },
+    {
+      "start": 937.88,
+      "end": 943.16,
+      "text": "your given use case. And quantization"
+    },
+    {
+      "start": 940.56,
+      "end": 945.1999999999999,
+      "text": "helps especially with edge devices."
+    },
+    {
+      "start": 943.16,
+      "end": 947.24,
+      "text": "Let's say you have a drone, which is"
+    },
+    {
+      "start": 945.2,
+      "end": 951.0790000000001,
+      "text": "flying over your"
+    },
+    {
+      "start": 947.24,
+      "end": 953.5600000000001,
+      "text": "field and you're using deep learning to"
+    },
+    {
+      "start": 951.079,
+      "end": 956.959,
+      "text": "uh do some kind of uh computer vision"
+    },
+    {
+      "start": 953.56,
+      "end": 958.52,
+      "text": "type of use case, then quantization"
+    },
+    {
+      "start": 956.959,
+      "end": 961.8389999999999,
+      "text": "really helps because you can have"
+    },
+    {
+      "start": 958.52,
+      "end": 963.6,
+      "text": "quantized model loaded into your drone."
+    },
+    {
+      "start": 961.839,
+      "end": 966.8000000000001,
+      "text": "You know, drone will not have that much"
+    },
+    {
+      "start": 963.6,
+      "end": 968.9590000000001,
+      "text": "memory. So, it will work the best uh"
+    },
+    {
+      "start": 966.8,
+      "end": 971.4799999999999,
+      "text": "during the inference time. So,"
+    },
+    {
+      "start": 968.959,
+      "end": 974.079,
+      "text": "quantization is popular when it comes to"
+    },
+    {
+      "start": 971.48,
+      "end": 977.36,
+      "text": "edge devices. It is popular in other use"
+    },
+    {
+      "start": 974.079,
+      "end": 979.3599999999999,
+      "text": "cases as well, where you need efficiency"
+    },
+    {
+      "start": 977.36,
+      "end": 982.4,
+      "text": "when it comes to your computation and"
+    },
+    {
+      "start": 979.36,
+      "end": 985.16,
+      "text": "memory requirements. So, let's see how"
+    },
+    {
+      "start": 982.4,
+      "end": 987.6,
+      "text": "quantization works. Let's say"
+    },
+    {
+      "start": 985.16,
+      "end": 990.4399999999999,
+      "text": "you have a couple of weights which are"
+    },
+    {
+      "start": 987.6,
+      "end": 993.76,
+      "text": "float 32. Okay? And usually, these"
+    },
+    {
+      "start": 990.44,
+      "end": 997.6,
+      "text": "weights uh are minus one to one. So, the"
+    },
+    {
+      "start": 993.76,
+      "end": 999.8389999999999,
+      "text": "values of these weights will be .91 .78,"
+    },
+    {
+      "start": 997.6,
+      "end": 1001.4,
+      "text": "okay? Negative. And then,"
+    },
+    {
+      "start": 999.839,
+      "end": 1003.5600000000001,
+      "text": ".87"
+    },
+    {
+      "start": 1001.4,
+      "end": 1005.6,
+      "text": ".28 and so on. So, I'm just showing you"
+    },
+    {
+      "start": 1003.56,
+      "end": 1009.3599999999999,
+      "text": "some sample weights from a neural"
+    },
+    {
+      "start": 1005.6,
+      "end": 1012.76,
+      "text": "network. And the scale here is minus one"
+    },
+    {
+      "start": 1009.36,
+      "end": 1016.16,
+      "text": "to one. When you quantize this to int"
+    },
+    {
+      "start": 1012.76,
+      "end": 1017.8389999999999,
+      "text": "two, int two will take how many What"
+    },
+    {
+      "start": 1016.16,
+      "end": 1020.0,
+      "text": "will be the range for int two? Just just"
+    },
+    {
+      "start": 1017.839,
+      "end": 1022.36,
+      "text": "tell me. You need to have this computer"
+    },
+    {
+      "start": 1020.0,
+      "end": 1025.679,
+      "text": "science fundamentals clear. Int two"
+    },
+    {
+      "start": 1022.36,
+      "end": 1029.24,
+      "text": "means two bits. And in two bits, we can"
+    },
+    {
+      "start": 1025.679,
+      "end": 1031.64,
+      "text": "store four number. Minus two to positive"
+    },
+    {
+      "start": 1029.24,
+      "end": 1035.28,
+      "text": "one. So, the way you can quantize this"
+    },
+    {
+      "start": 1031.64,
+      "end": 1039.439,
+      "text": "is you can divide your float 32 range"
+    },
+    {
+      "start": 1035.28,
+      "end": 1041.72,
+      "text": "into four equal bins, okay? Four equal"
+    },
+    {
+      "start": 1039.439,
+      "end": 1047.3600000000001,
+      "text": "bins and just map them to these four"
+    },
+    {
+      "start": 1041.72,
+      "end": 1050.04,
+      "text": "bits. So, these values n- .91 .78"
+    },
+    {
+      "start": 1047.36,
+      "end": 1052.6,
+      "text": "will become negative two. .39 will"
+    },
+    {
+      "start": 1050.04,
+      "end": 1054.56,
+      "text": "become negative one. Any values that"
+    },
+    {
+      "start": 1052.6,
+      "end": 1056.9599999999998,
+      "text": "comes into this bin will become negative"
+    },
+    {
+      "start": 1054.56,
+      "end": 1059.2,
+      "text": "one. Okay? So, it is sort of like"
+    },
+    {
+      "start": 1056.96,
+      "end": 1061.96,
+      "text": "scaling, but scaling with surrounding"
+    },
+    {
+      "start": 1059.2,
+      "end": 1065.8400000000001,
+      "text": "and some other difference, okay? So, the"
+    },
+    {
+      "start": 1061.96,
+      "end": 1069.48,
+      "text": "values you had for weights, minus .91"
+    },
+    {
+      "start": 1065.84,
+      "end": 1071.52,
+      "text": "-.78 and so on, after quantization will"
+    },
+    {
+      "start": 1069.48,
+      "end": 1074.08,
+      "text": "become this, okay?"
+    },
+    {
+      "start": 1071.52,
+      "end": 1076.52,
+      "text": "So, it's a pretty simple concept. What"
+    },
+    {
+      "start": 1074.08,
+      "end": 1079.04,
+      "text": "will happen if you are quantizing to int"
+    },
+    {
+      "start": 1076.52,
+      "end": 1082.28,
+      "text": "eight? Well, once again, what is the"
+    },
+    {
+      "start": 1079.04,
+      "end": 1084.96,
+      "text": "range for int eight? Int eight means"
+    },
+    {
+      "start": 1082.28,
+      "end": 1089.6399999999999,
+      "text": "eight bits. And eight bits can store"
+    },
+    {
+      "start": 1084.96,
+      "end": 1092.44,
+      "text": "values from minus 128 to positive 127."
+    },
+    {
+      "start": 1089.64,
+      "end": 1096.1200000000001,
+      "text": "So, you divide, once again, this range"
+    },
+    {
+      "start": 1092.44,
+      "end": 1098.56,
+      "text": "into total 255"
+    },
+    {
+      "start": 1096.12,
+      "end": 1101.84,
+      "text": "bins and you just map them. And let's"
+    },
+    {
+      "start": 1098.56,
+      "end": 1106.6,
+      "text": "say you call your original values X and"
+    },
+    {
+      "start": 1101.84,
+      "end": 1108.52,
+      "text": "you call your quantized values Q, okay?"
+    },
+    {
+      "start": 1106.6,
+      "end": 1110.76,
+      "text": "So, there is a mathematical formula to"
+    },
+    {
+      "start": 1108.52,
+      "end": 1113.24,
+      "text": "perform quantization. The first thing"
+    },
+    {
+      "start": 1110.76,
+      "end": 1115.36,
+      "text": "you need to do is find out the scale."
+    },
+    {
+      "start": 1113.24,
+      "end": 1116.84,
+      "text": "Again, this is like you have learned"
+    },
+    {
+      "start": 1115.36,
+      "end": 1118.76,
+      "text": "scaling in machine learning, right? This"
+    },
+    {
+      "start": 1116.84,
+      "end": 1121.1999999999998,
+      "text": "is similar to that. You're scaling"
+    },
+    {
+      "start": 1118.76,
+      "end": 1124.76,
+      "text": "values from one range to another range."
+    },
+    {
+      "start": 1121.2,
+      "end": 1129.4,
+      "text": "So, you first find scale by saying Xmax"
+    },
+    {
+      "start": 1124.76,
+      "end": 1130.36,
+      "text": "minus Xmin Qmax minus Qmin. So, Xmax is"
+    },
+    {
+      "start": 1129.4,
+      "end": 1134.64,
+      "text": "one."
+    },
+    {
+      "start": 1130.36,
+      "end": 1137.1589999999999,
+      "text": "Xmin is minus one. Qmax is 127. Qmin is"
+    },
+    {
+      "start": 1134.64,
+      "end": 1141.64,
+      "text": "minus 128. So, you put all those values"
+    },
+    {
+      "start": 1137.159,
+      "end": 1145.1200000000001,
+      "text": "here and you get a scale of .0078."
+    },
+    {
+      "start": 1141.64,
+      "end": 1146.6000000000001,
+      "text": "Now, to get quantized values, you use"
+    },
+    {
+      "start": 1145.12,
+      "end": 1147.6789999999999,
+      "text": "this formula, okay? This is a standard"
+    },
+    {
+      "start": 1146.6,
+      "end": 1150.8799999999999,
+      "text": "formula."
+    },
+    {
+      "start": 1147.679,
+      "end": 1152.96,
+      "text": "So, you have your X values, minus zero"
+    },
+    {
+      "start": 1150.88,
+      "end": 1154.6000000000001,
+      "text": "point, which means what is the value"
+    },
+    {
+      "start": 1152.96,
+      "end": 1156.56,
+      "text": "where you want to center your points. In"
+    },
+    {
+      "start": 1154.6,
+      "end": 1159.3999999999999,
+      "text": "our case, let's say this is zero, okay?"
+    },
+    {
+      "start": 1156.56,
+      "end": 1161.84,
+      "text": "So, this zero point will be zero. X will"
+    },
+    {
+      "start": 1159.4,
+      "end": 1164.2,
+      "text": "be all these values and scale will be"
+    },
+    {
+      "start": 1161.84,
+      "end": 1165.9189999999999,
+      "text": "scale, okay? So, for one of the values,"
+    },
+    {
+      "start": 1164.2,
+      "end": 1168.679,
+      "text": "let's say for this"
+    },
+    {
+      "start": 1165.919,
+      "end": 1171.88,
+      "text": "negative .91 value,"
+    },
+    {
+      "start": 1168.679,
+      "end": 1174.44,
+      "text": "uh zero point is zero, then scale is"
+    },
+    {
+      "start": 1171.88,
+      "end": 1178.2800000000002,
+      "text": "this. When you round it, you will get"
+    },
+    {
+      "start": 1174.44,
+      "end": 1181.3200000000002,
+      "text": "negative 116. So, you map this value to"
+    },
+    {
+      "start": 1178.28,
+      "end": 1182.72,
+      "text": "negative 116. Once again, it's a concept"
+    },
+    {
+      "start": 1181.32,
+      "end": 1183.9189999999999,
+      "text": "similar to scaling with some"
+    },
+    {
+      "start": 1182.72,
+      "end": 1186.6000000000001,
+      "text": "differences,"
+    },
+    {
+      "start": 1183.919,
+      "end": 1190.5600000000002,
+      "text": "where you have a bunch of values, you're"
+    },
+    {
+      "start": 1186.6,
+      "end": 1193.04,
+      "text": "mapping it to limited range of integers."
+    },
+    {
+      "start": 1190.56,
+      "end": 1194.9199999999998,
+      "text": "Okay? See, when we were doing scaling in"
+    },
+    {
+      "start": 1193.04,
+      "end": 1197.3999999999999,
+      "text": "machine learning module, the scaled"
+    },
+    {
+      "start": 1194.92,
+      "end": 1199.6000000000001,
+      "text": "value will still be a float. So, you are"
+    },
+    {
+      "start": 1197.4,
+      "end": 1202.5600000000002,
+      "text": "not saving any time anything in terms of"
+    },
+    {
+      "start": 1199.6,
+      "end": 1205.1999999999998,
+      "text": "memory. But here, the scale value is"
+    },
+    {
+      "start": 1202.56,
+      "end": 1207.6399999999999,
+      "text": "integer. So, you are mapping this float"
+    },
+    {
+      "start": 1205.2,
+      "end": 1210.6000000000001,
+      "text": "to integer through this formula, and"
+    },
+    {
+      "start": 1207.64,
+      "end": 1212.8400000000001,
+      "text": "that will give you this memory saving."
+    },
+    {
+      "start": 1210.6,
+      "end": 1216.04,
+      "text": "So, I have this Jupiter notebook where"
+    },
+    {
+      "start": 1212.84,
+      "end": 1219.04,
+      "text": "I'm creating some hundred random values"
+    },
+    {
+      "start": 1216.04,
+      "end": 1221.3999999999999,
+      "text": "in range minus one to one, okay? So,"
+    },
+    {
+      "start": 1219.04,
+      "end": 1223.8799999999999,
+      "text": "let's say these values look something"
+    },
+    {
+      "start": 1221.4,
+      "end": 1227.0400000000002,
+      "text": "like this. Now, I'm using the same scale"
+    },
+    {
+      "start": 1223.88,
+      "end": 1230.44,
+      "text": "formula that we saw previously. Max X"
+    },
+    {
+      "start": 1227.04,
+      "end": 1234.48,
+      "text": "minus min X Q max minus Q min, and scale"
+    },
+    {
+      "start": 1230.44,
+      "end": 1235.48,
+      "text": "is going to be 0.0078,"
+    },
+    {
+      "start": 1234.48,
+      "end": 1237.72,
+      "text": "okay?"
+    },
+    {
+      "start": 1235.48,
+      "end": 1239.32,
+      "text": "Now, my zero point is zero underscore"
+    },
+    {
+      "start": 1237.72,
+      "end": 1241.68,
+      "text": "point is zero."
+    },
+    {
+      "start": 1239.32,
+      "end": 1244.36,
+      "text": "And for quantization, I'm using that"
+    },
+    {
+      "start": 1241.68,
+      "end": 1247.16,
+      "text": "same formula. X minus zero point, okay?"
+    },
+    {
+      "start": 1244.36,
+      "end": 1250.28,
+      "text": "X minus zero point here, divide by"
+    },
+    {
+      "start": 1247.16,
+      "end": 1253.0,
+      "text": "scale, and you round it to an integer."
+    },
+    {
+      "start": 1250.28,
+      "end": 1254.8,
+      "text": "And then you clip the values to Q min"
+    },
+    {
+      "start": 1253.0,
+      "end": 1261.36,
+      "text": "and Q max. You don't want to your values"
+    },
+    {
+      "start": 1254.8,
+      "end": 1263.44,
+      "text": "to go beyond minus 128 and plus 127."
+    },
+    {
+      "start": 1261.36,
+      "end": 1266.36,
+      "text": "And when you apply this formula, you get"
+    },
+    {
+      "start": 1263.44,
+      "end": 1268.6000000000001,
+      "text": "Q values for your X values. So, for your"
+    },
+    {
+      "start": 1266.36,
+      "end": 1270.1599999999999,
+      "text": "X values which are these first 10"
+    },
+    {
+      "start": 1268.6,
+      "end": 1272.6799999999998,
+      "text": "values,"
+    },
+    {
+      "start": 1270.16,
+      "end": 1273.6000000000001,
+      "text": "the first 10 Q values will be this. So,"
+    },
+    {
+      "start": 1272.68,
+      "end": 1276.48,
+      "text": "see?"
+    },
+    {
+      "start": 1273.6,
+      "end": 1278.3999999999999,
+      "text": "We map minus one"
+    },
+    {
+      "start": 1276.48,
+      "end": 1279.52,
+      "text": "to minus 128."
+    },
+    {
+      "start": 1278.4,
+      "end": 1284.68,
+      "text": "Then"
+    },
+    {
+      "start": 1279.52,
+      "end": 1287.28,
+      "text": "um minus point 9797, whatever, to minus"
+    },
+    {
+      "start": 1284.68,
+      "end": 1290.5600000000002,
+      "text": "125, and so on."
+    },
+    {
+      "start": 1287.28,
+      "end": 1292.72,
+      "text": "And to do dequantization, which is from"
+    },
+    {
+      "start": 1290.56,
+      "end": 1294.12,
+      "text": "these values, let's say I want to get"
+    },
+    {
+      "start": 1292.72,
+      "end": 1296.2,
+      "text": "these values back, right? Because you"
+    },
+    {
+      "start": 1294.12,
+      "end": 1298.9199999999998,
+      "text": "have to do that. To do that, you will"
+    },
+    {
+      "start": 1296.2,
+      "end": 1300.96,
+      "text": "just use this formula. It's a reverse of"
+    },
+    {
+      "start": 1298.92,
+      "end": 1303.28,
+      "text": "quantization, okay? So, this formula"
+    },
+    {
+      "start": 1300.96,
+      "end": 1305.56,
+      "text": "should be pretty straightforward, folks."
+    },
+    {
+      "start": 1303.28,
+      "end": 1308.28,
+      "text": "Scale into Q minus zero point, and you"
+    },
+    {
+      "start": 1305.56,
+      "end": 1310.9199999999998,
+      "text": "get these values back. So, this minus"
+    },
+    {
+      "start": 1308.28,
+      "end": 1312.76,
+      "text": "one value you got it back as minus"
+    },
+    {
+      "start": 1310.92,
+      "end": 1314.04,
+      "text": "1.0039."
+    },
+    {
+      "start": 1312.76,
+      "end": 1315.92,
+      "text": "So, there will be some loss of"
+    },
+    {
+      "start": 1314.04,
+      "end": 1317.56,
+      "text": "precision. You understand that, right?"
+    },
+    {
+      "start": 1315.92,
+      "end": 1319.8000000000002,
+      "text": "It's like when you zip your data, unzip"
+    },
+    {
+      "start": 1317.56,
+      "end": 1322.96,
+      "text": "it, there is some loss. Similarly, here"
+    },
+    {
+      "start": 1319.8,
+      "end": 1325.6789999999999,
+      "text": "there is some loss. So, minus 0.979,"
+    },
+    {
+      "start": 1322.96,
+      "end": 1329.48,
+      "text": "you got it back as minus 0.98. But it's"
+    },
+    {
+      "start": 1325.679,
+      "end": 1332.0400000000002,
+      "text": "not too bad, right? See, minus 0.818,"
+    },
+    {
+      "start": 1329.48,
+      "end": 1334.44,
+      "text": "you got minus 01.815."
+    },
+    {
+      "start": 1332.04,
+      "end": 1337.8,
+      "text": "So, it's not too bad. You save a lot of"
+    },
+    {
+      "start": 1334.44,
+      "end": 1339.8400000000001,
+      "text": "memory, and you get similar accuracy."
+    },
+    {
+      "start": 1337.8,
+      "end": 1342.2,
+      "text": "There'll be some drop in the accuracy,"
+    },
+    {
+      "start": 1339.84,
+      "end": 1345.72,
+      "text": "but for your practical use case,"
+    },
+    {
+      "start": 1342.2,
+      "end": 1349.28,
+      "text": "it will mostly works, okay? And this is"
+    },
+    {
+      "start": 1345.72,
+      "end": 1353.679,
+      "text": "how you plot it on the chart. Let's now"
+    },
+    {
+      "start": 1349.28,
+      "end": 1355.52,
+      "text": "look at normal float NF4 quantization."
+    },
+    {
+      "start": 1353.679,
+      "end": 1357.8000000000002,
+      "text": "We previously saw that when you have in"
+    },
+    {
+      "start": 1355.52,
+      "end": 1360.04,
+      "text": "the two, possible values are four, okay?"
+    },
+    {
+      "start": 1357.8,
+      "end": 1362.56,
+      "text": "Minus two, minus one, zero, one. Total"
+    },
+    {
+      "start": 1360.04,
+      "end": 1364.84,
+      "text": "possible four values. So, you create"
+    },
+    {
+      "start": 1362.56,
+      "end": 1367.72,
+      "text": "four bins, and you map it, okay? What"
+    },
+    {
+      "start": 1364.84,
+      "end": 1370.28,
+      "text": "happens if instead of in two, you have"
+    },
+    {
+      "start": 1367.72,
+      "end": 1372.1200000000001,
+      "text": "int four? In int four, how many possible"
+    },
+    {
+      "start": 1370.28,
+      "end": 1373.56,
+      "text": "values are there? Folks, use your"
+    },
+    {
+      "start": 1372.12,
+      "end": 1375.36,
+      "text": "computer science fundamentals. Pause"
+    },
+    {
+      "start": 1373.56,
+      "end": 1377.9199999999998,
+      "text": "this video and tell me how many possible"
+    },
+    {
+      "start": 1375.36,
+      "end": 1382.1999999999998,
+      "text": "values are there."
+    },
+    {
+      "start": 1377.92,
+      "end": 1384.52,
+      "text": "Well, total possible values will be 16,"
+    },
+    {
+      "start": 1382.2,
+      "end": 1386.64,
+      "text": "minus eight to positive seven. See,"
+    },
+    {
+      "start": 1384.52,
+      "end": 1389.4,
+      "text": "minus eight will be this, okay? This is"
+    },
+    {
+      "start": 1386.64,
+      "end": 1392.0,
+      "text": "a bit representation where this bit is a"
+    },
+    {
+      "start": 1389.4,
+      "end": 1394.4,
+      "text": "sign. So, sign one one bit means"
+    },
+    {
+      "start": 1392.0,
+      "end": 1397.48,
+      "text": "negative, and zero zero zero."
+    },
+    {
+      "start": 1394.4,
+      "end": 1399.24,
+      "text": "Uh then one and one one one is minus"
+    },
+    {
+      "start": 1397.48,
+      "end": 1403.3600000000001,
+      "text": "seven, and so on."
+    },
+    {
+      "start": 1399.24,
+      "end": 1405.4,
+      "text": "So, you create 16 bins and map them,"
+    },
+    {
+      "start": 1403.36,
+      "end": 1408.12,
+      "text": "okay? This is a linear mapping. You"
+    },
+    {
+      "start": 1405.4,
+      "end": 1410.72,
+      "text": "create 16 equal bins and map it. But"
+    },
+    {
+      "start": 1408.12,
+      "end": 1412.8799999999999,
+      "text": "this will create problems when we use"
+    },
+    {
+      "start": 1410.72,
+      "end": 1415.32,
+      "text": "quantization for our neural network,"
+    },
+    {
+      "start": 1412.88,
+      "end": 1417.24,
+      "text": "especially for LLM, because our weights,"
+    },
+    {
+      "start": 1415.32,
+      "end": 1419.32,
+      "text": "you know, all these weights, let's say"
+    },
+    {
+      "start": 1417.24,
+      "end": 1421.6,
+      "text": "you take that neural network, and you"
+    },
+    {
+      "start": 1419.32,
+      "end": 1423.8799999999999,
+      "text": "take all the weights, and if you plot a"
+    },
+    {
+      "start": 1421.6,
+      "end": 1425.6789999999999,
+      "text": "distribution, it will be a normal"
+    },
+    {
+      "start": 1423.88,
+      "end": 1427.96,
+      "text": "distribution. So, if it's a normal"
+    },
+    {
+      "start": 1425.679,
+      "end": 1430.88,
+      "text": "distribution, majority of the values are"
+    },
+    {
+      "start": 1427.96,
+      "end": 1433.52,
+      "text": "centered around zero. And when you are"
+    },
+    {
+      "start": 1430.88,
+      "end": 1436.3200000000002,
+      "text": "using regular in four, you are creating"
+    },
+    {
+      "start": 1433.52,
+      "end": 1439.04,
+      "text": "equal bins, correct? Equal"
+    },
+    {
+      "start": 1436.32,
+      "end": 1440.56,
+      "text": "equally spaced bins, and due to this,"
+    },
+    {
+      "start": 1439.04,
+      "end": 1443.48,
+      "text": "what will happen is"
+    },
+    {
+      "start": 1440.56,
+      "end": 1445.48,
+      "text": "majority of these values will be mapped"
+    },
+    {
+      "start": 1443.48,
+      "end": 1449.1200000000001,
+      "text": "to one value, right? Like like these"
+    },
+    {
+      "start": 1445.48,
+      "end": 1452.6,
+      "text": "values, let's say this is this value is,"
+    },
+    {
+      "start": 1449.12,
+      "end": 1454.6,
+      "text": "let's say, 30% of total values. Okay, I"
+    },
+    {
+      "start": 1452.6,
+      "end": 1457.12,
+      "text": "I don't know the exact number, but let's"
+    },
+    {
+      "start": 1454.6,
+      "end": 1458.9599999999998,
+      "text": "assume. Let's say this is 30%."
+    },
+    {
+      "start": 1457.12,
+      "end": 1462.0,
+      "text": "And let's say this is 20% of the total"
+    },
+    {
+      "start": 1458.96,
+      "end": 1464.92,
+      "text": "values, and this is 20%."
+    },
+    {
+      "start": 1462.0,
+      "end": 1467.36,
+      "text": "So, then all these values are being"
+    },
+    {
+      "start": 1464.92,
+      "end": 1471.6000000000001,
+      "text": "mapped to single value. Let's say this"
+    },
+    {
+      "start": 1467.36,
+      "end": 1474.6,
+      "text": "is minus two, this is minus one, zero."
+    },
+    {
+      "start": 1471.6,
+      "end": 1477.04,
+      "text": "I think zero, one, two, three, four,"
+    },
+    {
+      "start": 1474.6,
+      "end": 1478.9599999999998,
+      "text": "five, six, seven, okay? So, majority of"
+    },
+    {
+      "start": 1477.04,
+      "end": 1481.56,
+      "text": "the values are being mapped to minus one"
+    },
+    {
+      "start": 1478.96,
+      "end": 1483.48,
+      "text": "and one. And when you do dequantization,"
+    },
+    {
+      "start": 1481.56,
+      "end": 1485.0,
+      "text": "you will lose a lot of precision. So,"
+    },
+    {
+      "start": 1483.48,
+      "end": 1486.72,
+      "text": "this is not a good approach, right? For"
+    },
+    {
+      "start": 1485.0,
+      "end": 1489.36,
+      "text": "a normal distribution,"
+    },
+    {
+      "start": 1486.72,
+      "end": 1492.1200000000001,
+      "text": "creating equal bins will not work. So,"
+    },
+    {
+      "start": 1489.36,
+      "end": 1494.8,
+      "text": "folks, please pause this video and tell"
+    },
+    {
+      "start": 1492.12,
+      "end": 1496.52,
+      "text": "me an idea which will work the best for"
+    },
+    {
+      "start": 1494.8,
+      "end": 1499.24,
+      "text": "this scenario."
+    },
+    {
+      "start": 1496.52,
+      "end": 1500.72,
+      "text": "I'm telling you, it's a common sense."
+    },
+    {
+      "start": 1499.24,
+      "end": 1502.84,
+      "text": "Okay, you have to just apply common"
+    },
+    {
+      "start": 1500.72,
+      "end": 1504.28,
+      "text": "sense. Pause this video and tell me how"
+    },
+    {
+      "start": 1502.84,
+      "end": 1506.32,
+      "text": "do you change this so that there is an"
+    },
+    {
+      "start": 1504.28,
+      "end": 1509.2,
+      "text": "equal mapping. All right, I hope you"
+    },
+    {
+      "start": 1506.32,
+      "end": 1511.9199999999998,
+      "text": "found the correct answer. The answer is"
+    },
+    {
+      "start": 1509.2,
+      "end": 1514.28,
+      "text": "you will not create equal bins."
+    },
+    {
+      "start": 1511.92,
+      "end": 1516.3600000000001,
+      "text": "You will create bins based on the"
+    },
+    {
+      "start": 1514.28,
+      "end": 1517.56,
+      "text": "percentage of data points in your"
+    },
+    {
+      "start": 1516.36,
+      "end": 1520.08,
+      "text": "histogram."
+    },
+    {
+      "start": 1517.56,
+      "end": 1523.12,
+      "text": "So, this total number of data points you"
+    },
+    {
+      "start": 1520.08,
+      "end": 1525.0,
+      "text": "have is 100%, right? And if you divide"
+    },
+    {
+      "start": 1523.12,
+      "end": 1526.9599999999998,
+      "text": "that by 16,"
+    },
+    {
+      "start": 1525.0,
+      "end": 1530.24,
+      "text": "you get 6.25%."
+    },
+    {
+      "start": 1526.96,
+      "end": 1532.64,
+      "text": "So, you want 6.25%"
+    },
+    {
+      "start": 1530.24,
+      "end": 1535.84,
+      "text": "in each bin, and you will design that"
+    },
+    {
+      "start": 1532.64,
+      "end": 1537.5600000000002,
+      "text": "bin accordingly, okay? So, here, since"
+    },
+    {
+      "start": 1535.84,
+      "end": 1539.9599999999998,
+      "text": "in this histogram there are more number"
+    },
+    {
+      "start": 1537.56,
+      "end": 1542.56,
+      "text": "of data points, the width of the bin is"
+    },
+    {
+      "start": 1539.96,
+      "end": 1545.3600000000001,
+      "text": "lower, okay? So, if this is zero value,"
+    },
+    {
+      "start": 1542.56,
+      "end": 1548.52,
+      "text": "this might be zero to"
+    },
+    {
+      "start": 1545.36,
+      "end": 1550.6,
+      "text": "let's say 0.005."
+    },
+    {
+      "start": 1548.52,
+      "end": 1553.28,
+      "text": "Let's assume that this is zero, this is"
+    },
+    {
+      "start": 1550.6,
+      "end": 1556.48,
+      "text": "one, and this is minus one. So, then"
+    },
+    {
+      "start": 1553.28,
+      "end": 1562.36,
+      "text": "this bin will be zero to 0.00"
+    },
+    {
+      "start": 1556.48,
+      "end": 1562.3600000000001,
+      "text": "let's say one. Then 0.001 to 0.005,"
+    },
+    {
+      "start": 1562.4,
+      "end": 1569.0,
+      "text": "and so on. So, you create these bins in"
+    },
+    {
+      "start": 1566.679,
+      "end": 1570.88,
+      "text": "such a way that the data points, let's"
+    },
+    {
+      "start": 1569.0,
+      "end": 1573.76,
+      "text": "say these data points, right? Like so"
+    },
+    {
+      "start": 1570.88,
+      "end": 1577.72,
+      "text": "So, if you look at this particular area,"
+    },
+    {
+      "start": 1573.76,
+      "end": 1580.4,
+      "text": "this should be 6.25%."
+    },
+    {
+      "start": 1577.72,
+      "end": 1581.84,
+      "text": "If you look at this particular area,"
+    },
+    {
+      "start": 1580.4,
+      "end": 1584.8400000000001,
+      "text": "this should be"
+    },
+    {
+      "start": 1581.84,
+      "end": 1584.84,
+      "text": "6.25%."
+    },
+    {
+      "start": 1585.52,
+      "end": 1587.72,
+      "text": "Okay?"
+    },
+    {
+      "start": 1586.48,
+      "end": 1591.0,
+      "text": "Let's"
+    },
+    {
+      "start": 1587.72,
+      "end": 1593.76,
+      "text": "look at the coding so that you get an"
+    },
+    {
+      "start": 1591.0,
+      "end": 1596.04,
+      "text": "idea. And this is called normal float"
+    },
+    {
+      "start": 1593.76,
+      "end": 1599.679,
+      "text": "four, right? Like normal normal for"
+    },
+    {
+      "start": 1596.04,
+      "end": 1601.52,
+      "text": "normal distribution. So, this is NF4"
+    },
+    {
+      "start": 1599.679,
+      "end": 1603.6000000000001,
+      "text": "quantization. Let's look at the code"
+    },
+    {
+      "start": 1601.52,
+      "end": 1606.48,
+      "text": "now. So, in the code, what we're doing"
+    },
+    {
+      "start": 1603.6,
+      "end": 1608.8,
+      "text": "here is X is we are just creating 100"
+    },
+    {
+      "start": 1606.48,
+      "end": 1611.32,
+      "text": "data points, okay? 100 random data"
+    },
+    {
+      "start": 1608.8,
+      "end": 1613.36,
+      "text": "points between minus one to one range."
+    },
+    {
+      "start": 1611.32,
+      "end": 1616.32,
+      "text": "Let's say these are your weights of your"
+    },
+    {
+      "start": 1613.36,
+      "end": 1619.3999999999999,
+      "text": "neural network, and these NF4 values are"
+    },
+    {
+      "start": 1616.32,
+      "end": 1622.96,
+      "text": "16 values. Okay? So, these values are"
+    },
+    {
+      "start": 1619.4,
+      "end": 1627.3200000000002,
+      "text": "minus 0.01 to minus 0.05. So, the"
+    },
+    {
+      "start": 1622.96,
+      "end": 1628.28,
+      "text": "distance between these two is 0.04."
+    },
+    {
+      "start": 1627.32,
+      "end": 1632.2,
+      "text": "And then"
+    },
+    {
+      "start": 1628.28,
+      "end": 1633.8,
+      "text": "from here to here, the distance is 0.05."
+    },
+    {
+      "start": 1632.2,
+      "end": 1636.6000000000001,
+      "text": "See, distance will increase. You see in"
+    },
+    {
+      "start": 1633.8,
+      "end": 1638.3999999999999,
+      "text": "this chart, this distance, okay? This"
+    },
+    {
+      "start": 1636.6,
+      "end": 1641.56,
+      "text": "distance right here"
+    },
+    {
+      "start": 1638.4,
+      "end": 1642.6000000000001,
+      "text": "is how much? 0.04."
+    },
+    {
+      "start": 1641.56,
+      "end": 1646.3999999999999,
+      "text": "Okay?"
+    },
+    {
+      "start": 1642.6,
+      "end": 1646.3999999999999,
+      "text": "So, 0.04."
+    },
+    {
+      "start": 1646.56,
+      "end": 1652.2,
+      "text": "But the distance between the dis- the"
+    },
+    {
+      "start": 1649.16,
+      "end": 1653.2,
+      "text": "width for the second bin, okay? Second"
+    },
+    {
+      "start": 1652.2,
+      "end": 1654.44,
+      "text": "bin,"
+    },
+    {
+      "start": 1653.2,
+      "end": 1657.1200000000001,
+      "text": "is"
+    },
+    {
+      "start": 1654.44,
+      "end": 1659.24,
+      "text": "what is this? If you add 0.05 into this,"
+    },
+    {
+      "start": 1657.12,
+      "end": 1663.52,
+      "text": "you get 0.1."
+    },
+    {
+      "start": 1659.24,
+      "end": 1663.52,
+      "text": "So, this distance is 0.05."
+    },
+    {
+      "start": 1664.36,
+      "end": 1668.84,
+      "text": "So, it will increase. Then the distance"
+    },
+    {
+      "start": 1666.32,
+      "end": 1672.4399999999998,
+      "text": "or the width for the third bin will be"
+    },
+    {
+      "start": 1668.84,
+      "end": 1673.8,
+      "text": "you even higher. So, 0.1 to 0.2 is 0.1,"
+    },
+    {
+      "start": 1672.44,
+      "end": 1676.48,
+      "text": "see?"
+    },
+    {
+      "start": 1673.8,
+      "end": 1678.24,
+      "text": "0.1. So, you realize like when you"
+    },
+    {
+      "start": 1676.48,
+      "end": 1680.92,
+      "text": "increase that width, you can accommodate"
+    },
+    {
+      "start": 1678.24,
+      "end": 1684.04,
+      "text": "more data points. Because of this normal"
+    },
+    {
+      "start": 1680.92,
+      "end": 1687.0,
+      "text": "distribution, we need to do that. And"
+    },
+    {
+      "start": 1684.04,
+      "end": 1689.48,
+      "text": "these values are kind of fixed, okay? If"
+    },
+    {
+      "start": 1687.0,
+      "end": 1691.32,
+      "text": "you use some ready-made Python library"
+    },
+    {
+      "start": 1689.48,
+      "end": 1693.84,
+      "text": "like bits and bytes, you will get a"
+    },
+    {
+      "start": 1691.32,
+      "end": 1696.24,
+      "text": "better values, but this is a rough"
+    },
+    {
+      "start": 1693.84,
+      "end": 1698.72,
+      "text": "approximation. So, now let's quantize"
+    },
+    {
+      "start": 1696.24,
+      "end": 1701.64,
+      "text": "it. So, what you're doing essentially is"
+    },
+    {
+      "start": 1698.72,
+      "end": 1704.84,
+      "text": "uh once again, very simple. You are"
+    },
+    {
+      "start": 1701.64,
+      "end": 1706.88,
+      "text": "mapping all these data points to nearby"
+    },
+    {
+      "start": 1704.84,
+      "end": 1708.72,
+      "text": "value. So, what is a nearby value for"
+    },
+    {
+      "start": 1706.88,
+      "end": 1709.96,
+      "text": "minus one? This. So, you'll map it to"
+    },
+    {
+      "start": 1708.72,
+      "end": 1713.88,
+      "text": "this."
+    },
+    {
+      "start": 1709.96,
+      "end": 1717.08,
+      "text": "What is more nearby to minus 0.97? Is it"
+    },
+    {
+      "start": 1713.88,
+      "end": 1719.0800000000002,
+      "text": "minus one or point 75? Well, it's minus"
+    },
+    {
+      "start": 1717.08,
+      "end": 1720.72,
+      "text": "one. So, you will map this value to"
+    },
+    {
+      "start": 1719.08,
+      "end": 1722.6789999999999,
+      "text": "here, okay?"
+    },
+    {
+      "start": 1720.72,
+      "end": 1727.6000000000001,
+      "text": "And what is"
+    },
+    {
+      "start": 1722.679,
+      "end": 1729.0800000000002,
+      "text": "most nearby to this? Is it minus 0.75 or"
+    },
+    {
+      "start": 1727.6,
+      "end": 1731.48,
+      "text": "minus one?"
+    },
+    {
+      "start": 1729.08,
+      "end": 1733.84,
+      "text": "Just not this. 0.87."
+    },
+    {
+      "start": 1731.48,
+      "end": 1737.44,
+      "text": "Again, minus one. But if you look at"
+    },
+    {
+      "start": 1733.84,
+      "end": 1739.84,
+      "text": "minus 0.85, it is more near to this. So,"
+    },
+    {
+      "start": 1737.44,
+      "end": 1743.3600000000001,
+      "text": "these three values will be mapped to"
+    },
+    {
+      "start": 1739.84,
+      "end": 1745.32,
+      "text": "minus 0.75. These four values will be"
+    },
+    {
+      "start": 1743.36,
+      "end": 1748.52,
+      "text": "mapped to minus 1.0. You are just"
+    },
+    {
+      "start": 1745.32,
+      "end": 1751.24,
+      "text": "mapping it to nearby value. Very simple"
+    },
+    {
+      "start": 1748.52,
+      "end": 1753.32,
+      "text": "logic, and we have this Python function."
+    },
+    {
+      "start": 1751.24,
+      "end": 1755.6,
+      "text": "And when you quantize it, see? You'll"
+    },
+    {
+      "start": 1753.32,
+      "end": 1758.24,
+      "text": "get this. See, all these values are"
+    },
+    {
+      "start": 1755.6,
+      "end": 1759.9599999999998,
+      "text": "mapped to minus one. Last three values"
+    },
+    {
+      "start": 1758.24,
+      "end": 1762.88,
+      "text": "are mapped to"
+    },
+    {
+      "start": 1759.96,
+      "end": 1764.76,
+      "text": "point minus 0.75 because it's it's more"
+    },
+    {
+      "start": 1762.88,
+      "end": 1766.1200000000001,
+      "text": "closer to it, okay?"
+    },
+    {
+      "start": 1764.76,
+      "end": 1770.76,
+      "text": "And"
+    },
+    {
+      "start": 1766.12,
+      "end": 1770.76,
+      "text": "this is how the distribution looks like."
+    },
+    {
+      "start": 1773.64,
+      "end": 1778.2800000000002,
+      "text": "Q LoRA is essentially the quantized"
+    },
+    {
+      "start": 1776.04,
+      "end": 1780.6789999999999,
+      "text": "version of LoRA technique."
+    },
+    {
+      "start": 1778.28,
+      "end": 1783.9189999999999,
+      "text": "Let's understand how this works."
+    },
+    {
+      "start": 1780.679,
+      "end": 1787.0400000000002,
+      "text": "Say you are fine-tuning an LLM with with"
+    },
+    {
+      "start": 1783.919,
+      "end": 1790.5200000000002,
+      "text": "65 billion parameter. Now, if this is"
+    },
+    {
+      "start": 1787.04,
+      "end": 1792.52,
+      "text": "using float 32, it will take 260 GB of"
+    },
+    {
+      "start": 1790.52,
+      "end": 1795.12,
+      "text": "memory to load the model."
+    },
+    {
+      "start": 1792.52,
+      "end": 1798.6,
+      "text": "You will first quantize this using let's"
+    },
+    {
+      "start": 1795.12,
+      "end": 1801.84,
+      "text": "say NF4 quantization. And the quantized"
+    },
+    {
+      "start": 1798.6,
+      "end": 1803.76,
+      "text": "model will have a size of 32.5 GB"
+    },
+    {
+      "start": 1801.84,
+      "end": 1806.1999999999998,
+      "text": "because for each parameter is it it is"
+    },
+    {
+      "start": 1803.76,
+      "end": 1809.52,
+      "text": "taking half a byte. So, for 65 it will"
+    },
+    {
+      "start": 1806.2,
+      "end": 1812.16,
+      "text": "be 32.5. And then you apply LoRA"
+    },
+    {
+      "start": 1809.52,
+      "end": 1815.4,
+      "text": "fine-tuning using your domain-specific"
+    },
+    {
+      "start": 1812.16,
+      "end": 1818.48,
+      "text": "data set. This is what QLoRA is. It has"
+    },
+    {
+      "start": 1815.4,
+      "end": 1820.4,
+      "text": "few other elements as well, but just to"
+    },
+    {
+      "start": 1818.48,
+      "end": 1823.3600000000001,
+      "text": "go over definition of QLoRA, it's a"
+    },
+    {
+      "start": 1820.4,
+      "end": 1825.48,
+      "text": "memory-efficient fine-tuning method that"
+    },
+    {
+      "start": 1823.36,
+      "end": 1827.76,
+      "text": "combines 4-bit quantization with"
+    },
+    {
+      "start": 1825.48,
+      "end": 1830.6,
+      "text": "low-rank adaptation."
+    },
+    {
+      "start": 1827.76,
+      "end": 1833.72,
+      "text": "Now, other than NF4 quantization, it"
+    },
+    {
+      "start": 1830.6,
+      "end": 1837.24,
+      "text": "uses a concept of double quantization"
+    },
+    {
+      "start": 1833.72,
+      "end": 1840.24,
+      "text": "and also page optimizers. If you look at"
+    },
+    {
+      "start": 1837.24,
+      "end": 1843.52,
+      "text": "their research paper, in the abstract"
+    },
+    {
+      "start": 1840.24,
+      "end": 1846.08,
+      "text": "itself, they talk about all these three"
+    },
+    {
+      "start": 1843.52,
+      "end": 1847.76,
+      "text": "points, which is 4-bit normal float"
+    },
+    {
+      "start": 1846.08,
+      "end": 1850.4399999999998,
+      "text": "quantization, double quantization, and"
+    },
+    {
+      "start": 1847.76,
+      "end": 1852.96,
+      "text": "page optimizer. So, we already looked at"
+    },
+    {
+      "start": 1850.44,
+      "end": 1855.0,
+      "text": "NF4 quantization. Let's look at what is"
+    },
+    {
+      "start": 1852.96,
+      "end": 1858.04,
+      "text": "double quantization. This is like"
+    },
+    {
+      "start": 1855.0,
+      "end": 1860.4,
+      "text": "zipping a file once again. So, you zip a"
+    },
+    {
+      "start": 1858.04,
+      "end": 1862.84,
+      "text": "file, you get a smaller version, then"
+    },
+    {
+      "start": 1860.4,
+      "end": 1865.68,
+      "text": "you again zip it, you get even a smaller"
+    },
+    {
+      "start": 1862.84,
+      "end": 1868.1999999999998,
+      "text": "version. So, same thing we do here. So,"
+    },
+    {
+      "start": 1865.68,
+      "end": 1871.24,
+      "text": "let's say you have 7 billion parameter"
+    },
+    {
+      "start": 1868.2,
+      "end": 1873.44,
+      "text": "model. To quantize it usually, you don't"
+    },
+    {
+      "start": 1871.24,
+      "end": 1876.68,
+      "text": "take all the parameters and quantize it"
+    },
+    {
+      "start": 1873.44,
+      "end": 1879.24,
+      "text": "in one shot. You will create a block of"
+    },
+    {
+      "start": 1876.68,
+      "end": 1880.88,
+      "text": "64 parameters. So, you have all these 7"
+    },
+    {
+      "start": 1879.24,
+      "end": 1883.52,
+      "text": "billion parameters, okay?"
+    },
+    {
+      "start": 1880.88,
+      "end": 1884.7600000000002,
+      "text": "You create a group of 64 billion"
+    },
+    {
+      "start": 1883.52,
+      "end": 1887.32,
+      "text": "parameters."
+    },
+    {
+      "start": 1884.76,
+      "end": 1890.32,
+      "text": "And you will get n number of blocks, I"
+    },
+    {
+      "start": 1887.32,
+      "end": 1892.96,
+      "text": "think 109 million blocks in this case."
+    },
+    {
+      "start": 1890.32,
+      "end": 1896.08,
+      "text": "And then you apply quantization, okay?"
+    },
+    {
+      "start": 1892.96,
+      "end": 1898.4,
+      "text": "NF4 quantization. So, each of these"
+    },
+    {
+      "start": 1896.08,
+      "end": 1901.56,
+      "text": "blocks will have less size and they will"
+    },
+    {
+      "start": 1898.4,
+      "end": 1904.3200000000002,
+      "text": "have their own individual scale values."
+    },
+    {
+      "start": 1901.56,
+      "end": 1906.2,
+      "text": "If you remember quantization formula,"
+    },
+    {
+      "start": 1904.32,
+      "end": 1909.36,
+      "text": "there was scale and there was zero"
+    },
+    {
+      "start": 1906.2,
+      "end": 1912.28,
+      "text": "point, okay? So, for doing block-wise"
+    },
+    {
+      "start": 1909.36,
+      "end": 1914.08,
+      "text": "quantization, each block will have"
+    },
+    {
+      "start": 1912.28,
+      "end": 1916.28,
+      "text": "different scale. So, the scale one will"
+    },
+    {
+      "start": 1914.08,
+      "end": 1918.04,
+      "text": "be different than scale two and so on."
+    },
+    {
+      "start": 1916.28,
+      "end": 1920.72,
+      "text": "It will also have a different zero"
+    },
+    {
+      "start": 1918.04,
+      "end": 1923.72,
+      "text": "point. Now, the people who wrote QLoRA"
+    },
+    {
+      "start": 1920.72,
+      "end": 1926.3600000000001,
+      "text": "paper thought that, okay, we got some"
+    },
+    {
+      "start": 1923.72,
+      "end": 1929.28,
+      "text": "optimization here, but the scales are"
+    },
+    {
+      "start": 1926.36,
+      "end": 1931.3999999999999,
+      "text": "still float 32, right? The scale is"
+    },
+    {
+      "start": 1929.28,
+      "end": 1934.72,
+      "text": "floating-point number. In our case, it"
+    },
+    {
+      "start": 1931.4,
+      "end": 1936.8000000000002,
+      "text": "was 0.0078 something. It is still a"
+    },
+    {
+      "start": 1934.72,
+      "end": 1938.96,
+      "text": "floating-point number. And you have so"
+    },
+    {
+      "start": 1936.8,
+      "end": 1942.8799999999999,
+      "text": "many such numbers. In this case, 7"
+    },
+    {
+      "start": 1938.96,
+      "end": 1946.48,
+      "text": "billion parameters, you will have 109"
+    },
+    {
+      "start": 1942.88,
+      "end": 1949.16,
+      "text": "million blocks, I think. And for each"
+    },
+    {
+      "start": 1946.48,
+      "end": 1953.1200000000001,
+      "text": "block you have one scale. So, 109"
+    },
+    {
+      "start": 1949.16,
+      "end": 1955.48,
+      "text": "million float 32 numbers. So, what if"
+    },
+    {
+      "start": 1953.12,
+      "end": 1958.32,
+      "text": "you take all these scales and you"
+    },
+    {
+      "start": 1955.48,
+      "end": 1961.52,
+      "text": "quantize them again, okay? So, that way"
+    },
+    {
+      "start": 1958.32,
+      "end": 1964.24,
+      "text": "you also get some reduction in terms of"
+    },
+    {
+      "start": 1961.52,
+      "end": 1966.36,
+      "text": "size for the scale values and zero point"
+    },
+    {
+      "start": 1964.24,
+      "end": 1968.84,
+      "text": "values, okay? So, it's a simple concept"
+    },
+    {
+      "start": 1966.36,
+      "end": 1971.28,
+      "text": "just like zipping a file which is"
+    },
+    {
+      "start": 1968.84,
+      "end": 1973.12,
+      "text": "already zipped, okay? So, quantization"
+    },
+    {
+      "start": 1971.28,
+      "end": 1976.28,
+      "text": "you're doing and then you're doing a"
+    },
+    {
+      "start": 1973.12,
+      "end": 1979.08,
+      "text": "quantization again on the scale, etc."
+    },
+    {
+      "start": 1976.28,
+      "end": 1981.6789999999999,
+      "text": "The third element of QLoRA is page"
+    },
+    {
+      "start": 1979.08,
+      "end": 1983.56,
+      "text": "optimizers. So, what happens is when you"
+    },
+    {
+      "start": 1981.679,
+      "end": 1987.3600000000001,
+      "text": "are fine-tuning this model, usually"
+    },
+    {
+      "start": 1983.56,
+      "end": 1989.56,
+      "text": "you'll use GPU. So, on GPU, let's say"
+    },
+    {
+      "start": 1987.36,
+      "end": 1992.4399999999998,
+      "text": "fine-tuning is going on. Sometimes it"
+    },
+    {
+      "start": 1989.56,
+      "end": 1995.0,
+      "text": "may run out of memory. So, you will use"
+    },
+    {
+      "start": 1992.44,
+      "end": 1997.64,
+      "text": "this paging concept similar to you know"
+    },
+    {
+      "start": 1995.0,
+      "end": 2000.16,
+      "text": "how paging works in terms of operating"
+    },
+    {
+      "start": 1997.64,
+      "end": 2003.0,
+      "text": "system. There is a page of memory which"
+    },
+    {
+      "start": 2000.16,
+      "end": 2005.0400000000002,
+      "text": "will be swapped in, swapped out of CPU"
+    },
+    {
+      "start": 2003.0,
+      "end": 2007.16,
+      "text": "memory back to disk and disk to CPU"
+    },
+    {
+      "start": 2005.04,
+      "end": 2009.0,
+      "text": "memory or RAM. We use similar concept"
+    },
+    {
+      "start": 2007.16,
+      "end": 2011.3600000000001,
+      "text": "here. So, when GPU is going out of"
+    },
+    {
+      "start": 2009.0,
+      "end": 2014.48,
+      "text": "memory, some of the pages that it has"
+    },
+    {
+      "start": 2011.36,
+      "end": 2017.1999999999998,
+      "text": "will be swapped out to CPU memory or RAM"
+    },
+    {
+      "start": 2014.48,
+      "end": 2021.04,
+      "text": "and then they will be swapped back in"
+    },
+    {
+      "start": 2017.2,
+      "end": 2023.56,
+      "text": "whenever needed. So, these are the three"
+    },
+    {
+      "start": 2021.04,
+      "end": 2026.0,
+      "text": "key elements of QLoRA technique. And I"
+    },
+    {
+      "start": 2023.56,
+      "end": 2028.6,
+      "text": "have the research paper open here. As"
+    },
+    {
+      "start": 2026.0,
+      "end": 2032.08,
+      "text": "you can see, you can fine-tune 65"
+    },
+    {
+      "start": 2028.6,
+      "end": 2035.84,
+      "text": "billion parameter model on a single 48"
+    },
+    {
+      "start": 2032.08,
+      "end": 2038.52,
+      "text": "GB GPU. So, you realize it says if 65"
+    },
+    {
+      "start": 2035.84,
+      "end": 2041.4399999999998,
+      "text": "billion parameter with float 32, that"
+    },
+    {
+      "start": 2038.52,
+      "end": 2043.72,
+      "text": "multiplied by four, so 280 GB, whatever,"
+    },
+    {
+      "start": 2041.44,
+      "end": 2046.64,
+      "text": "it will be that huge number. So, I have"
+    },
+    {
+      "start": 2043.72,
+      "end": 2049.2400000000002,
+      "text": "a QLoRA paper open here."
+    },
+    {
+      "start": 2046.64,
+      "end": 2052.2400000000002,
+      "text": "And here it says that"
+    },
+    {
+      "start": 2049.24,
+      "end": 2055.6789999999996,
+      "text": "a 65 billion parameter model"
+    },
+    {
+      "start": 2052.24,
+      "end": 2058.12,
+      "text": "can be trained on a single 48 GB GPU."
+    },
+    {
+      "start": 2055.679,
+      "end": 2062.6,
+      "text": "This is humongous because 65 billion"
+    },
+    {
+      "start": 2058.12,
+      "end": 2064.44,
+      "text": "parameter model is around 100 260 GB."
+    },
+    {
+      "start": 2062.6,
+      "end": 2067.2,
+      "text": "And if you can"
+    },
+    {
+      "start": 2064.44,
+      "end": 2070.8,
+      "text": "fine-tune that heavy model on a single"
+    },
+    {
+      "start": 2067.2,
+      "end": 2072.72,
+      "text": "GPU with 48 GB RAM, then that's really"
+    },
+    {
+      "start": 2070.8,
+      "end": 2074.8790000000004,
+      "text": "amazing, okay? I'm going to link this"
+    },
+    {
+      "start": 2072.72,
+      "end": 2078.64,
+      "text": "research paper. You can read it if you"
+    },
+    {
+      "start": 2074.879,
+      "end": 2078.64,
+      "text": "want to go into the details."
+    },
+    {
+      "start": 2081.64,
+      "end": 2086.2799999999997,
+      "text": "We will use this Unsloth library, which"
+    },
+    {
+      "start": 2084.08,
+      "end": 2088.159,
+      "text": "is very popular when it comes to LLM"
+    },
+    {
+      "start": 2086.28,
+      "end": 2090.9190000000003,
+      "text": "fine-tuning. And they have this nice"
+    },
+    {
+      "start": 2088.159,
+      "end": 2094.28,
+      "text": "documentation which you can use to get"
+    },
+    {
+      "start": 2090.919,
+      "end": 2096.96,
+      "text": "help on API, etc. To install it, you"
+    },
+    {
+      "start": 2094.28,
+      "end": 2098.0800000000004,
+      "text": "will use pip install Unsloth on your"
+    },
+    {
+      "start": 2096.96,
+      "end": 2099.2400000000002,
+      "text": "computer."
+    },
+    {
+      "start": 2098.08,
+      "end": 2102.04,
+      "text": "Now,"
+    },
+    {
+      "start": 2099.24,
+      "end": 2104.56,
+      "text": "to fine-tune, you need GPU on your"
+    },
+    {
+      "start": 2102.04,
+      "end": 2107.12,
+      "text": "computer. So, if your computer has GPU,"
+    },
+    {
+      "start": 2104.56,
+      "end": 2110.12,
+      "text": "you can do it locally, but I prefer"
+    },
+    {
+      "start": 2107.12,
+      "end": 2112.92,
+      "text": "doing this in cloud because in cloud you"
+    },
+    {
+      "start": 2110.12,
+      "end": 2115.359,
+      "text": "can get access to GPU as well as some of"
+    },
+    {
+      "start": 2112.92,
+      "end": 2117.92,
+      "text": "the dependency errors that I was getting"
+    },
+    {
+      "start": 2115.359,
+      "end": 2121.52,
+      "text": "while I was running locally, I did not"
+    },
+    {
+      "start": 2117.92,
+      "end": 2122.56,
+      "text": "get on cloud. So, I will start with"
+    },
+    {
+      "start": 2121.52,
+      "end": 2125.56,
+      "text": "Colab, okay? So,"
+    },
+    {
+      "start": 2122.56,
+      "end": 2125.56,
+      "text": "colab.research.google.com."
+    },
+    {
+      "start": 2126.4,
+      "end": 2132.44,
+      "text": "Create a new notebook and then"
+    },
+    {
+      "start": 2129.68,
+      "end": 2134.7999999999997,
+      "text": "connect it with a GPU instance. So, by"
+    },
+    {
+      "start": 2132.44,
+      "end": 2137.6,
+      "text": "default this is connected to CPU. You"
+    },
+    {
+      "start": 2134.8,
+      "end": 2140.2000000000003,
+      "text": "can just say change runtime type."
+    },
+    {
+      "start": 2137.6,
+      "end": 2143.6,
+      "text": "T4. So, this is giving you an access of"
+    },
+    {
+      "start": 2140.2,
+      "end": 2146.8799999999997,
+      "text": "Tesla T4 GPU, which is not very"
+    },
+    {
+      "start": 2143.6,
+      "end": 2149.04,
+      "text": "powerful, but good enough for our"
+    },
+    {
+      "start": 2146.88,
+      "end": 2150.6,
+      "text": "practical demonstration."
+    },
+    {
+      "start": 2149.04,
+      "end": 2153.08,
+      "text": "If you have a paid account and if you"
+    },
+    {
+      "start": 2150.6,
+      "end": 2156.44,
+      "text": "can get access to higher-end GPU, then"
+    },
+    {
+      "start": 2153.08,
+      "end": 2159.2,
+      "text": "that's even better. I will demonstrate"
+    },
+    {
+      "start": 2156.44,
+      "end": 2161.52,
+      "text": "this entire thing through a pre-built"
+    },
+    {
+      "start": 2159.2,
+      "end": 2164.2,
+      "text": "notebook because running this code takes"
+    },
+    {
+      "start": 2161.52,
+      "end": 2165.92,
+      "text": "a lot of time, okay? So, I have already"
+    },
+    {
+      "start": 2164.2,
+      "end": 2168.6,
+      "text": "executed this notebook and I'll walk"
+    },
+    {
+      "start": 2165.92,
+      "end": 2172.32,
+      "text": "over it. So, in a Colab notebook, you"
+    },
+    {
+      "start": 2168.6,
+      "end": 2175.0,
+      "text": "first need to install Unsloth library,"
+    },
+    {
+      "start": 2172.32,
+      "end": 2178.3590000000004,
+      "text": "okay? Uh because when you connect with"
+    },
+    {
+      "start": 2175.0,
+      "end": 2179.88,
+      "text": "the Colab environment, it starts fresh."
+    },
+    {
+      "start": 2178.359,
+      "end": 2182.84,
+      "text": "So, you can't just install it and save"
+    },
+    {
+      "start": 2179.88,
+      "end": 2185.6,
+      "text": "it. You have to install it, okay? So, in"
+    },
+    {
+      "start": 2182.84,
+      "end": 2189.56,
+      "text": "your cell, just run this after you have"
+    },
+    {
+      "start": 2185.6,
+      "end": 2191.92,
+      "text": "connected with that GPU instance. And"
+    },
+    {
+      "start": 2189.56,
+      "end": 2195.7999999999997,
+      "text": "then you will"
+    },
+    {
+      "start": 2191.92,
+      "end": 2198.359,
+      "text": "import fast language model class from"
+    },
+    {
+      "start": 2195.8,
+      "end": 2201.6000000000004,
+      "text": "Unsloth, okay? You'll also import"
+    },
+    {
+      "start": 2198.359,
+      "end": 2203.92,
+      "text": "PyTorch, which is torch. And here you"
+    },
+    {
+      "start": 2201.6,
+      "end": 2207.56,
+      "text": "are defining a bunch of parameters."
+    },
+    {
+      "start": 2203.92,
+      "end": 2209.6800000000003,
+      "text": "And at this point, you are getting a"
+    },
+    {
+      "start": 2207.56,
+      "end": 2213.52,
+      "text": "pre-trained model. So, here we are"
+    },
+    {
+      "start": 2209.68,
+      "end": 2215.9199999999996,
+      "text": "fine-tuning Llama model, Llama 3.2 3B"
+    },
+    {
+      "start": 2213.52,
+      "end": 2218.7599999999998,
+      "text": "instruct. This is the model we are"
+    },
+    {
+      "start": 2215.92,
+      "end": 2222.359,
+      "text": "fine-tuning. So, you specify that."
+    },
+    {
+      "start": 2218.76,
+      "end": 2224.6400000000003,
+      "text": "Then max sequence length is your context"
+    },
+    {
+      "start": 2222.359,
+      "end": 2226.68,
+      "text": "window length, okay? How much longer"
+    },
+    {
+      "start": 2224.64,
+      "end": 2228.2,
+      "text": "sequence you want to support in your"
+    },
+    {
+      "start": 2226.68,
+      "end": 2232.96,
+      "text": "fine-tuned model."
+    },
+    {
+      "start": 2228.2,
+      "end": 2235.16,
+      "text": "Dtype none means let GPU figure out what"
+    },
+    {
+      "start": 2232.96,
+      "end": 2237.16,
+      "text": "kind of dtype will be the best. And by"
+    },
+    {
+      "start": 2235.16,
+      "end": 2239.8799999999997,
+      "text": "the way, I have provided help on all"
+    },
+    {
+      "start": 2237.16,
+      "end": 2241.48,
+      "text": "these parameters. See, it specifies the"
+    },
+    {
+      "start": 2239.88,
+      "end": 2243.96,
+      "text": "data type of model weights and"
+    },
+    {
+      "start": 2241.48,
+      "end": 2246.48,
+      "text": "computation. If you have something like"
+    },
+    {
+      "start": 2243.96,
+      "end": 2250.4,
+      "text": "Nvidia A100 GPU,"
+    },
+    {
+      "start": 2246.48,
+      "end": 2252.96,
+      "text": "then it will use this torch.bfloat16,"
+    },
+    {
+      "start": 2250.4,
+      "end": 2255.88,
+      "text": "okay? So, when you say dtype none, it"
+    },
+    {
+      "start": 2252.96,
+      "end": 2257.4,
+      "text": "will figure out the correct uh type for"
+    },
+    {
+      "start": 2255.88,
+      "end": 2262.08,
+      "text": "the storage."
+    },
+    {
+      "start": 2257.4,
+      "end": 2263.92,
+      "text": "And load in four bit is used for 4-bit"
+    },
+    {
+      "start": 2262.08,
+      "end": 2266.64,
+      "text": "quantization, okay? So, we are going to"
+    },
+    {
+      "start": 2263.92,
+      "end": 2269.28,
+      "text": "use 4-bit quantization here."
+    },
+    {
+      "start": 2266.64,
+      "end": 2271.12,
+      "text": "And when you run it, it will download a"
+    },
+    {
+      "start": 2269.28,
+      "end": 2273.0800000000004,
+      "text": "bunch of stuff because it is downloading"
+    },
+    {
+      "start": 2271.12,
+      "end": 2275.56,
+      "text": "this model."
+    },
+    {
+      "start": 2273.08,
+      "end": 2277.92,
+      "text": "Uh and it is loading that model into"
+    },
+    {
+      "start": 2275.56,
+      "end": 2281.2799999999997,
+      "text": "this model parameter."
+    },
+    {
+      "start": 2277.92,
+      "end": 2282.88,
+      "text": "You also get this tokenizer variable. If"
+    },
+    {
+      "start": 2281.28,
+      "end": 2285.2000000000003,
+      "text": "you look at this index, this looks"
+    },
+    {
+      "start": 2282.88,
+      "end": 2288.4,
+      "text": "similar to the Hugging Face Transformer"
+    },
+    {
+      "start": 2285.2,
+      "end": 2290.2799999999997,
+      "text": "library syntax where you say library"
+    },
+    {
+      "start": 2288.4,
+      "end": 2291.84,
+      "text": "class.from_pretrained,"
+    },
+    {
+      "start": 2290.28,
+      "end": 2294.84,
+      "text": "you load the model."
+    },
+    {
+      "start": 2291.84,
+      "end": 2296.4,
+      "text": "Okay, so now I have Llama model here in"
+    },
+    {
+      "start": 2294.84,
+      "end": 2298.96,
+      "text": "this model variable. And I will"
+    },
+    {
+      "start": 2296.4,
+      "end": 2302.0,
+      "text": "fine-tune that, okay? You also need this"
+    },
+    {
+      "start": 2298.96,
+      "end": 2305.8,
+      "text": "tokenizer, okay? So, as a next step,"
+    },
+    {
+      "start": 2302.0,
+      "end": 2308.2,
+      "text": "what you do is you get the parameter"
+    },
+    {
+      "start": 2305.8,
+      "end": 2309.44,
+      "text": "efficient fine-tuned model, get PEFT"
+    },
+    {
+      "start": 2308.2,
+      "end": 2310.9199999999996,
+      "text": "model."
+    },
+    {
+      "start": 2309.44,
+      "end": 2313.28,
+      "text": "So, here"
+    },
+    {
+      "start": 2310.92,
+      "end": 2315.96,
+      "text": "you are defining your parameters for"
+    },
+    {
+      "start": 2313.28,
+      "end": 2319.6400000000003,
+      "text": "LoRA. So, what do you need? Rank, okay?"
+    },
+    {
+      "start": 2315.96,
+      "end": 2322.12,
+      "text": "Rank I'm specifying as 16."
+    },
+    {
+      "start": 2319.64,
+      "end": 2324.2,
+      "text": "You can also try eight, 32, etc. It's a"
+    },
+    {
+      "start": 2322.12,
+      "end": 2326.12,
+      "text": "hyperparameter, folks. So, I'm starting"
+    },
+    {
+      "start": 2324.2,
+      "end": 2328.08,
+      "text": "with 16, but you can start with eight,"
+    },
+    {
+      "start": 2326.12,
+      "end": 2331.2799999999997,
+      "text": "32, play with it."
+    },
+    {
+      "start": 2328.08,
+      "end": 2335.2,
+      "text": "Then for target modules, Q_proj, K_proj,"
+    },
+    {
+      "start": 2331.28,
+      "end": 2337.6400000000003,
+      "text": "V_proj, and O_proj refers to those uh"
+    },
+    {
+      "start": 2335.2,
+      "end": 2340.12,
+      "text": "remember those matrices? You remember"
+    },
+    {
+      "start": 2337.64,
+      "end": 2342.24,
+      "text": "these in a"
+    },
+    {
+      "start": 2340.12,
+      "end": 2344.8399999999997,
+      "text": "attention layer, you will have these"
+    },
+    {
+      "start": 2342.24,
+      "end": 2347.0,
+      "text": "four matrices. In feed-forward layer,"
+    },
+    {
+      "start": 2344.84,
+      "end": 2349.0,
+      "text": "you will have two matrices, W1, W2. And"
+    },
+    {
+      "start": 2347.0,
+      "end": 2352.76,
+      "text": "and and you will have few more in the"
+    },
+    {
+      "start": 2349.0,
+      "end": 2358.2,
+      "text": "output layer as well. So, that's what it"
+    },
+    {
+      "start": 2352.76,
+      "end": 2361.92,
+      "text": "is. Q_proj is for that uh WQ uh matrix,"
+    },
+    {
+      "start": 2358.2,
+      "end": 2364.359,
+      "text": "then WK, VV K, etc. Now, let's say if"
+    },
+    {
+      "start": 2361.92,
+      "end": 2367.92,
+      "text": "you don't specify this parameter, then"
+    },
+    {
+      "start": 2364.359,
+      "end": 2371.64,
+      "text": "it will not add that extra adapter, that"
+    },
+    {
+      "start": 2367.92,
+      "end": 2373.52,
+      "text": "extra delta W after that a particular"
+    },
+    {
+      "start": 2371.64,
+      "end": 2374.92,
+      "text": "matrix, okay? Now, since I have all"
+    },
+    {
+      "start": 2373.52,
+      "end": 2377.6,
+      "text": "these matrices"
+    },
+    {
+      "start": 2374.92,
+      "end": 2381.16,
+      "text": "uh defined, what it will do is see, you"
+    },
+    {
+      "start": 2377.6,
+      "end": 2383.56,
+      "text": "will have WQ and plus it will add delta"
+    },
+    {
+      "start": 2381.16,
+      "end": 2384.96,
+      "text": "W, right? Like delta W"
+    },
+    {
+      "start": 2383.56,
+      "end": 2387.12,
+      "text": "to this."
+    },
+    {
+      "start": 2384.96,
+      "end": 2390.36,
+      "text": "Then since I have W"
+    },
+    {
+      "start": 2387.12,
+      "end": 2394.3199999999997,
+      "text": "K approach defined, it will have WK"
+    },
+    {
+      "start": 2390.36,
+      "end": 2396.96,
+      "text": "plus delta WK, something like that."
+    },
+    {
+      "start": 2394.32,
+      "end": 2399.1200000000003,
+      "text": "Okay, so wherever you want to"
+    },
+    {
+      "start": 2396.96,
+      "end": 2401.64,
+      "text": "modify those matrices, you will add this"
+    },
+    {
+      "start": 2399.12,
+      "end": 2402.92,
+      "text": "parameter. So let's say if I don't add K"
+    },
+    {
+      "start": 2401.64,
+      "end": 2404.8799999999997,
+      "text": "approach, okay?"
+    },
+    {
+      "start": 2402.92,
+      "end": 2407.52,
+      "text": "If I don't add that,"
+    },
+    {
+      "start": 2404.88,
+      "end": 2410.36,
+      "text": "it will use WK original as a frozen"
+    },
+    {
+      "start": 2407.52,
+      "end": 2411.7599999999998,
+      "text": "layer. It will not add that adapter. I"
+    },
+    {
+      "start": 2410.36,
+      "end": 2413.92,
+      "text": "hope you're getting this point. This is"
+    },
+    {
+      "start": 2411.76,
+      "end": 2416.92,
+      "text": "coming from our LoRA lecture that we"
+    },
+    {
+      "start": 2413.92,
+      "end": 2419.2000000000003,
+      "text": "already discussed before, okay? And"
+    },
+    {
+      "start": 2416.92,
+      "end": 2422.6,
+      "text": "these are the matrices"
+    },
+    {
+      "start": 2419.2,
+      "end": 2426.3599999999997,
+      "text": "from the fully connected layer. Then we"
+    },
+    {
+      "start": 2422.6,
+      "end": 2428.64,
+      "text": "have LoRA alpha. So this LoRA alpha is"
+    },
+    {
+      "start": 2426.36,
+      "end": 2430.1200000000003,
+      "text": "this particular alpha. See, your"
+    },
+    {
+      "start": 2428.64,
+      "end": 2432.72,
+      "text": "equation is"
+    },
+    {
+      "start": 2430.12,
+      "end": 2436.68,
+      "text": "W0, which is original weight matrix,"
+    },
+    {
+      "start": 2432.72,
+      "end": 2438.68,
+      "text": "plus delta W. So A.B is your delta W."
+    },
+    {
+      "start": 2436.68,
+      "end": 2440.8399999999997,
+      "text": "But you don't just do delta W, you add"
+    },
+    {
+      "start": 2438.68,
+      "end": 2444.3999999999996,
+      "text": "some scaling parameter. So that is alpha"
+    },
+    {
+      "start": 2440.84,
+      "end": 2446.36,
+      "text": "divided by rank, okay? And that alpha is"
+    },
+    {
+      "start": 2444.4,
+      "end": 2450.6800000000003,
+      "text": "this LoRA alpha parameter that you're"
+    },
+    {
+      "start": 2446.36,
+      "end": 2453.6400000000003,
+      "text": "specifying. This will tell you how much"
+    },
+    {
+      "start": 2450.68,
+      "end": 2456.3999999999996,
+      "text": "that adapter contributes to your weight"
+    },
+    {
+      "start": 2453.64,
+      "end": 2458.7599999999998,
+      "text": "update. Because this WW"
+    },
+    {
+      "start": 2456.4,
+      "end": 2460.96,
+      "text": "W0 is same as W that we have discussed"
+    },
+    {
+      "start": 2458.76,
+      "end": 2462.4,
+      "text": "before. This W is not changing, it's a"
+    },
+    {
+      "start": 2460.96,
+      "end": 2464.76,
+      "text": "frozen layer."
+    },
+    {
+      "start": 2462.4,
+      "end": 2468.48,
+      "text": "What is changing is this A.B, which is"
+    },
+    {
+      "start": 2464.76,
+      "end": 2471.2400000000002,
+      "text": "delta W, correct? But how much delta W"
+    },
+    {
+      "start": 2468.48,
+      "end": 2473.48,
+      "text": "contributes to the final weights,"
+    },
+    {
+      "start": 2471.24,
+      "end": 2476.24,
+      "text": "you can configure that through this"
+    },
+    {
+      "start": 2473.48,
+      "end": 2478.2400000000002,
+      "text": "scaling parameter, okay? So that's what"
+    },
+    {
+      "start": 2476.24,
+      "end": 2480.52,
+      "text": "this LoRA alpha is. Then you have"
+    },
+    {
+      "start": 2478.24,
+      "end": 2482.0,
+      "text": "dropout. Dropout is for regularization."
+    },
+    {
+      "start": 2480.52,
+      "end": 2483.28,
+      "text": "So while you're doing training, if you"
+    },
+    {
+      "start": 2482.0,
+      "end": 2485.96,
+      "text": "remember from our neural network"
+    },
+    {
+      "start": 2483.28,
+      "end": 2489.6000000000004,
+      "text": "lecture, if you want to drop certain"
+    },
+    {
+      "start": 2485.96,
+      "end": 2491.2,
+      "text": "neurons to kind of address overfitting,"
+    },
+    {
+      "start": 2489.6,
+      "end": 2493.44,
+      "text": "then you can specify that. In In our"
+    },
+    {
+      "start": 2491.2,
+      "end": 2495.7599999999998,
+      "text": "case, we are not going to"
+    },
+    {
+      "start": 2493.44,
+      "end": 2498.96,
+      "text": "have any dropout, we'll just say zero."
+    },
+    {
+      "start": 2495.76,
+      "end": 2501.36,
+      "text": "Then this bias, okay? So I've given"
+    },
+    {
+      "start": 2498.96,
+      "end": 2504.88,
+      "text": "the information on all these parameters"
+    },
+    {
+      "start": 2501.36,
+      "end": 2508.6800000000003,
+      "text": "here, okay? Random state, all of that."
+    },
+    {
+      "start": 2504.88,
+      "end": 2511.44,
+      "text": "So here, you are defining your LoRA"
+    },
+    {
+      "start": 2508.68,
+      "end": 2513.68,
+      "text": "model, your parameter efficient"
+    },
+    {
+      "start": 2511.44,
+      "end": 2516.16,
+      "text": "fine-tune model. So you"
+    },
+    {
+      "start": 2513.68,
+      "end": 2518.7599999999998,
+      "text": "loaded Llama 3 model,"
+    },
+    {
+      "start": 2516.16,
+      "end": 2522.3199999999997,
+      "text": "then you defined all these"
+    },
+    {
+      "start": 2518.76,
+      "end": 2524.6000000000004,
+      "text": "parameters for your LoRA, okay? Like R"
+    },
+    {
+      "start": 2522.32,
+      "end": 2528.2400000000002,
+      "text": "and LoRA alpha and so on."
+    },
+    {
+      "start": 2524.6,
+      "end": 2530.56,
+      "text": "And now you got this new model, which is"
+    },
+    {
+      "start": 2528.24,
+      "end": 2532.04,
+      "text": "having all those LoRA parameters. As a"
+    },
+    {
+      "start": 2530.56,
+      "end": 2534.36,
+      "text": "next step,"
+    },
+    {
+      "start": 2532.04,
+      "end": 2536.24,
+      "text": "you will download the dataset on which"
+    },
+    {
+      "start": 2534.36,
+      "end": 2540.08,
+      "text": "you want to fine-tune your model. So"
+    },
+    {
+      "start": 2536.24,
+      "end": 2543.3599999999997,
+      "text": "here we are using ServiceNow R1 Distill"
+    },
+    {
+      "start": 2540.08,
+      "end": 2544.84,
+      "text": "SFT dataset. And this dataset library,"
+    },
+    {
+      "start": 2543.36,
+      "end": 2548.52,
+      "text": "by the way, it is a Hugging Face"
+    },
+    {
+      "start": 2544.84,
+      "end": 2550.6000000000004,
+      "text": "library. It allows you to access so many"
+    },
+    {
+      "start": 2548.52,
+      "end": 2552.44,
+      "text": "different datasets. I'm on Hugging Face"
+    },
+    {
+      "start": 2550.6,
+      "end": 2555.68,
+      "text": "website right now and I have this"
+    },
+    {
+      "start": 2552.44,
+      "end": 2559.2000000000003,
+      "text": "ServiceNow R1 Distill SFT"
+    },
+    {
+      "start": 2555.68,
+      "end": 2562.56,
+      "text": "dataset, as you can see. It has 172,000"
+    },
+    {
+      "start": 2559.2,
+      "end": 2564.3999999999996,
+      "text": "rows and each row is sort of like you"
+    },
+    {
+      "start": 2562.56,
+      "end": 2566.4,
+      "text": "have a problem and you have solution. So"
+    },
+    {
+      "start": 2564.4,
+      "end": 2568.8,
+      "text": "see, this is a problem. It's like a"
+    },
+    {
+      "start": 2566.4,
+      "end": 2570.4,
+      "text": "puzzle. For Halloween, Sarah receives 66"
+    },
+    {
+      "start": 2568.8,
+      "end": 2572.48,
+      "text": "pieces, whatever."
+    },
+    {
+      "start": 2570.4,
+      "end": 2576.36,
+      "text": "This is like a puzzle and this is the"
+    },
+    {
+      "start": 2572.48,
+      "end": 2578.76,
+      "text": "solution. So you want to fine-tune your"
+    },
+    {
+      "start": 2576.36,
+      "end": 2580.96,
+      "text": "model on all these puzzles"
+    },
+    {
+      "start": 2578.76,
+      "end": 2584.36,
+      "text": "and you want to fine-tune it in a way"
+    },
+    {
+      "start": 2580.96,
+      "end": 2587.64,
+      "text": "that it will do reasoning similar to"
+    },
+    {
+      "start": 2584.36,
+      "end": 2589.1600000000003,
+      "text": "your DeepSeek model, okay? And for that,"
+    },
+    {
+      "start": 2587.64,
+      "end": 2591.08,
+      "text": "see, these are the two main columns in"
+    },
+    {
+      "start": 2589.16,
+      "end": 2594.68,
+      "text": "your dataset, right? Problem and this is"
+    },
+    {
+      "start": 2591.08,
+      "end": 2597.7599999999998,
+      "text": "a solution. And in solution, Sarah ate"
+    },
+    {
+      "start": 2594.68,
+      "end": 2599.7599999999998,
+      "text": "nine pieces of candy, see? The solution"
+    },
+    {
+      "start": 2597.76,
+      "end": 2602.2000000000003,
+      "text": "is this descriptive answer, but the"
+    },
+    {
+      "start": 2599.76,
+      "end": 2605.0,
+      "text": "actual number that you're looking at is"
+    },
+    {
+      "start": 2602.2,
+      "end": 2609.24,
+      "text": "nine, okay? And other than these two"
+    },
+    {
+      "start": 2605.0,
+      "end": 2612.12,
+      "text": "columns, you have third column, which is"
+    },
+    {
+      "start": 2609.24,
+      "end": 2614.2,
+      "text": "re-annotated assistant content. And this"
+    },
+    {
+      "start": 2612.12,
+      "end": 2617.2799999999997,
+      "text": "is a reasoning. This is like a think,"
+    },
+    {
+      "start": 2614.2,
+      "end": 2620.0,
+      "text": "you know, that think prompt that you get"
+    },
+    {
+      "start": 2617.28,
+      "end": 2621.8,
+      "text": "in DeepSeek. So if you want to solve"
+    },
+    {
+      "start": 2620.0,
+      "end": 2624.48,
+      "text": "this problem,"
+    },
+    {
+      "start": 2621.8,
+      "end": 2626.0,
+      "text": "this is how you will do reasoning step"
+    },
+    {
+      "start": 2624.48,
+      "end": 2627.96,
+      "text": "by step. You will say, first I need to"
+    },
+    {
+      "start": 2626.0,
+      "end": 2630.36,
+      "text": "determine total number of pieces candy,"
+    },
+    {
+      "start": 2627.96,
+      "end": 2631.8,
+      "text": "whatever. Next I will do this. This is"
+    },
+    {
+      "start": 2630.36,
+      "end": 2633.6400000000003,
+      "text": "sort of like how humans think, right?"
+    },
+    {
+      "start": 2631.8,
+      "end": 2635.32,
+      "text": "Like when you're given a puzzle, first"
+    },
+    {
+      "start": 2633.64,
+      "end": 2637.7999999999997,
+      "text": "you will do this first step, second"
+    },
+    {
+      "start": 2635.32,
+      "end": 2640.44,
+      "text": "step, third step and so on. And that's"
+    },
+    {
+      "start": 2637.8,
+      "end": 2642.3590000000004,
+      "text": "what this column is and at the end,"
+    },
+    {
+      "start": 2640.44,
+      "end": 2643.88,
+      "text": "there is this"
+    },
+    {
+      "start": 2642.359,
+      "end": 2646.4,
+      "text": "final answer."
+    },
+    {
+      "start": 2643.88,
+      "end": 2649.7200000000003,
+      "text": "Now, in case you're wondering what is"
+    },
+    {
+      "start": 2646.4,
+      "end": 2653.12,
+      "text": "this {slash} boxed nine {slash} {slash}"
+    },
+    {
+      "start": 2649.72,
+      "end": 2656.04,
+      "text": "etc. Well, this is the LaTeX LaTeX"
+    },
+    {
+      "start": 2653.12,
+      "end": 2658.88,
+      "text": "markup language, okay? So let me just"
+    },
+    {
+      "start": 2656.04,
+      "end": 2662.359,
+      "text": "show you the"
+    },
+    {
+      "start": 2658.88,
+      "end": 2664.12,
+      "text": "It called LaTeX, but LaTeX is how you"
+    },
+    {
+      "start": 2662.359,
+      "end": 2668.24,
+      "text": "pronounce it."
+    },
+    {
+      "start": 2664.12,
+      "end": 2670.2799999999997,
+      "text": "And this markup language, okay? What it"
+    },
+    {
+      "start": 2668.24,
+      "end": 2672.56,
+      "text": "does is"
+    },
+    {
+      "start": 2670.28,
+      "end": 2676.5600000000004,
+      "text": "people use it for in academia for"
+    },
+    {
+      "start": 2672.56,
+      "end": 2678.7599999999998,
+      "text": "scientific publications, etc. So let me"
+    },
+    {
+      "start": 2676.56,
+      "end": 2680.7599999999998,
+      "text": "just show you. Let's say you are having"
+    },
+    {
+      "start": 2678.76,
+      "end": 2683.2400000000002,
+      "text": "a research paper"
+    },
+    {
+      "start": 2680.76,
+      "end": 2685.6800000000003,
+      "text": "and you want to have all these"
+    },
+    {
+      "start": 2683.24,
+      "end": 2688.2,
+      "text": "mathematical equation, etc."
+    },
+    {
+      "start": 2685.68,
+      "end": 2690.24,
+      "text": "For that, you will use this LaTeX"
+    },
+    {
+      "start": 2688.2,
+      "end": 2691.68,
+      "text": "package, okay? So it's like {slash}"
+    },
+    {
+      "start": 2690.24,
+      "end": 2693.359,
+      "text": "document {slash} use it. This is a"
+    },
+    {
+      "start": 2691.68,
+      "end": 2696.04,
+      "text": "markup language."
+    },
+    {
+      "start": 2693.359,
+      "end": 2698.12,
+      "text": "Okay, folks, I hope you're getting"
+    },
+    {
+      "start": 2696.04,
+      "end": 2700.64,
+      "text": "what I mean by markup language. And see,"
+    },
+    {
+      "start": 2698.12,
+      "end": 2702.24,
+      "text": "LSD listing. So it has its own syntax."
+    },
+    {
+      "start": 2700.64,
+      "end": 2705.3199999999997,
+      "text": "If you want to learn about it, you can"
+    },
+    {
+      "start": 2702.24,
+      "end": 2707.8399999999997,
+      "text": "go to YouTube. You'll find some LaTeX"
+    },
+    {
+      "start": 2705.32,
+      "end": 2710.92,
+      "text": "videos, but I don't think it's needed."
+    },
+    {
+      "start": 2707.84,
+      "end": 2712.6000000000004,
+      "text": "It's just in in your brain, like you"
+    },
+    {
+      "start": 2710.92,
+      "end": 2716.48,
+      "text": "need to think that, okay, this is some"
+    },
+    {
+      "start": 2712.6,
+      "end": 2719.24,
+      "text": "kind of markup language used in this"
+    },
+    {
+      "start": 2716.48,
+      "end": 2722.4,
+      "text": "particular dataset, okay? So this is a"
+    },
+    {
+      "start": 2719.24,
+      "end": 2724.8799999999997,
+      "text": "dataset. Now,"
+    },
+    {
+      "start": 2722.4,
+      "end": 2728.04,
+      "text": "you load that dataset here through"
+    },
+    {
+      "start": 2724.88,
+      "end": 2731.28,
+      "text": "transformer dataset library, okay?"
+    },
+    {
+      "start": 2728.04,
+      "end": 2734.84,
+      "text": "So after the dataset is loaded,"
+    },
+    {
+      "start": 2731.28,
+      "end": 2737.44,
+      "text": "we'll look at the few records and see."
+    },
+    {
+      "start": 2734.84,
+      "end": 2739.359,
+      "text": "It has a problem, it has a solution, it"
+    },
+    {
+      "start": 2737.44,
+      "end": 2741.84,
+      "text": "has an answer."
+    },
+    {
+      "start": 2739.359,
+      "end": 2743.7999999999997,
+      "text": "See, problem. There were 27 boys, 35"
+    },
+    {
+      "start": 2741.84,
+      "end": 2745.84,
+      "text": "girls. Remember in in high school days"
+    },
+    {
+      "start": 2743.8,
+      "end": 2748.84,
+      "text": "and college days, you used to get all"
+    },
+    {
+      "start": 2745.84,
+      "end": 2750.28,
+      "text": "these problems. There were"
+    },
+    {
+      "start": 2748.84,
+      "end": 2752.6400000000003,
+      "text": "fill in the blank children on the"
+    },
+    {
+      "start": 2750.28,
+      "end": 2754.6000000000004,
+      "text": "playground. So there's a problem."
+    },
+    {
+      "start": 2752.64,
+      "end": 2757.4,
+      "text": "There's a solution. Solution is usually"
+    },
+    {
+      "start": 2754.6,
+      "end": 2759.72,
+      "text": "in that boxed parameter."
+    },
+    {
+      "start": 2757.4,
+      "end": 2762.7200000000003,
+      "text": "Okay, so"
+    },
+    {
+      "start": 2759.72,
+      "end": 2766.04,
+      "text": "solution will be here somewhere and"
+    },
+    {
+      "start": 2762.72,
+      "end": 2769.9199999999996,
+      "text": "there is this reasoning pattern."
+    },
+    {
+      "start": 2766.04,
+      "end": 2773.44,
+      "text": "Now, you take all those"
+    },
+    {
+      "start": 2769.92,
+      "end": 2776.44,
+      "text": "records. So there are 172,000"
+    },
+    {
+      "start": 2773.44,
+      "end": 2778.32,
+      "text": "records in our dataset that we will use"
+    },
+    {
+      "start": 2776.44,
+      "end": 2779.88,
+      "text": "for fine-tuning."
+    },
+    {
+      "start": 2778.32,
+      "end": 2783.1600000000003,
+      "text": "In this particular code, what we are"
+    },
+    {
+      "start": 2779.88,
+      "end": 2785.6400000000003,
+      "text": "doing is we take each of those records"
+    },
+    {
+      "start": 2783.16,
+      "end": 2787.7599999999998,
+      "text": "and you put it in this prompt. So you're"
+    },
+    {
+      "start": 2785.64,
+      "end": 2790.2799999999997,
+      "text": "saying you are a reflective assistant,"
+    },
+    {
+      "start": 2787.76,
+      "end": 2793.44,
+      "text": "blah blah blah, engaging iterative"
+    },
+    {
+      "start": 2790.28,
+      "end": 2794.84,
+      "text": "reasoning, mimicking human stream of"
+    },
+    {
+      "start": 2793.44,
+      "end": 2796.4,
+      "text": "your your"
+    },
+    {
+      "start": 2794.84,
+      "end": 2799.4,
+      "text": "your approach and present exploration"
+    },
+    {
+      "start": 2796.4,
+      "end": 2800.0,
+      "text": "start out, whatever. So you give this"
+    },
+    {
+      "start": 2799.4,
+      "end": 2802.1600000000003,
+      "text": "uh"
+    },
+    {
+      "start": 2800.0,
+      "end": 2803.92,
+      "text": "prompt, then here is a problem. So there"
+    },
+    {
+      "start": 2802.16,
+      "end": 2806.68,
+      "text": "are three brackets, right?"
+    },
+    {
+      "start": 2803.92,
+      "end": 2808.04,
+      "text": "So this is a problem, okay? So you you"
+    },
+    {
+      "start": 2806.68,
+      "end": 2810.12,
+      "text": "go through, see, you have a dataset,"
+    },
+    {
+      "start": 2808.04,
+      "end": 2812.4,
+      "text": "right? So you go through each record."
+    },
+    {
+      "start": 2810.12,
+      "end": 2814.88,
+      "text": "When you say dot map, this dot map"
+    },
+    {
+      "start": 2812.4,
+      "end": 2817.48,
+      "text": "function will go through each record one"
+    },
+    {
+      "start": 2814.88,
+      "end": 2819.6800000000003,
+      "text": "by one. For each record,"
+    },
+    {
+      "start": 2817.48,
+      "end": 2820.96,
+      "text": "this function is called, okay? And and"
+    },
+    {
+      "start": 2819.68,
+      "end": 2824.04,
+      "text": "in every record, what do you have?"
+    },
+    {
+      "start": 2820.96,
+      "end": 2827.88,
+      "text": "Problem, solution and DeepSeek-like"
+    },
+    {
+      "start": 2824.04,
+      "end": 2830.52,
+      "text": "step-by-step thinking block, okay?"
+    },
+    {
+      "start": 2827.88,
+      "end": 2832.359,
+      "text": "For them, what you do is you take R1"
+    },
+    {
+      "start": 2830.52,
+      "end": 2834.04,
+      "text": "prompt and R1 has these three"
+    },
+    {
+      "start": 2832.359,
+      "end": 2835.84,
+      "text": "parameters, right? So when you do"
+    },
+    {
+      "start": 2834.04,
+      "end": 2838.88,
+      "text": "format,"
+    },
+    {
+      "start": 2835.84,
+      "end": 2840.88,
+      "text": "it will in first block, it will first"
+    },
+    {
+      "start": 2838.88,
+      "end": 2843.8,
+      "text": "put problem, then in the second one, it"
+    },
+    {
+      "start": 2840.88,
+      "end": 2845.2400000000002,
+      "text": "will put thought, third, it will put"
+    },
+    {
+      "start": 2843.8,
+      "end": 2848.32,
+      "text": "solution."
+    },
+    {
+      "start": 2845.24,
+      "end": 2850.8799999999997,
+      "text": "Okay? And it will return you the text."
+    },
+    {
+      "start": 2848.32,
+      "end": 2852.8,
+      "text": "So for each of the records, just imagine"
+    },
+    {
+      "start": 2850.88,
+      "end": 2855.92,
+      "text": "you're getting this big prompt for each"
+    },
+    {
+      "start": 2852.8,
+      "end": 2858.1600000000003,
+      "text": "of the puzzle you have."
+    },
+    {
+      "start": 2855.92,
+      "end": 2860.6800000000003,
+      "text": "After that, what happens is you're"
+    },
+    {
+      "start": 2858.16,
+      "end": 2863.72,
+      "text": "creating a trainer object. Now, trainer"
+    },
+    {
+      "start": 2860.68,
+      "end": 2866.56,
+      "text": "object is coming from transformer"
+    },
+    {
+      "start": 2863.72,
+      "end": 2869.3199999999997,
+      "text": "reinforcement learning library,"
+    },
+    {
+      "start": 2866.56,
+      "end": 2871.44,
+      "text": "which is once again Hugging Face, okay?"
+    },
+    {
+      "start": 2869.32,
+      "end": 2873.2400000000002,
+      "text": "So this is the library, folks. It's a"
+    },
+    {
+      "start": 2871.44,
+      "end": 2875.68,
+      "text": "Hugging Face library, transformer"
+    },
+    {
+      "start": 2873.24,
+      "end": 2878.4399999999996,
+      "text": "reinforcement learning library. And when"
+    },
+    {
+      "start": 2875.68,
+      "end": 2880.3199999999997,
+      "text": "you did pip install on sloth, it kind of"
+    },
+    {
+      "start": 2878.44,
+      "end": 2882.16,
+      "text": "install all these because these are the"
+    },
+    {
+      "start": 2880.32,
+      "end": 2885.0,
+      "text": "dependencies."
+    },
+    {
+      "start": 2882.16,
+      "end": 2888.6,
+      "text": "So in that library, there is this SFT"
+    },
+    {
+      "start": 2885.0,
+      "end": 2891.44,
+      "text": "trainer, okay? Like supervised fine-tune"
+    },
+    {
+      "start": 2888.6,
+      "end": 2894.0,
+      "text": "training trainer, which you are"
+    },
+    {
+      "start": 2891.44,
+      "end": 2896.84,
+      "text": "importing and"
+    },
+    {
+      "start": 2894.0,
+      "end": 2898.4,
+      "text": "you are giving the base model, that LoRA"
+    },
+    {
+      "start": 2896.84,
+      "end": 2900.48,
+      "text": "model, okay?"
+    },
+    {
+      "start": 2898.4,
+      "end": 2901.96,
+      "text": "Then see, the the model is not trained"
+    },
+    {
+      "start": 2900.48,
+      "end": 2904.4,
+      "text": "yet, okay? You have just defined the"
+    },
+    {
+      "start": 2901.96,
+      "end": 2906.56,
+      "text": "configuration. So this model has that"
+    },
+    {
+      "start": 2904.4,
+      "end": 2908.88,
+      "text": "LoRA configuration that we gave here."
+    },
+    {
+      "start": 2906.56,
+      "end": 2910.88,
+      "text": "See, this this particular configuration."
+    },
+    {
+      "start": 2908.88,
+      "end": 2913.92,
+      "text": "So it knows what is the value of R, what"
+    },
+    {
+      "start": 2910.88,
+      "end": 2916.04,
+      "text": "is R LoRA alpha and so on."
+    },
+    {
+      "start": 2913.92,
+      "end": 2918.52,
+      "text": "Then you will use the dataset and"
+    },
+    {
+      "start": 2916.04,
+      "end": 2920.7599999999998,
+      "text": "tokenizer. So when you run the training,"
+    },
+    {
+      "start": 2918.52,
+      "end": 2922.52,
+      "text": "see, later on I will say"
+    },
+    {
+      "start": 2920.76,
+      "end": 2925.44,
+      "text": "trainer.train."
+    },
+    {
+      "start": 2922.52,
+      "end": 2927.84,
+      "text": "So when I do that, it will use this"
+    },
+    {
+      "start": 2925.44,
+      "end": 2930.76,
+      "text": "tokenizer for tokenizing. It will use"
+    },
+    {
+      "start": 2927.84,
+      "end": 2932.52,
+      "text": "this dataset to load the record and to"
+    },
+    {
+      "start": 2930.76,
+      "end": 2934.7200000000003,
+      "text": "train the model."
+    },
+    {
+      "start": 2932.52,
+      "end": 2936.64,
+      "text": "Okay, so these are all the parameters,"
+    },
+    {
+      "start": 2934.72,
+      "end": 2939.2,
+      "text": "these are training arguments and these"
+    },
+    {
+      "start": 2936.64,
+      "end": 2941.44,
+      "text": "are some of these are familiar to you"
+    },
+    {
+      "start": 2939.2,
+      "end": 2942.8399999999997,
+      "text": "when you looked into the deep learning"
+    },
+    {
+      "start": 2941.44,
+      "end": 2945.12,
+      "text": "module."
+    },
+    {
+      "start": 2942.84,
+      "end": 2948.2000000000003,
+      "text": "We had all this learning parameter,"
+    },
+    {
+      "start": 2945.12,
+      "end": 2951.92,
+      "text": "learning rate, weight decay, all of"
+    },
+    {
+      "start": 2948.2,
+      "end": 2954.08,
+      "text": "those, okay? Like optimizer. So Adam is"
+    },
+    {
+      "start": 2951.92,
+      "end": 2955.92,
+      "text": "your optimizer here and I have given"
+    },
+    {
+      "start": 2954.08,
+      "end": 2957.92,
+      "text": "information on all those parameters"
+    },
+    {
+      "start": 2955.92,
+      "end": 2960.08,
+      "text": "here, folks. Read through it. You don't"
+    },
+    {
+      "start": 2957.92,
+      "end": 2961.92,
+      "text": "need to remember the syntax here. You"
+    },
+    {
+      "start": 2960.08,
+      "end": 2964.72,
+      "text": "can get the syntax through ChatGPT or"
+    },
+    {
+      "start": 2961.92,
+      "end": 2966.8,
+      "text": "through the on sloth documentation. So"
+    },
+    {
+      "start": 2964.72,
+      "end": 2968.12,
+      "text": "don't stress too much, okay? Like right"
+    },
+    {
+      "start": 2966.8,
+      "end": 2970.52,
+      "text": "now you might be thinking, oh, this guy"
+    },
+    {
+      "start": 2968.12,
+      "end": 2972.72,
+      "text": "is just showing the code and he's not"
+    },
+    {
+      "start": 2970.52,
+      "end": 2974.92,
+      "text": "typing. Well, typing is not needed"
+    },
+    {
+      "start": 2972.72,
+      "end": 2977.8399999999997,
+      "text": "nowadays in the world of AI. It's like"
+    },
+    {
+      "start": 2974.92,
+      "end": 2980.8,
+      "text": "how you make use of those AI tools and"
+    },
+    {
+      "start": 2977.84,
+      "end": 2982.56,
+      "text": "make yourself productive while still"
+    },
+    {
+      "start": 2980.8,
+      "end": 2983.6800000000003,
+      "text": "learning the fundamentals. That is the"
+    },
+    {
+      "start": 2982.56,
+      "end": 2986.2799999999997,
+      "text": "entire"
+    },
+    {
+      "start": 2983.68,
+      "end": 2988.7599999999998,
+      "text": "uh goal that we need to have."
+    },
+    {
+      "start": 2986.28,
+      "end": 2991.1600000000003,
+      "text": "Okay? So, you created this trainer"
+    },
+    {
+      "start": 2988.76,
+      "end": 2993.48,
+      "text": "object and then you will do"
+    },
+    {
+      "start": 2991.16,
+      "end": 2995.8399999999997,
+      "text": "trainer.train."
+    },
+    {
+      "start": 2993.48,
+      "end": 2998.36,
+      "text": "It will take long time, folks. For me, I"
+    },
+    {
+      "start": 2995.84,
+      "end": 3001.32,
+      "text": "think it took like 20 minutes."
+    },
+    {
+      "start": 2998.36,
+      "end": 3003.28,
+      "text": "And it is showing you the epochs and the"
+    },
+    {
+      "start": 3001.32,
+      "end": 3005.36,
+      "text": "training loss and you as you can see the"
+    },
+    {
+      "start": 3003.28,
+      "end": 3007.96,
+      "text": "loss is reducing, which is a good sign,"
+    },
+    {
+      "start": 3005.36,
+      "end": 3009.44,
+      "text": "which means my model is training in the"
+    },
+    {
+      "start": 3007.96,
+      "end": 3011.52,
+      "text": "right direction."
+    },
+    {
+      "start": 3009.44,
+      "end": 3015.28,
+      "text": "And after"
+    },
+    {
+      "start": 3011.52,
+      "end": 3017.04,
+      "text": "60 epochs, my loss is 0.48. So, I read"
+    },
+    {
+      "start": 3015.28,
+      "end": 3019.1600000000003,
+      "text": "somewhere in the documentation if it is"
+    },
+    {
+      "start": 3017.04,
+      "end": 3020.84,
+      "text": "less than 0.5,"
+    },
+    {
+      "start": 3019.16,
+      "end": 3022.92,
+      "text": "it's good enough."
+    },
+    {
+      "start": 3020.84,
+      "end": 3024.88,
+      "text": "Uh I mean, it actually depends on your"
+    },
+    {
+      "start": 3022.92,
+      "end": 3026.64,
+      "text": "use case, but that's a general"
+    },
+    {
+      "start": 3024.88,
+      "end": 3030.0,
+      "text": "guideline."
+    },
+    {
+      "start": 3026.64,
+      "end": 3032.56,
+      "text": "And then you will try some"
+    },
+    {
+      "start": 3030.0,
+      "end": 3035.08,
+      "text": "prompt. So, my model is trained, okay?"
+    },
+    {
+      "start": 3032.56,
+      "end": 3037.32,
+      "text": "After that that line, when you the"
+    },
+    {
+      "start": 3035.08,
+      "end": 3039.12,
+      "text": "trainer.train, model is trained."
+    },
+    {
+      "start": 3037.32,
+      "end": 3043.2000000000003,
+      "text": "Which means model is fine-tuned. So, we"
+    },
+    {
+      "start": 3039.12,
+      "end": 3045.8399999999997,
+      "text": "took Llama 3 model. We trained it on the"
+    },
+    {
+      "start": 3043.2,
+      "end": 3047.08,
+      "text": "ServiceNow R1 dataset, okay? Which"
+    },
+    {
+      "start": 3045.84,
+      "end": 3050.52,
+      "text": "dataset?"
+    },
+    {
+      "start": 3047.08,
+      "end": 3053.7599999999998,
+      "text": "This dataset. 172,000 rows."
+    },
+    {
+      "start": 3050.52,
+      "end": 3057.64,
+      "text": "And that Llama 3 model was not"
+    },
+    {
+      "start": 3053.76,
+      "end": 3058.8,
+      "text": "originally trained to think like this,"
+    },
+    {
+      "start": 3057.64,
+      "end": 3060.3599999999997,
+      "text": "to think"
+    },
+    {
+      "start": 3058.8,
+      "end": 3063.1200000000003,
+      "text": "like DeepSeek, you know, like"
+    },
+    {
+      "start": 3060.36,
+      "end": 3064.28,
+      "text": "step-by-step. But now that we fine-tuned"
+    },
+    {
+      "start": 3063.12,
+      "end": 3065.96,
+      "text": "it,"
+    },
+    {
+      "start": 3064.28,
+      "end": 3068.36,
+      "text": "the model will also start thinking like"
+    },
+    {
+      "start": 3065.96,
+      "end": 3070.56,
+      "text": "DeepSeek, okay? So, here"
+    },
+    {
+      "start": 3068.36,
+      "end": 3072.44,
+      "text": "I'm giving one sample"
+    },
+    {
+      "start": 3070.56,
+      "end": 3075.12,
+      "text": "uh question."
+    },
+    {
+      "start": 3072.44,
+      "end": 3076.88,
+      "text": "How many Rs are present in strawberry?"
+    },
+    {
+      "start": 3075.12,
+      "end": 3080.2,
+      "text": "And folks, this might look like a simple"
+    },
+    {
+      "start": 3076.88,
+      "end": 3082.92,
+      "text": "problem. Actually, LLM gets confused"
+    },
+    {
+      "start": 3080.2,
+      "end": 3085.3199999999997,
+      "text": "with these problems, okay? So, it's kind"
+    },
+    {
+      "start": 3082.92,
+      "end": 3086.52,
+      "text": "of like a hard problem for LLM."
+    },
+    {
+      "start": 3085.32,
+      "end": 3088.0,
+      "text": "So,"
+    },
+    {
+      "start": 3086.52,
+      "end": 3091.68,
+      "text": "I give this"
+    },
+    {
+      "start": 3088.0,
+      "end": 3095.08,
+      "text": "uh problem uh statement to my model,"
+    },
+    {
+      "start": 3091.68,
+      "end": 3098.7599999999998,
+      "text": "okay? And here you are doing tokenizer,"
+    },
+    {
+      "start": 3095.08,
+      "end": 3100.6,
+      "text": "whatever the basic setup, essentially."
+    },
+    {
+      "start": 3098.76,
+      "end": 3101.84,
+      "text": "And then here is where you are doing"
+    },
+    {
+      "start": 3100.6,
+      "end": 3104.24,
+      "text": "inference. So, you'll say"
+    },
+    {
+      "start": 3101.84,
+      "end": 3105.44,
+      "text": "model.generate."
+    },
+    {
+      "start": 3104.24,
+      "end": 3106.12,
+      "text": "Okay?"
+    },
+    {
+      "start": 3105.44,
+      "end": 3107.36,
+      "text": "Um"
+    },
+    {
+      "start": 3106.12,
+      "end": 3109.12,
+      "text": "whatever all these parameters,"
+    },
+    {
+      "start": 3107.36,
+      "end": 3111.36,
+      "text": "temperature, and so on."
+    },
+    {
+      "start": 3109.12,
+      "end": 3113.52,
+      "text": "And whatever output you get, you will"
+    },
+    {
+      "start": 3111.36,
+      "end": 3115.1200000000003,
+      "text": "decode it into"
+    },
+    {
+      "start": 3113.52,
+      "end": 3118.84,
+      "text": "a response."
+    },
+    {
+      "start": 3115.12,
+      "end": 3121.44,
+      "text": "So, here, if you look at the response,"
+    },
+    {
+      "start": 3118.84,
+      "end": 3125.2400000000002,
+      "text": "let me just show you the response."
+    },
+    {
+      "start": 3121.44,
+      "end": 3127.56,
+      "text": "See? Now it is thinking step-by-step."
+    },
+    {
+      "start": 3125.24,
+      "end": 3130.4799999999996,
+      "text": "Let me recap. See, let me recap. So, it"
+    },
+    {
+      "start": 3127.56,
+      "end": 3132.7999999999997,
+      "text": "is actually thinking step-by-step. It is"
+    },
+    {
+      "start": 3130.48,
+      "end": 3134.08,
+      "text": "saying that, \"Okay,"
+    },
+    {
+      "start": 3132.8,
+      "end": 3136.6800000000003,
+      "text": "um"
+    },
+    {
+      "start": 3134.08,
+      "end": 3138.2799999999997,
+      "text": "you know, it goes through the entire"
+    },
+    {
+      "start": 3136.68,
+      "end": 3140.8799999999997,
+      "text": "sentence letter by letter and it's"
+    },
+    {
+      "start": 3138.28,
+      "end": 3142.1600000000003,
+      "text": "saying, \"Okay, R is one. Here R is one.\""
+    },
+    {
+      "start": 3140.88,
+      "end": 3145.2400000000002,
+      "text": "and so on."
+    },
+    {
+      "start": 3142.16,
+      "end": 3147.04,
+      "text": "So, it it is is also doing double-check"
+    },
+    {
+      "start": 3145.24,
+      "end": 3149.64,
+      "text": "because in our"
+    },
+    {
+      "start": 3147.04,
+      "end": 3151.04,
+      "text": "uh prompt, we asked it to do human-like"
+    },
+    {
+      "start": 3149.64,
+      "end": 3154.4,
+      "text": "thinking."
+    },
+    {
+      "start": 3151.04,
+      "end": 3157.84,
+      "text": "And then in the end, it will tell you"
+    },
+    {
+      "start": 3154.4,
+      "end": 3158.92,
+      "text": "total R R 2. Okay? Isn't this amazing,"
+    },
+    {
+      "start": 3157.84,
+      "end": 3161.32,
+      "text": "folks?"
+    },
+    {
+      "start": 3158.92,
+      "end": 3165.7200000000003,
+      "text": "We trained the model. We fine-tuned it"
+    },
+    {
+      "start": 3161.32,
+      "end": 3168.0,
+      "text": "on this ServiceNow R1 dataset. And Llama"
+    },
+    {
+      "start": 3165.72,
+      "end": 3170.6,
+      "text": "3, which was not originally designed to"
+    },
+    {
+      "start": 3168.0,
+      "end": 3173.92,
+      "text": "produce output in this format, now it is"
+    },
+    {
+      "start": 3170.6,
+      "end": 3175.92,
+      "text": "able to do reasoning, okay?"
+    },
+    {
+      "start": 3173.92,
+      "end": 3177.92,
+      "text": "You can run this in Google Colab. It's"
+    },
+    {
+      "start": 3175.92,
+      "end": 3180.4,
+      "text": "going to take long time."
+    },
+    {
+      "start": 3177.92,
+      "end": 3182.36,
+      "text": "Um the code is attached. So, folks,"
+    },
+    {
+      "start": 3180.4,
+      "end": 3184.52,
+      "text": "please read through the code. Once"
+    },
+    {
+      "start": 3182.36,
+      "end": 3186.52,
+      "text": "again, let me remind you. I know I'm"
+    },
+    {
+      "start": 3184.52,
+      "end": 3188.7599999999998,
+      "text": "saying this again and again. You don't"
+    },
+    {
+      "start": 3186.52,
+      "end": 3190.8,
+      "text": "need to remember syntax, folks. If you"
+    },
+    {
+      "start": 3188.76,
+      "end": 3192.8,
+      "text": "waste your mental energy in remembering"
+    },
+    {
+      "start": 3190.8,
+      "end": 3193.84,
+      "text": "syntax, you are not doing yourself any"
+    },
+    {
+      "start": 3192.8,
+      "end": 3195.1600000000003,
+      "text": "good."
+    },
+    {
+      "start": 3193.84,
+      "end": 3198.6800000000003,
+      "text": "You can get all this help through"
+    },
+    {
+      "start": 3195.16,
+      "end": 3201.2,
+      "text": "ChatGPT AI and API documentation. Your"
+    },
+    {
+      "start": 3198.68,
+      "end": 3204.2,
+      "text": "goal is to remember fundamentals, okay?"
+    },
+    {
+      "start": 3201.2,
+      "end": 3206.52,
+      "text": "And connect those fundamentals on how do"
+    },
+    {
+      "start": 3204.2,
+      "end": 3209.7999999999997,
+      "text": "you solve a business problem."
+    },
+    {
+      "start": 3206.52,
+      "end": 3211.84,
+      "text": "All right. So, that's about it."
+    },
+    {
+      "start": 3209.8,
+      "end": 3215.4,
+      "text": "Uh the code is provided. Please run it"
+    },
+    {
+      "start": 3211.84,
+      "end": 3217.8,
+      "text": "in your Colab notebook and uh see how it"
+    },
+    {
+      "start": 3215.4,
+      "end": 3217.8,
+      "text": "goes."
+    }
+  ]
+}
